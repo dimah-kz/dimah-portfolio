@@ -8,6 +8,11 @@
 export const site = {
   name: 'dimah',
   description: 'Believer in open source.',
+  /**
+   * Public origin of the deployed site, without a trailing slash.
+   * This template is deployed at https://dimah.dev. Replace it when you deploy your own.
+   */
+  url: 'https://dimah.dev',
   locale: 'en',
   direction: 'ltr',
   author: {

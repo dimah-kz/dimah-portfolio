@@ -19,11 +19,22 @@ const fontArabic = Noto_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: {
     default: site.name,
     template: `%s · ${site.name}`,
   },
   description: site.description,
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    url: site.url,
+    siteName: site.name,
+    title: site.name,
+    description: site.description,
+  },
 };
 
 export default function Layout({ children }: LayoutProps<'/'>) {

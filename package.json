@@ -5,6 +5,8 @@
   "description": "A developer portfolio and public template. Content is Fumadocs MDX. UI is shadcn/ui on Base UI.",
   "license": "MIT",
   "author": "dimah-kz",
+  "homepage": "https://dimah.dev",
+  "packageManager": "pnpm@12.21.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dimah-kz/dimah-portfolio.git"

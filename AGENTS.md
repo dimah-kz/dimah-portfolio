@@ -54,7 +54,7 @@ Run shadcn from this directory so it reads `components.json`. Do not pass `--bas
 
 | Change                                      | Where                                         |
 | ------------------------------------------- | --------------------------------------------- |
-| Name, bio, locale, direction, GitHub, email | `src/lib/site.ts`                             |
+| Name, bio, locale, direction, GitHub, email, deployed URL | `src/lib/site.ts` (`site.url`, currently `https://dimah.dev`) |
 | Docs                                        | `content/docs` and `content/docs/meta.json`   |
 | Blog posts                                  | `content/blog/*.mdx`. Author key `dimah`      |
 | Home page sections                          | `src/app/(home)/`                             |
