@@ -1,8 +1,28 @@
 ---
-title: Notes
-description: Notes on the open-source tools I maintain.
+title: Overview
+description: Open-source work by dimah. The two main projects are dimah-starter and dimah-s3.
 ---
 
-Short notes alongside the portfolio. I publish server-first tools for React and Next.js under [dimah-kz](https://github.com/dimah-kz).
+I publish server-first tools for React and Next.js under [dimah-kz](https://github.com/dimah-kz). Two of them carry most of that work.
 
-The projects are on [Work](/docs/work).
+<Cards>
+  <Card
+    title="dimah-starter"
+    href="/docs/starter"
+    description="A server-first Next.js 16 starter for multi-tenant SaaS."
+  />
+  <Card
+    title="dimah-s3"
+    href="/docs/s3"
+    description="A full-stack S3 toolkit for the React ecosystem."
+  />
+</Cards>
+
+dimah-starter is the application shell: organizations, roles, auth, and an admin panel, with writes as Server Actions. dimah-s3 is the upload toolkit that starter uses when a file has to reach a bucket. The [blog](/blog) is where I write about the choices behind both.
+
+## Also published
+
+These are smaller projects, separate from the two above.
+
+- [dimah-form](https://github.com/dimah-kz/dimah-form) is backend-first form infrastructure for TypeScript servers and React clients. [form.dimah.dev](https://form.dimah.dev)
+- [dimah-survey](https://github.com/dimah-kz/dimah-survey) is a backend for SurveyJS. SurveyJS stays the form. [survey.dimah.dev](https://survey.dimah.dev)

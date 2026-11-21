@@ -1,8 +1,10 @@
 import { llms, loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
 import { docsRoute } from './shared';
-import { defineDocs } from 'fumadocs-mdx/macro';
+import { defineCollections, defineDocs } from 'fumadocs-mdx/macro';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
+import { type BlogAuthor, blogPageSchema } from './blog';
+import { site } from './site';
 
 const docs = defineDocs({
   dir: 'content/docs',
@@ -29,3 +31,23 @@ export const docsLlms = llms(source, {
 
 ${await page.data.getText('processed')}`,
 });
+
+export const blog = defineCollections({
+  type: 'doc',
+  dir: 'content/blog',
+  schema: blogPageSchema,
+});
+
+export const blogSource = loader({
+  baseUrl: '/blog',
+  source: blog.toFumadocsSource(),
+});
+
+export const blogAuthors = {
+  dimah: {
+    name: site.author.name,
+    title: site.description,
+    url: site.author.githubUrl,
+    image: site.author.avatarUrl,
+  },
+} satisfies Record<string, BlogAuthor>;

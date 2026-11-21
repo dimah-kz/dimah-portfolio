@@ -6,8 +6,10 @@ alwaysApply: false
 
 # Content
 
-- Notes are MDX in `content/docs`, ordered by `content/docs/meta.json`, loaded in `src/lib/source.ts`.
-- A new document-shaped section (projects, writing) is a new Fumadocs collection, then a route. Not a hardcoded array in a component.
+- Docs are MDX in `content/docs`, ordered by `meta.json`, loaded in `src/lib/source.ts`.
+- Blog posts are MDX in `content/blog` (Fumadocs `add blog`). Routes are `src/app/(home)/blog`. Author key is `dimah`.
+- Write only what is true of dimah-kz and the public repositories. No placeholder projects or invented biography.
+- A new document-shaped section is a new Fumadocs collection, then a route. Not a hardcoded array in a component.
 - Name, bio, locale, direction, and profile links stay in `src/lib/site.ts`.
 - Fumadocs APIs: https://fumadocs.dev/llms.txt
 

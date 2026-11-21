@@ -1,0 +1,22 @@
+---
+title: Presign-first
+description: dimah-s3 signs an upload on the server. The browser sends the file to the bucket. Credentials stay behind the handler.
+---
+
+A presigned request is a normal S3 request with a signature and an expiry attached. dimah-s3 keeps that signature on the server. The browser receives a ticket it can use once, for the operation the handler allowed, and sends the bytes to the bucket itself.
+
+The application still owns the decision. Before anything is signed, server hooks can refuse the caller, enforce a quota, or record the object in the database. Those hooks are the extension point. The toolkit does not ship an opinion about your users table.
+
+## What you pass in
+
+Your own `S3Client` from AWS SDK v3. dimah-s3 does not hide a second client or a hosted bucket. Amazon S3, Cloudflare R2, MinIO, and other S3-compatible stores all go through that client, as long as the operation is one the store can presign.
+
+The React side is headless hooks. An optional shadcn UI can render them. An optional database plugin can persist the object's record. Neither is required to sign an upload.
+
+## What stays out
+
+Presign flows only. Listing a bucket, changing a policy, or any call that needs the raw credential stays in your backend with `@aws-sdk/client-s3`.
+
+That split is the product. The browser can upload without ever seeing the access key, and the server does not have to proxy the file through the application process.
+
+In [dimah-starter](/docs/starter/included) the same rule shows up as a direct-to-bucket upload. The action stores the public URL after the browser finishes, and a later purge removes uploads that were signed and never confirmed.

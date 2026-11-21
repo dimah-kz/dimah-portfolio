@@ -1,0 +1,19 @@
+---
+title: Why dimah-starter is server-first
+description: Tenants, roles, and writes stay on the server. The starter does not add a client SDK and leave those parts open.
+date: 2026-11-21
+tags: [dimah-starter]
+authors: [dimah]
+---
+
+A lot of Next.js starters begin with a client. You get an auth SDK, a query library, and a set of widgets, and then you are on your own for organizations, permissions, and cache invalidation. I built [dimah-starter](/docs/starter) in the other direction.
+
+The page reads the session in a Server Component. A list is a `'use cache'` read tagged for that user or that organization. A write is one Server Action, and `updateTag` expires what that write changed, so the person who submitted the form sees the new data in the same response. There is no auth client to hydrate, and no React Query cache to invalidate.
+
+The permission check is repeated on the read, not only in the layout. A layout gate does not keep a page's data out of its response. `requireDashboardSession`, `requireOrganizationManager`, and `requirePlatformAdmin` are the three gates, and the cached function underneath them never sees `headers()` or `cookies()`. A cached session would be shared across requests.
+
+Multi-tenancy is not a later chapter. Organizations, invitations, and the owner, admin, and member roles are in the first run, on Better Auth. English and Persian are too, with the direction set on the document rather than patched onto individual components.
+
+Billing, a marketing CMS, and analytics are left out, so the provider can match the product.
+
+The read and the write, including the trimmed members-list example, are written up in [Server-first](/docs/starter/server). The repository is [dimah-kz/dimah-starter](https://github.com/dimah-kz/dimah-starter), and the running app is [starter.dimah.dev](https://starter.dimah.dev).

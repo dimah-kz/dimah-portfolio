@@ -1,0 +1,42 @@
+---
+title: dimah-starter
+description: Open-source, server-first Next.js 16 starter for multi-tenant SaaS.
+---
+
+**Open-source, server-first Next.js 16 starter for multi-tenant SaaS.** Sign-in, organizations with roles, an admin panel, file uploads, and English/Persian with a right-to-left layout are already wired, so a new product starts on the feature that makes it different.
+
+[Live demo](https://starter.dimah.dev) · [Repository](https://github.com/dimah-kz/dimah-starter) · [MIT](https://github.com/dimah-kz/dimah-starter/blob/main/LICENSE)
+
+## What it refuses to hand you
+
+Most SaaS kits ship a client SDK, a data-fetching library, and drop-in widgets, then leave tenants, roles, caching, and server-side permissions to you. dimah-starter goes the other way.
+
+- Pages read the session in Server Components. Lists come from tagged `'use cache'` reads. Every write is a Server Action. There is no auth client, no React Query, and no client data layer to keep in sync.
+- Organizations, invitations, member roles, and a platform admin panel are built on [Better Auth](https://www.better-auth.com). Permission checks run on every page and on every data read, not only in layouts.
+- It is built on Next.js 16 [Cache Components](/docs/starter/server) and Partial Prefetching, React 19 with the React Compiler, and Turbopack.
+- English and Persian ship together. Every string lives in message files, and the layout is correct for both directions.
+- Rate-limited auth, security headers, safe redirects, upload quotas, a stale-upload purge, unit tests, end-to-end tests, and CI are already in the repository.
+
+The parts left open on purpose are billing, a marketing CMS, and analytics.
+
+## Where the code sits
+
+One Next.js app, `apps/web`, and shared packages:
+
+| Package | Holds |
+| --- | --- |
+| `@repo/api` | The product oRPC router |
+| `@repo/auth` | Better Auth, roles, and permissions |
+| `@repo/db` | Drizzle schema, client, and migrations |
+| `@repo/email` | Transactional email |
+| `@repo/i18n` | Messages, locales, and formatters |
+| `@repo/storage` | [dimah-s3](/docs/s3) uploads and object cleanup |
+| `@repo/ui` | shadcn/ui on Base UI, and ReUI |
+
+`pnpm dev` serves the app at `http://localhost:3000`. The repository README has the environment, the first admin, and the production checklist.
+
+## In these docs
+
+- [Server-first](/docs/starter/server) is how a read and a write actually run.
+- [What ships](/docs/starter/included) is the list of product areas already in the box.
+- [Uploads in the starter](/blog/starter-uploads) is the note on how files reach the bucket through dimah-s3.

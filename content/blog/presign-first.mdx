@@ -1,0 +1,19 @@
+---
+title: dimah-s3 signs the upload, then steps aside
+description: The server signs. The browser talks to the bucket. Credentials, quotas, and database rules stay in server hooks.
+date: 2026-11-20
+tags: [dimah-s3]
+authors: [dimah]
+---
+
+File uploads get pushed into the application process more often than they should. The browser posts the file to your server, your server streams it to S3, and the request holds a function open for the size of the file. [dimah-s3](/docs/s3) does not do that.
+
+The handler signs a request with the AWS SDK v3 `S3Client` you pass in. The browser uploads to the bucket with that signature. The access key stays on the server. Before the signature is issued, your hooks can check the caller, apply a quota, or write the database row. After the browser finishes, your application stores the URL it already decided was allowed.
+
+It is presign flows only. Amazon S3, Cloudflare R2, MinIO, and other S3-compatible stores work when the operation can be signed. Anything that needs the raw credential stays in your own backend with `@aws-sdk/client-s3`.
+
+The React pieces are headless hooks. shadcn UI and a database plugin are optional. You can sign an upload without rendering either.
+
+The README on `main` is the 1.x line, documented at [v1.s3.dimah.dev](https://v1.s3.dimah.dev/docs). New projects should use the [2.0 beta](https://s3.dimah.dev/docs) (`@dimah-s3/react@beta`). The shape above is the same idea in both lines: the server signs, the browser sends the bytes, the credential never leaves.
+
+How a single request is split is in [Presign-first](/docs/s3/presign). The repository is [dimah-kz/dimah-s3](https://github.com/dimah-kz/dimah-s3).

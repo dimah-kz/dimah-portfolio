@@ -1,0 +1,6 @@
+{
+  "title": "dimah-s3",
+  "description": "Full-stack S3 toolkit for React.",
+  "icon": "Cloud",
+  "pages": ["index", "presign"]
+}

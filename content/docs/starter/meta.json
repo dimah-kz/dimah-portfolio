@@ -1,0 +1,6 @@
+{
+  "title": "dimah-starter",
+  "description": "Server-first Next.js 16 SaaS starter.",
+  "icon": "Layers",
+  "pages": ["index", "server", "included"]
+}

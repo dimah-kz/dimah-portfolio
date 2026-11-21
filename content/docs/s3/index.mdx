@@ -1,0 +1,30 @@
+---
+title: dimah-s3
+description: Full-stack S3 toolkit for the React ecosystem, powered by AWS SDK v3.
+---
+
+**Full-stack S3 toolkit for the React ecosystem, powered by AWS SDK v3.** Server handlers, headless React hooks, an optional shadcn UI, and an optional database plugin. You pass in your own AWS SDK `S3Client`.
+
+[Repository](https://github.com/dimah-kz/dimah-s3) · [MIT](https://github.com/dimah-kz/dimah-s3/blob/main/LICENSE)
+
+<Callout title="1.x and the 2.0 beta" type="warn">
+  The README on `main` is the 1.x line. Documentation for that line is
+  [v1.s3.dimah.dev](https://v1.s3.dimah.dev/docs). New projects should use the
+  [2.0 beta](https://s3.dimah.dev/docs), installed with `npm i
+  @dimah-s3/react@beta`. The 1.x server package is
+  [`@dimah-s3/server`](https://www.npmjs.com/package/@dimah-s3/server).
+</Callout>
+
+## What it will not take from you
+
+Credentials never leave the backend. The server signs an upload, and the browser talks to the bucket. Auth, quotas, and database rules live in server hooks, which is where an application already knows who the caller is.
+
+It works with Amazon S3, Cloudflare R2, MinIO, and other S3-compatible stores. Presign flows only. Anything else stays in your own backend with [`@aws-sdk/client-s3`](https://www.npmjs.com/package/@aws-sdk/client-s3).
+
+[dimah-starter](/docs/starter) uses this for avatars, logos, and other direct-to-bucket uploads. The note on that wiring is [Uploads in dimah-starter](/blog/starter-uploads).
+
+## Where to read next
+
+- [Presign-first](/docs/s3/presign) is the shape of a request.
+- [v1 comparison](https://v1.s3.dimah.dev/docs/comparison) is the 1.x comparison.
+- [v1 llms.txt](https://v1.s3.dimah.dev/llms.txt) is the same documentation for a coding agent.

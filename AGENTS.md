@@ -39,8 +39,8 @@ Run shadcn from this directory so it reads `components.json`. Do not pass `--bas
 
 ## Rules
 
-1. **Copy is content.** A page, a project write-up, or a note is an MDX file under `content/`. Name, description, locale, direction, and profile links live only in `src/lib/site.ts`. A component reads those; it does not restate them.
-2. **A new section that is a set of documents is a Fumadocs collection**, then a route. Do not start that section as a hardcoded array in a component. The notes collection is `content/docs`, loaded in `src/lib/source.ts`.
+1. **Copy is content.** Docs are MDX in `content/docs`. Blog posts are MDX in `content/blog`. Name, description, locale, direction, and profile links live only in `src/lib/site.ts`. A component reads those; it does not restate them. Do not add placeholder posts or project claims that are not true of dimah-kz.
+2. **A new section that is a set of documents is a Fumadocs collection**, then a route. Do not start that section as a hardcoded array in a component. Docs are loaded in `src/lib/source.ts`. The blog collection is there too, installed with `pnpm dlx @fumadocs/cli@latest add blog`, and rendered by `src/app/(home)/blog`.
 3. **Reach for an installed shadcn component before custom markup.** Add a missing primitive with the CLI. Compose at the call site. Do not restyle a primitive's colors or radius with `className`.
 4. **Base UI, not Radix.** Custom triggers use `render`, not `asChild`. `nativeButton={false}` is for a non-button tag that should still be a button. A link that should look like a button uses `className={buttonVariants()}` on `Link`. Do not pass a link to `Button`'s `render` prop — Base UI forces `role="button"` on it.
 5. **Logical properties everywhere.** `ms-*` / `me-*`, `ps-*` / `pe-*`, `start-*` / `end-*`, `text-start`, `border-s`, `rounded-s`. `gap-*`, not `space-x-*` or `space-y-*`. Equal width and height is `size-*`. This is what makes `site.direction = "rtl"` work later without a restyle.
@@ -52,18 +52,19 @@ Run shadcn from this directory so it reads `components.json`. Do not pass `--bas
 
 ## Make it yours
 
-| Change                                      | Where                                             |
-| ------------------------------------------- | ------------------------------------------------- |
-| Name, bio, locale, direction, GitHub, email | `src/lib/site.ts`                                 |
-| Notes                                       | `content/docs/*.mdx` and `content/docs/meta.json` |
-| Home page sections                          | `src/app/(home)/`                                 |
-| Docs navigation label                       | `src/lib/layout.shared.tsx` reads `site.name`     |
+| Change                                      | Where                                         |
+| ------------------------------------------- | --------------------------------------------- |
+| Name, bio, locale, direction, GitHub, email | `src/lib/site.ts`                             |
+| Docs                                        | `content/docs` and `content/docs/meta.json`   |
+| Blog posts                                  | `content/blog/*.mdx`. Author key `dimah`      |
+| Home page sections                          | `src/app/(home)/`                             |
+| Docs navigation label                       | `src/lib/layout.shared.tsx` reads `site.name` |
 
 Setting `direction` to `"rtl"` and `locale` to `"fa"` flips the document. Keep writing styles with the logical properties above so that flip does not require a CSS pass.
 
 ## Check
 
-`pnpm lint` and `pnpm types:check` pass. UI changes are checked in the running app, including `/` and `/docs`.
+`pnpm lint` and `pnpm types:check` pass. UI changes are checked in the running app, including `/`, `/docs`, and `/blog`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

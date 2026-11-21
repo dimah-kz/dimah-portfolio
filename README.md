@@ -2,7 +2,7 @@
 
 A personal portfolio for developers, and a template you can make your own. Content is [MDX](https://fumadocs.dev/docs/mdx) through [Fumadocs](https://fumadocs.dev). UI is [shadcn/ui](https://ui.shadcn.com) on Base UI.
 
-The sample copy is [dimah](https://github.com/dimah-kz): the name, the bio, and the open-source projects on the notes pages. Replace that with yours.
+The sample copy is [dimah](https://github.com/dimah-kz): the name, the bio, and the open-source projects in the docs and the blog. Replace that with yours.
 
 ## Stack
 
@@ -15,7 +15,8 @@ Direction is ready for right-to-left. Styles use logical properties (`ms-*`, `ps
 | What                                        | Where                                                  |
 | ------------------------------------------- | ------------------------------------------------------ |
 | Name, bio, locale, direction, GitHub, email | [`src/lib/site.ts`](src/lib/site.ts)                   |
-| Notes                                       | [`content/docs`](content/docs)                         |
+| Docs                                        | [`content/docs`](content/docs)                         |
+| Blog posts                                  | [`content/blog`](content/blog)                         |
 | Home page                                   | [`src/app/(home)/page.tsx`](<src/app/(home)/page.tsx>) |
 
 Set `direction` to `"rtl"` and `locale` to `"fa"` (or another language) when the portfolio should read right-to-left. Inter covers Latin; Noto Sans Arabic covers Arabic script. Coding agents should follow [`AGENTS.md`](AGENTS.md).
@@ -30,7 +31,7 @@ pnpm types:check
 pnpm build
 ```
 
-Add a component with `pnpm dlx shadcn@latest add <name>` from this directory.
+Add a shadcn component with `pnpm dlx shadcn@latest add <name>` from this directory. The blog components come from `pnpm dlx @fumadocs/cli@latest add blog`.
 
 ## License
 
