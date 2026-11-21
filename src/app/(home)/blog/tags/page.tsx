@@ -1,12 +1,13 @@
 import { BlogHeader, BlogTagCards, BlogTitle } from '@/components/blog';
 import { getPosts, getTags } from '@/lib/blog';
+import { pageMeta } from '@/lib/seo';
 import { blogSource } from '@/lib/source';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta('/blog/tags', {
   title: 'Tags',
   description: 'Topics across the notes on dimah-starter and dimah-s3.',
-};
+});
 
 export default function Page() {
   const tags = getTags(getPosts(blogSource.getPages()));

@@ -5,17 +5,12 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https' as const,
-        hostname: 'avatars.githubusercontent.com',
-        pathname: '/u/**',
-      },
-    ],
-  },
   async rewrites() {
     return [
+      {
+        source: '/favicon.ico',
+        destination: '/icon-192.png',
+      },
       {
         source: '/docs/:path*.md',
         destination: '/llms.mdx/docs/:path*.md',

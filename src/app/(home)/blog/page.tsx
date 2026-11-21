@@ -1,12 +1,13 @@
 import { BlogCards, BlogDescription, BlogHeader, BlogTitle } from '@/components/blog';
 import { getPosts } from '@/lib/blog';
+import { pageMeta } from '@/lib/seo';
 import { blogAuthors, blogSource } from '@/lib/source';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta('/blog', {
   title: 'Blog',
   description: 'Notes on dimah-starter and dimah-s3.',
-};
+});
 
 export default function Page() {
   return (

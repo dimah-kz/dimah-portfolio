@@ -1,9 +1,12 @@
+import { ProjectMark } from '@/components/brand';
 import { llms, loader } from 'fumadocs-core/source';
-import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
-import { docsRoute } from './shared';
-import { defineCollections, defineDocs } from 'fumadocs-mdx/macro';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
+import { defineCollections, defineDocs } from 'fumadocs-mdx/macro';
+import { icons } from 'lucide-react';
+import { createElement } from 'react';
 import { type BlogAuthor, blogPageSchema } from './blog';
+import { isProjectId } from './projects';
+import { docsRoute } from './shared';
 import { site } from './site';
 
 const docs = defineDocs({
@@ -23,7 +26,11 @@ const docs = defineDocs({
 export const source = loader({
   baseUrl: docsRoute,
   source: docs.toFumadocsSource(),
-  plugins: [lucideIconsPlugin()],
+  icon(icon) {
+    if (!icon) return;
+    if (isProjectId(icon)) return createElement(ProjectMark, { id: icon });
+    if (icon in icons) return createElement(icons[icon as keyof typeof icons]);
+  },
 });
 
 export const docsLlms = llms(source, {

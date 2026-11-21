@@ -1,9 +1,11 @@
+import { ProjectMark } from '@/components/brand';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
+    ProjectMark,
     ...components,
   } satisfies MDXComponents;
 }

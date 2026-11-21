@@ -1,7 +1,6 @@
-import { site } from '@/lib/site';
+import { siteOgImageWebp } from '@/lib/og';
 import { source } from '@/lib/source';
 import { notFound } from 'next/navigation';
-import { generateOGImage } from 'fumadocs-ui/og/takumi';
 
 export const revalidate = false;
 
@@ -10,12 +9,7 @@ export async function GET(_req: Request, { params }: RouteContext<'/og/docs/[...
   const page = source.getPage(slug.slice(0, -1));
   if (!page) notFound();
 
-  return generateOGImage({
-    title: page.data.title,
-    description: page.data.description,
-    site: site.name,
-    format: 'webp',
-  });
+  return siteOgImageWebp(page.data.title, page.data.description);
 }
 
 export function generateStaticParams() {

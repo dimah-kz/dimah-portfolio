@@ -22,7 +22,8 @@ export const site = {
     x: 'dimahkzx',
     xUrl: 'https://x.com/dimahkzx',
     email: 'dimahkz.dev@gmail.com',
-    avatarUrl: 'https://avatars.githubusercontent.com/u/312741413?v=4',
+    /** Served from `public/dimah-avatar.png`. */
+    avatarUrl: '/dimah-avatar.png',
   },
   repository: {
     owner: 'dimah-kz',

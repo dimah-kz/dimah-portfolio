@@ -1,42 +1,26 @@
+import { ProjectMark } from "@/components/brand";
+import { ProjectCard } from "@/components/project-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Item,
   ItemContent,
   ItemDescription,
   ItemGroup,
   ItemHeader,
+  ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
 import { getPosts } from "@/lib/blog";
-import { blogAuthors, blogSource } from "@/lib/source";
+import { projectsForTags, projectsIn } from "@/lib/projects";
+import { pageMeta } from "@/lib/seo";
 import { site } from "@/lib/site";
+import { blogAuthors, blogSource } from "@/lib/source";
 import { ArrowUpRightIcon } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 
-const work = [
-  {
-    name: "dimah-starter",
-    description:
-      "Server-first Next.js 16 starter for multi-tenant SaaS. Organizations, roles, and an admin panel, with writes as Server Actions.",
-    docs: "/docs/starter",
-    live: "https://starter.dimah.dev",
-  },
-  {
-    name: "dimah-s3",
-    description:
-      "Full-stack S3 toolkit for React. The server signs the upload, the browser talks to the bucket, and credentials stay on the backend.",
-    docs: "/docs/s3",
-    live: "https://s3.dimah.dev",
-  },
-] as const;
+export const metadata: Metadata = pageMeta("/");
 
 const dateFormat = new Intl.DateTimeFormat(site.locale, {
   dateStyle: "medium",
@@ -52,7 +36,7 @@ export default function HomePage() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <Avatar size="lg">
-              <AvatarImage src={site.author.avatarUrl} alt="" />
+              <AvatarImage src={site.author.avatarUrl} alt={site.author.name} />
               <AvatarFallback>{site.name.slice(0, 1)}</AvatarFallback>
             </Avatar>
             <p className="text-sm text-muted-foreground">
@@ -95,47 +79,19 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          {work.map((project) => (
-            <Card key={project.name} className="h-full">
-              <CardHeader>
-                <CardTitle>{project.name}</CardTitle>
-                <CardDescription>{project.description}</CardDescription>
-              </CardHeader>
-              <CardFooter className="mt-auto gap-2">
-                <Link
-                  href={project.docs}
-                  className={buttonVariants({ variant: "outline", size: "sm" })}
-                >
-                  Docs
-                </Link>
-                <Link
-                  href={project.live}
-                  className={buttonVariants({ variant: "ghost", size: "sm" })}
-                >
-                  Live
-                  <ArrowUpRightIcon data-icon="inline-end" />
-                </Link>
-              </CardFooter>
-            </Card>
+          {projectsIn("primary").map((project) => (
+            <ProjectCard key={project.id} project={project} />
           ))}
         </div>
-        <p className="text-xs/relaxed text-muted-foreground">
-          Also{" "}
-          <a
-            href="https://form.dimah.dev"
-            className="text-foreground underline-offset-4 hover:underline"
-          >
-            dimah-form
-          </a>{" "}
-          and{" "}
-          <a
-            href="https://survey.dimah.dev"
-            className="text-foreground underline-offset-4 hover:underline"
-          >
-            dimah-survey
-          </a>
-          .
-        </p>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="font-heading text-sm font-medium">Also published</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {projectsIn("other").map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
       </section>
 
       <section className="flex flex-col gap-4">
@@ -155,6 +111,7 @@ export default function HomePage() {
               variant="outline"
               render={<Link href={post.url} />}
             >
+              <PostMarks tags={post.tags.map((tag) => tag.name)} />
               <ItemContent>
                 <ItemHeader>
                   <ItemTitle>{post.title}</ItemTitle>
@@ -175,6 +132,34 @@ export default function HomePage() {
           ))}
         </ItemGroup>
       </section>
+
+      <footer className="flex flex-wrap gap-x-4 gap-y-2 border-t pt-6 text-sm text-muted-foreground">
+        <a
+          href={site.author.xUrl}
+          className="underline-offset-4 hover:text-foreground hover:underline"
+        >
+          X
+        </a>
+        <a
+          href={`mailto:${site.author.email}`}
+          className="underline-offset-4 hover:text-foreground hover:underline"
+        >
+          Email
+        </a>
+      </footer>
     </main>
+  );
+}
+
+function PostMarks({ tags }: { tags: string[] }) {
+  const matched = projectsForTags(tags);
+  if (matched.length === 0) return null;
+
+  return (
+    <ItemMedia variant="icon">
+      {matched.map((project) => (
+        <ProjectMark key={project.id} id={project.id} />
+      ))}
+    </ItemMedia>
   );
 }
