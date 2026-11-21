@@ -7,7 +7,15 @@ const avatar = await readFile(join(process.cwd(), "public/dimah-avatar.png"));
 const avatarSrc = `data:image/png;base64,${avatar.toString("base64")}`;
 
 const icon = (
-  <div style={{ display: "flex", width: 56, height: 56 }}>
+  <div
+    style={{
+      display: "flex",
+      width: 56,
+      height: 56,
+      borderRadius: 12,
+      overflow: "hidden",
+    }}
+  >
     {/* Satori accepts <img>, not next/image. */}
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img src={avatarSrc} width={56} height={56} alt="" />
