@@ -1,0 +1,15 @@
+---
+description: shadcn on Base UI, logical CSS, and direction
+globs: "**/*.{tsx,css}"
+alwaysApply: false
+---
+
+# UI
+
+- Primitives are shadcn/ui on Base UI (`base-mira`) in `src/components/ui`. Add more with `pnpm dlx shadcn@latest add <name>`. Not Radix: `render` instead of `asChild`. `nativeButton={false}` is for a non-button tag that is still a button. A link that looks like a button uses `buttonVariants()` on `Link`, not `Button`.
+- `import { cn } from "cn"`. Icons from `lucide-react`. Inside a component, `data-icon="inline-start"` or `"inline-end"` and no size class.
+- Logical properties only: `ms`/`me`, `ps`/`pe`, `start`/`end`, `text-start`, `border-s`. `gap-*`, not `space-x-*` or `space-y-*`. `size-*` when width and height match.
+- `lang` and `dir` come from `site.direction` / `site.locale` on `<html>`, also passed to `DirectionProvider` and Fumadocs `RootProvider`.
+- Leave the pointer-cursor rule in `src/app/global.css`. Toast with `toast.add` from `@/components/ui/toast`.
+
+Guide: [AGENTS.md](../../AGENTS.md)

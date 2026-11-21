@@ -1,45 +1,37 @@
-# dimah
+# dimah-portfolio
 
-This is a Next.js application generated with
-[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+A personal portfolio for developers, and a template you can make your own. Content is [MDX](https://fumadocs.dev/docs/mdx) through [Fumadocs](https://fumadocs.dev). UI is [shadcn/ui](https://ui.shadcn.com) on Base UI.
 
-Run development server:
+The sample copy is [dimah](https://github.com/dimah-kz): the name, the bio, and the open-source projects on the notes pages. Replace that with yours.
+
+## Stack
+
+Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Fumadocs MDX · shadcn/ui (`base-mira`, Base UI) · lucide
+
+Direction is ready for right-to-left. Styles use logical properties (`ms-*`, `ps-*`, `text-start`), and `src/lib/site.ts` is the switch.
+
+## Make it yours
+
+| What                                        | Where                                                  |
+| ------------------------------------------- | ------------------------------------------------------ |
+| Name, bio, locale, direction, GitHub, email | [`src/lib/site.ts`](src/lib/site.ts)                   |
+| Notes                                       | [`content/docs`](content/docs)                         |
+| Home page                                   | [`src/app/(home)/page.tsx`](<src/app/(home)/page.tsx>) |
+
+Set `direction` to `"rtl"` and `locale` to `"fa"` (or another language) when the portfolio should read right-to-left. Inter covers Latin; Noto Sans Arabic covers Arabic script. Coding agents should follow [`AGENTS.md`](AGENTS.md).
+
+## Scripts
 
 ```bash
-npm run dev
-# or
-pnpm dev
-# or
-yarn dev
+pnpm install
+pnpm dev          # http://localhost:3000
+pnpm lint
+pnpm types:check
+pnpm build
 ```
 
-Open http://localhost:3000 with your browser to see the result.
+Add a component with `pnpm dlx shadcn@latest add <name>` from this directory.
 
-## Explore
+## License
 
-In the project, you can see:
-
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
-
-| Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
-| `app/(home)`              | The route group for your landing page and other pages. |
-| `app/docs`                | The documentation layout and pages.                    |
-| `app/api/search/route.ts` | The Route Handler for search.                          |
-
-### Fumadocs MDX
-
-Collections are defined with the [Macro API](https://fumadocs.dev/docs/mdx/macro) in `lib/source.ts`.
-
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
-
-## Learn More
-
-To learn more about Next.js and Fumadocs, take a look at the following
-resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
+[MIT](LICENSE) © [dimah-kz](https://github.com/dimah-kz)

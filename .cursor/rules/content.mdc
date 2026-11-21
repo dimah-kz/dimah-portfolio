@@ -1,0 +1,14 @@
+---
+description: Portfolio copy is Fumadocs MDX
+globs: "content/**/*.{md,mdx,json},src/lib/source.ts,src/lib/site.ts"
+alwaysApply: false
+---
+
+# Content
+
+- Notes are MDX in `content/docs`, ordered by `content/docs/meta.json`, loaded in `src/lib/source.ts`.
+- A new document-shaped section (projects, writing) is a new Fumadocs collection, then a route. Not a hardcoded array in a component.
+- Name, bio, locale, direction, and profile links stay in `src/lib/site.ts`.
+- Fumadocs APIs: https://fumadocs.dev/llms.txt
+
+Guide: [AGENTS.md](../../AGENTS.md)

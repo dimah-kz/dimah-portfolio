@@ -1,0 +1,11 @@
+---
+description: dimah-portfolio is a personal site and a public template
+alwaysApply: true
+---
+
+# Portfolio template
+
+- Sample identity is Dimah, from https://github.com/dimah-kz. It lives in `src/lib/site.ts`. Long-form copy lives in `content/**/*.mdx`.
+- Do not invent a biography, employer, location, or metric that is not already in `site.ts` or MDX.
+- Making the template yours means editing those files, not adding a parallel config.
+- Guide: [AGENTS.md](../../AGENTS.md)
