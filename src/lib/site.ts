@@ -46,6 +46,7 @@ export const site: SiteConfig = {
     "oRPC",
     "AWS SDK",
     "Turborepo",
+    "Figma",
   ],
 
   repository: "https://github.com/dimah-kz/dimah-portfolio",
@@ -66,7 +67,7 @@ export const site: SiteConfig = {
       about: {
         paragraphs: [
           "I'm Dimah, a full-stack developer born in Shiraz in 2006 and a computer engineering student at Shiraz University. Mathematics was my first love, and the same pull toward logic and problem-solving led me to programming, which has been my passion ever since.",
-          "My work centers on the React ecosystem, with Next.js as my main framework. I write TypeScript end to end, from the interface to the APIs and databases behind it, and I aim for code that is clear, well structured, and easy for a team to maintain. I also build interfaces that work equally well in English and Persian, left to right and right to left.",
+          "My work centers on the React ecosystem, with Next.js as my main framework. I write TypeScript end to end, from the interface to the APIs and databases behind it, and I aim for code that is clear, well structured, and easy for a team to maintain. My background in UI design with Figma helps me bring design and code together, building precise, polished interfaces that work equally well in English and Persian, left to right and right to left.",
           "I'm a firm believer in open source. Working in the open keeps code transparent, invites review and contributions, and lets others learn from it and build on it. That's why I publish most of my work under dimah-kz, with documentation written for both people and coding agents.",
         ],
         journey: [
@@ -90,9 +91,9 @@ export const site: SiteConfig = {
           },
           {
             period: "After the Konkur",
-            title: "First websites with WordPress",
+            title: "WordPress and UI design",
             description:
-              "I started building websites with WordPress, my first hands-on work on the web.",
+              "I started building websites with WordPress and, at the same time, grew passionate about graphic and interface design. I learned Figma in depth and became a UI designer, a background that still shapes how I build interfaces.",
           },
           {
             period: "University",
@@ -104,7 +105,7 @@ export const site: SiteConfig = {
             period: "Today",
             title: "Full-stack development and open source",
             description:
-              "From WordPress I moved into programming. Today I build full-stack applications with React and Next.js and maintain open-source tools.",
+              "From WordPress and UI design I moved into programming. Today I build full-stack applications with React and Next.js and maintain open-source tools.",
           },
         ],
       },
@@ -126,7 +127,7 @@ export const site: SiteConfig = {
       about: {
         paragraphs: [
           "دیماه هستم، توسعه‌دهنده فول‌استک، متولد ۱۳۸۵ در شیراز و دانشجوی مهندسی کامپیوتر دانشگاه شیراز. ریاضی اولین عشقم بود و همان علاقه به منطق و حل مسئله مرا به برنامه‌نویسی رساند؛ کاری که از آن روز تا امروز عاشقش هستم.",
-          "تمرکز کارم روی اکوسیستم React است و فریم‌ورک اصلی‌ام Next.js. با TypeScript از رابط کاربری تا API و دیتابیس پشت آن را می‌نویسم و دنبال کدی هستم که خوانا، ساختارمند و برای کار تیمی قابل نگهداری باشد. رابط‌هایی هم می‌سازم که به فارسی و انگلیسی، راست‌به‌چپ و چپ‌به‌راست، به یک اندازه درست کار کنند.",
+          "تمرکز کارم روی اکوسیستم React است و فریم‌ورک اصلی‌ام Next.js. با TypeScript از رابط کاربری تا API و دیتابیس پشت آن را می‌نویسم و دنبال کدی هستم که خوانا، ساختارمند و برای کار تیمی قابل نگهداری باشد. سابقه‌ام در طراحی رابط کاربری با فیگما کمک می‌کند طراحی و کد را به هم نزدیک کنم و رابط‌هایی دقیق و تمیز بسازم که به فارسی و انگلیسی، راست‌به‌چپ و چپ‌به‌راست، به یک اندازه درست کار کنند.",
           "به متن‌باز باور عمیقی دارم. کدی که آشکارا منتشر می‌شود شفاف‌تر است، بازبینی و مشارکت دیگران را به همراه دارد و به همه اجازه می‌دهد از آن یاد بگیرند و رویش بسازند. برای همین بیشتر کارهایم را با نام dimah-kz متن‌باز منتشر می‌کنم، همراه با مستنداتی که هم برای آدم‌ها نوشته شده و هم برای ایجنت‌های برنامه‌نویسی.",
         ],
         journey: [
@@ -150,9 +151,9 @@ export const site: SiteConfig = {
           },
           {
             period: "بعد از کنکور",
-            title: "اولین سایت‌ها با وردپرس",
+            title: "وردپرس و طراحی رابط کاربری",
             description:
-              "ساخت وب‌سایت را با وردپرس شروع کردم؛ اولین تجربه عملی‌ام در وب.",
+              "ساخت وب‌سایت را با وردپرس شروع کردم و هم‌زمان به گرافیک و طراحی رابط کاربری علاقه زیادی پیدا کردم. فیگما را عمیق یاد گرفتم و طراح رابط کاربری شدم؛ تجربه‌ای که هنوز در شیوه ساختن رابط‌هایم نقش دارد.",
           },
           {
             period: "دانشگاه",
@@ -164,7 +165,7 @@ export const site: SiteConfig = {
             period: "امروز",
             title: "توسعه فول‌استک و متن‌باز",
             description:
-              "از وردپرس به برنامه‌نویسی رسیدم. امروز با React و Next.js اپلیکیشن‌های فول‌استک می‌سازم و ابزارهای متن‌باز توسعه می‌دهم و نگهداری می‌کنم.",
+              "از وردپرس و طراحی رابط کاربری به برنامه‌نویسی رسیدم. امروز با React و Next.js اپلیکیشن‌های فول‌استک می‌سازم و ابزارهای متن‌باز توسعه می‌دهم و نگهداری می‌کنم.",
           },
         ],
       },
