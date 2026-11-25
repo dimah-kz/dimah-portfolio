@@ -143,7 +143,7 @@ The site ships in English (the default) and Persian. Routing, labels, and format
 
 - **URLs.** The default language has no prefix (`/projects`); every other language has its code in front (`/fa/projects`). `/en/...` redirects to the unprefixed URL. A URL always shows the same language, with no redirect by browser language or cookie, so crawlers and shared links see stable pages.
 - **SEO.** Each page has its own canonical URL, `hreflang` for every language it exists in plus `x-default`, `og:locale`, a share image, a feed, and a sitemap entry with its alternates. A post without a translation lists no alternates.
-- **Switcher.** A pill with each language's flag and its short name in its own script (`EN`, `فا`), next to the theme switch in the header and the mobile menu, and again in the footer; more than three languages open a menu. It opens the same page in the other language, or that language's home when the page has no translation.
+- **Switcher.** A small menu next to the theme switch in the header and the mobile menu, and again in the footer. It shows only the current language's flag and short name (`EN`, `فا`) and opens the list of languages. It opens the same page in the other language, or that language's home when the page has no translation.
 - **Direction and dates.** `dir` comes from the language (`fa` is right to left), and dates use its calendar and digits.
 
 ### Add a language

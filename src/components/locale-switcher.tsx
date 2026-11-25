@@ -5,31 +5,23 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { flags } from "@/i18n/flags";
 import { type Locale, localeConfig, locales } from "@/i18n/locales";
 import { localizePath, splitLocalePath } from "@/i18n/paths";
 import { cn } from "cn";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
-
-/** Up to this many languages show side by side; more open a menu. */
-const inlineLimit = 3;
-
-/** The same pill as the Fumadocs theme switch next to it. */
-const pill = "inline-flex items-center rounded-full border p-1";
-const segment =
-  "inline-flex h-6.5 items-center gap-1.5 rounded-full ps-1.5 pe-2 text-[0.8125rem] leading-none font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50";
 
 function LocaleFlag({ locale }: { locale: Locale }) {
   const Flag = flags[locale];
   return (
     <Flag
       aria-hidden="true"
+      data-icon="inline-start"
       className="h-3 w-4.5 shrink-0 overflow-hidden rounded-[2px] ring-1 ring-foreground/10"
     />
   );
@@ -48,94 +40,69 @@ function translatedPath(locale: Locale): string {
 }
 
 /**
- * Without JavaScript a language is a plain link to the same path. With it,
- * the click goes to the page's translation, in a full load: a new language
+ * The current language's flag and short name, in the same pill as the
+ * Fumadocs theme switch; it opens the list of languages. Without JavaScript
+ * each item is a plain link to the same path in that language. With it, the
+ * click goes to the page's translation, in a full load: a new language
  * changes `<html lang dir>` and the whole tree.
  */
-function useLanguageLink(active: Locale) {
-  const pathname = usePathname();
-
-  return (locale: Locale) => ({
-    href: localizePath(splitLocalePath(pathname).path, locale),
-    hrefLang: locale,
-    lang: locale,
-    "aria-current": locale === active ? ("true" as const) : undefined,
-    onClick: (event: MouseEvent) => {
-      event.preventDefault();
-      if (locale !== active) window.location.assign(translatedPath(locale));
-    },
-  });
-}
-
-/** Each language by its flag and its own short name, the current one filled. */
 export function LocaleSwitcher({ className }: { className?: string }) {
   const t = useTranslations("locale");
   const active = useLocale();
-  const linkProps = useLanguageLink(active);
+  const pathname = usePathname();
 
   if (locales.length < 2) return null;
-  if (locales.length > inlineLimit) return <LocaleMenu className={className} />;
-
-  return (
-    <nav aria-label={t("label")} className={cn(pill, className)}>
-      {locales.map((locale) => (
-        <a
-          key={locale}
-          {...linkProps(locale)}
-          title={localeConfig[locale].label}
-          className={cn(
-            segment,
-            locale === active
-              ? "bg-accent text-accent-foreground"
-              : "text-muted-foreground hover:text-foreground",
-          )}
-        >
-          <LocaleFlag locale={locale} />
-          {/* The flag alone on the narrowest phones; the name stays for screen readers. */}
-          <span className="max-[22rem]:sr-only">
-            {localeConfig[locale].short}
-          </span>
-        </a>
-      ))}
-    </nav>
-  );
-}
-
-/** For more languages: the current one in the pill, the rest in a menu. */
-function LocaleMenu({ className }: { className?: string }) {
-  const t = useTranslations("locale");
-  const active = useLocale();
-  const linkProps = useLanguageLink(active);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={t("label")}
-        className={cn(pill, className)}
+        className={cn(
+          "group inline-flex items-center rounded-full border p-1 outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+          className,
+        )}
       >
-        <span className={cn(segment, "text-muted-foreground")}>
+        <span className="inline-flex h-6.5 items-center gap-1.5 rounded-full ps-1.5 pe-1 text-[0.8125rem] leading-none font-medium text-muted-foreground transition-colors group-hover:text-foreground group-aria-expanded:bg-accent group-aria-expanded:text-accent-foreground">
           <LocaleFlag locale={active} />
           {localeConfig[active].short}
+          <ChevronDownIcon
+            aria-hidden="true"
+            className="size-3.5 opacity-60 transition-transform group-aria-expanded:rotate-180"
+          />
         </span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-40">
+      <DropdownMenuContent align="end" className="min-w-36">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>{t("label")}</DropdownMenuLabel>
-          {locales.map((locale) => (
-            <DropdownMenuItem
-              key={locale}
-              render={<a {...linkProps(locale)} />}
-            >
-              <LocaleFlag locale={locale} />
-              <span className="flex-1">{localeConfig[locale].label}</span>
-              {locale === active ? (
-                <CheckIcon
-                  data-icon="inline-end"
-                  className="text-muted-foreground"
-                />
-              ) : null}
-            </DropdownMenuItem>
-          ))}
+          {locales.map((locale) => {
+            const isActive = locale === active;
+
+            return (
+              <DropdownMenuItem
+                key={locale}
+                render={
+                  <a
+                    href={localizePath(splitLocalePath(pathname).path, locale)}
+                    hrefLang={locale}
+                    lang={locale}
+                  />
+                }
+                aria-current={isActive ? "true" : undefined}
+                onClick={(event: MouseEvent) => {
+                  event.preventDefault();
+                  if (!isActive) window.location.assign(translatedPath(locale));
+                }}
+              >
+                <LocaleFlag locale={locale} />
+                <span className="flex-1">{localeConfig[locale].label}</span>
+                {isActive ? (
+                  <CheckIcon
+                    data-icon="inline-end"
+                    className="text-muted-foreground"
+                  />
+                ) : null}
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -151,7 +118,7 @@ export function HeaderLocaleSwitcher() {
   return <LocaleSwitcher />;
 }
 
-/** The slot's `text`: the pill already names the language. */
+/** The slot's `text`: the switcher already names the language. */
 export function HeaderLocaleText() {
   return null;
 }
