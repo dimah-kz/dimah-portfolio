@@ -1,85 +1,71 @@
-/**
- * Published projects. Short blurbs match the home page and docs.
- * Logo geometry lives in `src/components/brand.tsx`, copied from each repo.
- */
-export const projects = [
-  {
-    id: "starter",
-    name: "dimah-starter",
-    description:
-      "Server-first Next.js 16 starter for multi-tenant SaaS. Organizations, roles, and an admin panel, with writes as Server Actions.",
-    docs: "/docs/starter",
-    live: "https://starter.dimah.dev",
-    repository: "https://github.com/dimah-kz/dimah-starter",
-    tag: "dimah-starter",
-    group: "primary",
-  },
-  {
-    id: "s3",
-    name: "dimah-s3",
-    description:
-      "Full-stack S3 toolkit for React. The server signs the upload, the browser talks to the bucket, and credentials stay on the backend.",
-    docs: "/docs/s3",
-    live: "https://s3.dimah.dev",
-    repository: "https://github.com/dimah-kz/dimah-s3",
-    tag: "dimah-s3",
-    group: "primary",
-  },
-  {
-    id: "form",
-    name: "dimah-form",
-    description:
-      "Backend-first form infrastructure for TypeScript servers and React clients.",
-    live: "https://form.dimah.dev",
-    repository: "https://github.com/dimah-kz/dimah-form",
-    group: "other",
-  },
-  {
-    id: "survey",
-    name: "dimah-survey",
-    description: "A backend for SurveyJS. SurveyJS stays the form.",
-    live: "https://survey.dimah.dev",
-    repository: "https://github.com/dimah-kz/dimah-survey",
-    group: "other",
-  },
-] as const;
+import { defineCollections } from 'fumadocs-mdx/macro';
+import { z } from 'zod';
 
-export type Project = (typeof projects)[number];
-export type ProjectId = Project["id"];
+/** Frontmatter of one `.mdx` file in `content/projects` per project. */
+export const projectSchema = z.object({
+  name: z.string(),
+  /** One or two sentences. Shown on every card. */
+  description: z.string(),
+  /** Logo key in `src/components/brand.tsx`. Without one, the card shows the first letter. */
+  mark: z.string().optional(),
+  /** Featured projects get the large cards on the home page. */
+  featured: z.boolean().default(false),
+  /** Lower comes first. */
+  order: z.number().default(100),
+  /** Blog tag that belongs to this project. Posts with it show the project's logo. */
+  tag: z.string().optional(),
+  links: z.object({
+    /** Docs path on this site, like `/docs/starter`. */
+    docs: z.string().optional(),
+    live: z.url().optional(),
+    repository: z.url().optional(),
+  }),
+  /** Short points for the featured card. */
+  highlights: z.array(z.string()).default([]),
+  stack: z.array(z.string()).default([]),
+});
 
-const projectIds = new Set<string>(projects.map((project) => project.id));
+// A `doc` collection, read for its frontmatter only. (`type: 'meta'` with YAML
+// would fit better, but fumadocs-mdx 15.6 does not load macro meta collections.)
+const collection = defineCollections({
+  type: 'doc',
+  dir: 'content/projects',
+  schema: projectSchema,
+});
 
-export function isProjectId(icon: string): icon is ProjectId {
-  return projectIds.has(icon);
-}
+export type Project = z.output<typeof projectSchema> & {
+  /** File name without the extension. */
+  slug: string;
+};
 
-export function projectsIn(group: Project["group"]): Project[] {
-  return projects.filter((project) => project.group === group);
-}
+/** Every project, ordered by `order`, then by name. */
+export const projects: Project[] = collection.entries
+  .map((entry) => ({
+    ...projectSchema.parse(entry),
+    slug: entry.info.path.replace(/\.mdx?$/, ''),
+  }))
+  .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+
+export const featuredProjects = projects.filter((project) => project.featured);
+export const otherProjects = projects.filter((project) => !project.featured);
 
 export function projectByTag(tag: string): Project | undefined {
   const key = tag.toLowerCase();
-  return projects.find((project) =>
-    "tag" in project ? project.tag.toLowerCase() === key : false,
-  );
+  return projects.find((project) => project.tag?.toLowerCase() === key);
 }
 
+/** Projects of a post's tags, each once, in tag order. */
 export function projectsForTags(tags: readonly string[]): Project[] {
-  const seen = new Set<ProjectId>();
-  const matches: Project[] = [];
-
+  const matches = new Set<Project>();
   for (const tag of tags) {
     const project = projectByTag(tag);
-    if (!project || seen.has(project.id)) continue;
-    seen.add(project.id);
-    matches.push(project);
+    if (project) matches.add(project);
   }
-
-  return matches;
+  return [...matches];
 }
 
-/** Docs section slug (`starter`, `s3`) for a page under that folder. */
+/** The project whose docs live under `/docs/<slug>`. */
 export function projectForDocsSlug(slug: string | undefined): Project | undefined {
-  if (!slug || !isProjectId(slug)) return;
-  return projects.find((project) => project.id === slug);
+  if (!slug) return;
+  return projects.find((project) => project.links.docs === `/docs/${slug}`);
 }

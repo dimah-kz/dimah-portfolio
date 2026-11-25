@@ -1,22 +1,32 @@
-import { BlogCards, BlogDescription, BlogHeader, BlogTitle } from '@/components/blog';
-import { getPosts } from '@/lib/blog';
-import { pageMeta } from '@/lib/seo';
-import { blogAuthors, blogSource } from '@/lib/source';
-import type { Metadata } from 'next';
+import { BlogCards, BlogFeedLink, BlogTagCloud } from "@/components/blog";
+import { Container, PageHeader } from "@/components/layout/section";
+import { getPosts, getTags } from "@/lib/blog";
+import { t } from "@/lib/i18n";
+import { ogImage, pageMeta } from "@/lib/seo";
+import { blogAuthors, blogSource } from "@/lib/source";
+import type { Metadata } from "next";
 
-export const metadata: Metadata = pageMeta('/blog', {
-  title: 'Blog',
-  description: 'Notes on dimah-starter and dimah-s3.',
-});
+export const metadata: Metadata = pageMeta(
+  "/blog",
+  { title: t.blog.title, description: t.blog.description },
+  ogImage.page("blog"),
+);
 
-export default function Page() {
+export default function BlogIndexPage() {
+  const posts = getPosts(blogSource.getPages(), blogAuthors);
+  const tags = getTags(posts);
+
   return (
-    <div className="mx-auto flex w-full max-w-(--fd-layout-width) flex-col gap-4 px-4 py-12">
-      <BlogHeader>
-        <BlogTitle>Blog</BlogTitle>
-        <BlogDescription>Notes on dimah-starter and dimah-s3.</BlogDescription>
-      </BlogHeader>
-      <BlogCards posts={getPosts(blogSource.getPages(), blogAuthors)} />
-    </div>
+    <main id="main" className="flex flex-1 flex-col">
+      <PageHeader title={t.blog.title} description={t.blog.description}>
+        <div className="flex flex-col gap-4 pt-2">
+          {tags.length > 0 ? <BlogTagCloud tags={tags} /> : null}
+          <BlogFeedLink />
+        </div>
+      </PageHeader>
+      <Container className="py-12 sm:py-16">
+        <BlogCards posts={posts} featured />
+      </Container>
+    </main>
   );
 }

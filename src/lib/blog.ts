@@ -1,3 +1,4 @@
+import type { StructuredData } from 'fumadocs-core/mdx-plugins/remark-structure';
 import { createGetUrl } from 'fumadocs-core/source';
 import { pageSchema } from 'fumadocs-core/source/schema';
 import { z } from 'zod';
@@ -40,12 +41,23 @@ export interface BlogPost {
   image?: string;
   tags: BlogTag[];
   authors: BlogAuthor[];
+  /** estimated minutes to read, when the page has structured data */
+  readingTime?: number;
 }
 
 interface BlogPage {
   url: string;
   locale?: string;
-  data: z.output<typeof blogPageSchema>;
+  data: z.output<typeof blogPageSchema> & { structuredData?: StructuredData };
+}
+
+/** Words of the text and headings, at 220 words a minute, at least 1. */
+export function readingTime(data: StructuredData, wordsPerMinute = 220): number {
+  let words = 0;
+  for (const item of [...data.headings, ...data.contents]) {
+    words += item.content.split(/\s+/).filter(Boolean).length;
+  }
+  return Math.max(1, Math.round(words / wordsPerMinute));
 }
 
 /**
@@ -77,6 +89,7 @@ export function getPosts(pages: BlogPage[], authors: Record<string, BlogAuthor> 
       image: data.image,
       tags: [],
       authors: [],
+      readingTime: data.structuredData ? readingTime(data.structuredData) : undefined,
     };
 
     for (const name of data.tags ?? []) {

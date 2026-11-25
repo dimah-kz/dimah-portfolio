@@ -1,8 +1,7 @@
 import {
-  BlogAuthors,
   BlogBackLink,
   BlogBody,
-  BlogDate,
+  BlogByline,
   BlogDescription,
   BlogHeader,
   BlogPage,
@@ -13,13 +12,13 @@ import {
 import { JsonLd } from "@/components/json-ld";
 import { getMDXComponents } from "@/components/mdx";
 import { findPost, getPosts } from "@/lib/blog";
-import { articleJsonLd, pageMeta } from "@/lib/seo";
-import { blogAuthors, blogSource } from "@/lib/source";
+import { articleJsonLd, ogImage, pageMeta } from "@/lib/seo";
 import { site } from "@/lib/site";
+import { blogAuthors, blogSource } from "@/lib/source";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-export default async function Page(props: PageProps<"/blog/[slug]">) {
+export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
   const { slug } = await props.params;
   const page = blogSource.getPage([slug]);
   const found =
@@ -30,7 +29,11 @@ export default async function Page(props: PageProps<"/blog/[slug]">) {
   const MDX = page.data.body;
 
   return (
-    <>
+    <main id="main" className="relative isolate flex flex-1 flex-col">
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 -top-14 -z-10 h-[32rem] bg-grid"
+      />
       <JsonLd
         data={articleJsonLd({
           type: "BlogPosting",
@@ -38,24 +41,25 @@ export default async function Page(props: PageProps<"/blog/[slug]">) {
           title: post.title,
           description: post.description,
           datePublished: post.date,
-          image: `/og/blog/${slug}/image.png`,
+          image: ogImage.post(slug),
         })}
       />
       <BlogPage toc={page.data.toc}>
         <BlogHeader>
-          <BlogBackLink href="/blog" />
-          <BlogTitle>{post.title}</BlogTitle>
-          <BlogDescription>{post.description}</BlogDescription>
-          <BlogAuthors authors={post.authors} />
+          <BlogBackLink />
           <BlogTags tags={post.tags} />
-          {post.date ? <BlogDate date={post.date} /> : null}
+          <div className="flex flex-col gap-3">
+            <BlogTitle>{post.title}</BlogTitle>
+            <BlogDescription>{post.description}</BlogDescription>
+          </div>
+          <BlogByline post={post} />
         </BlogHeader>
         <BlogBody>
           <MDX components={getMDXComponents()} />
         </BlogBody>
         <BlogPostNav newer={newer} older={older} />
       </BlogPage>
-    </>
+    </main>
   );
 }
 
@@ -79,19 +83,18 @@ export async function generateMetadata(
   );
   const published = found?.post.date?.toISOString();
 
-  return pageMeta(page.url, {
-    title: page.data.title,
-    description: page.data.description,
-    openGraph: {
-      type: "article",
-      images: {
-        url: `/og/blog/${slug}/image.png`,
-        width: 1200,
-        height: 630,
-        alt: page.data.title,
+  return pageMeta(
+    page.url,
+    {
+      title: page.data.title,
+      description: page.data.description,
+      openGraph: {
+        type: "article",
+        authors: [site.author.name],
+        tags: found?.post.tags.map((tag) => tag.name),
+        ...(published ? { publishedTime: published } : {}),
       },
-      authors: [site.author.name],
-      ...(published ? { publishedTime: published } : {}),
     },
-  });
+    ogImage.post(slug),
+  );
 }

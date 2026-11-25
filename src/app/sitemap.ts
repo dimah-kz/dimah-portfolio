@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const entries: MetadataRoute.Sitemap = [
     { url: canonicalUrl('/'), changeFrequency: 'weekly', priority: 1 },
+    { url: canonicalUrl('/projects'), changeFrequency: 'monthly', priority: 0.8 },
     { url: canonicalUrl('/blog'), changeFrequency: 'weekly', priority: 0.7 },
     { url: canonicalUrl('/blog/tags'), changeFrequency: 'monthly', priority: 0.3 },
     ...source.getPages().map((page) => ({

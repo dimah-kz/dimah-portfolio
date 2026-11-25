@@ -15,7 +15,7 @@ import { JsonLd } from "@/components/json-ld";
 import type { Metadata } from "next";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import { getPageImageUrl, gitConfig } from "@/lib/shared";
-import { articleJsonLd, pageMeta } from "@/lib/seo";
+import { articleJsonLd, ogImages, pageMeta } from "@/lib/seo";
 
 export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;
@@ -41,7 +41,9 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
       />
       <DocsPage toc={page.data.toc} full={page.data.full}>
         <DocsTitle className={project ? "flex items-center gap-3" : undefined}>
-          {project ? <ProjectLogo id={project.id} /> : null}
+          {project ? (
+            <ProjectLogo mark={project.mark} name={project.name} />
+          ) : null}
           {page.data.title}
         </DocsTitle>
         <DocsDescription className="mb-0">
@@ -85,7 +87,7 @@ export async function generateMetadata(
     description: page.data.description,
     openGraph: {
       type: "article",
-      images: [{ url: image, width: 1200, height: 630, alt: page.data.title }],
+      images: ogImages(image, page.data.title),
     },
   });
 }

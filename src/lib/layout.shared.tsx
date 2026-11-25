@@ -1,18 +1,33 @@
+import { XIcon } from "@/components/icons";
 import { site } from "@/lib/site";
-import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
+import { FolderGit2Icon, NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
-import { appName, gitConfig } from "./shared";
+import { t } from "./i18n";
+import { navLinks } from "./links";
 
-function XIcon() {
+/** Avatar and name, linked to `/` by the layout. */
+function BrandTitle() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-    </svg>
+    <span className="inline-flex items-center gap-2.5">
+      <Image
+        src={site.author.avatarUrl}
+        alt=""
+        width={28}
+        height={28}
+        sizes="28px"
+        priority
+        className="size-7 rounded-full ring-1 ring-border"
+      />
+      <span className="font-heading text-[0.9375rem] font-semibold tracking-tight">
+        {site.name}
+      </span>
+    </span>
   );
 }
 
-const xLink = {
-  type: "icon" as const,
+const xLink: LinkItemType = {
+  type: "icon",
   url: site.author.xUrl,
   text: "X",
   label: "X",
@@ -20,54 +35,47 @@ const xLink = {
   external: true,
 };
 
-function BrandTitle() {
-  return (
-    <span className="inline-flex items-center gap-2">
-      <Image
-        src={site.author.avatarUrl}
-        alt=""
-        width={24}
-        height={24}
-        sizes="24px"
-        className="size-6 rounded-full"
-      />
-      {appName}
-    </span>
-  );
-}
-
-const githubUrl = `https://github.com/${gitConfig.user}/${gitConfig.repo}`;
-
-const headerLinks = [
-  {
-    text: "Docs",
-    url: "/docs",
-    active: "nested-url" as const,
-  },
-  {
-    text: "Blog",
-    url: "/blog",
-    active: "nested-url" as const,
-  },
-];
-
+/** Header of the home layout: `/`, `/projects`, `/blog`. */
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
       title: <BrandTitle />,
+      // Glass: the hero runs under the header. Tint and blur are in `global.css`.
+      transparentMode: "always",
     },
-    githubUrl,
-    links: [...headerLinks, xLink],
+    githubUrl: site.author.githubUrl,
+    links: [
+      ...navLinks.map(
+        (link): LinkItemType => ({
+          text: link.label,
+          url: link.href,
+          active: "nested-url",
+        }),
+      ),
+      xLink,
+    ],
   };
 }
 
-/** Docs sidebar shows the page tree. Header links stay on the home layout. */
+/** Docs sidebar shows the page tree, then links back to the rest of the site. */
 export function docsOptions(): BaseLayoutProps {
   return {
     nav: {
       title: <BrandTitle />,
     },
-    githubUrl,
-    links: [xLink],
+    githubUrl: site.author.githubUrl,
+    links: [
+      {
+        text: t.nav.projects,
+        url: "/projects",
+        icon: <FolderGit2Icon />,
+      },
+      {
+        text: t.nav.blog,
+        url: "/blog",
+        icon: <NotebookPenIcon />,
+      },
+      xLink,
+    ],
   };
 }

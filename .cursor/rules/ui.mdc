@@ -10,6 +10,8 @@ alwaysApply: false
 - `import { cn } from "cn"`. Icons from `lucide-react`. Inside a component, `data-icon="inline-start"` or `"inline-end"` and no size class.
 - Logical properties only: `ms`/`me`, `ps`/`pe`, `start`/`end`, `text-start`, `border-s`. `gap-*`, not `space-x-*` or `space-y-*`. `size-*` when width and height match.
 - `lang` and `dir` come from `site.direction` / `site.locale` on `<html>`, also passed to `DirectionProvider` and Fumadocs `RootProvider`.
+- Pages render `<main id="main">` inside `SiteLayout`. Use `Container`, `Section`, `SectionHeader`, and `PageHeader` from `src/components/layout/section.tsx` for widths and headings.
+- Colors are tokens. `--brand` is the accent for marks and icons, not body text. Directional arrows get `rtl:rotate-180`.
 - Leave the pointer-cursor rule in `src/app/global.css`. Toast with `toast.add` from `@/components/ui/toast`.
 
 Guide: [AGENTS.md](../../AGENTS.md)

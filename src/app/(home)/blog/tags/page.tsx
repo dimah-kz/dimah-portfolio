@@ -1,23 +1,31 @@
-import { BlogHeader, BlogTagCards, BlogTitle } from '@/components/blog';
-import { getPosts, getTags } from '@/lib/blog';
-import { pageMeta } from '@/lib/seo';
-import { blogSource } from '@/lib/source';
-import type { Metadata } from 'next';
+import { BlogBackLink, BlogTagCloud } from "@/components/blog";
+import { PageHeader } from "@/components/layout/section";
+import { getPosts, getTags } from "@/lib/blog";
+import { t } from "@/lib/i18n";
+import { ogImage, pageMeta } from "@/lib/seo";
+import { blogSource } from "@/lib/source";
+import type { Metadata } from "next";
 
-export const metadata: Metadata = pageMeta('/blog/tags', {
-  title: 'Tags',
-  description: 'Topics across the notes on dimah-starter and dimah-s3.',
-});
+export const metadata: Metadata = pageMeta(
+  "/blog/tags",
+  { title: t.blog.allTags, description: t.blog.tagsDescription },
+  ogImage.page("tags"),
+);
 
-export default function Page() {
+export default function BlogTagsPage() {
   const tags = getTags(getPosts(blogSource.getPages()));
 
   return (
-    <div className="mx-auto flex w-full max-w-(--fd-layout-width) flex-col gap-4 px-4 py-12">
-      <BlogHeader>
-        <BlogTitle>All Tags</BlogTitle>
-      </BlogHeader>
-      <BlogTagCards tags={tags} />
-    </div>
+    <main id="main" className="flex flex-1 flex-col">
+      <PageHeader
+        eyebrow={<BlogBackLink />}
+        title={t.blog.allTags}
+        description={t.blog.tagsDescription}
+      >
+        <div className="pt-2">
+          <BlogTagCloud tags={tags} />
+        </div>
+      </PageHeader>
+    </main>
   );
 }

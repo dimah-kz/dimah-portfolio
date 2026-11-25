@@ -1,9 +1,12 @@
-import type { ProjectId } from "@/lib/projects";
 import { cn } from "cn";
 import type { ReactNode } from "react";
 
 type MarkProps = {
   className?: string;
+  /** Width and height in pixels, for images rendered outside CSS (Open Graph). */
+  size?: number;
+  /** `currentColor` for the mark, for images rendered outside CSS. */
+  color?: string;
 };
 
 /** Dimah monogram from dimah-starter (`brand-mark.tsx` / `app/icon.svg`). */
@@ -12,11 +15,21 @@ const dimahMarkPath =
 
 function Mark({
   className,
+  size,
+  color,
   viewBox,
   children,
 }: MarkProps & { viewBox: string; children: ReactNode }) {
   return (
-    <svg viewBox={viewBox} fill="none" aria-hidden="true" className={className}>
+    <svg
+      viewBox={viewBox}
+      fill="none"
+      aria-hidden="true"
+      className={className}
+      width={size}
+      height={size}
+      color={color}
+    >
       {children}
     </svg>
   );
@@ -42,9 +55,9 @@ function Tile({ children }: { children: ReactNode }) {
   );
 }
 
-function StarterMark({ className }: MarkProps) {
+function StarterMark(props: MarkProps) {
   return (
-    <Mark viewBox="0 0 32 32" className={className}>
+    <Mark viewBox="0 0 32 32" {...props}>
       <g transform="translate(6.77 3.64) scale(1.186)" fill="currentColor">
         <path fillRule="evenodd" d={dimahMarkPath} />
       </g>
@@ -53,9 +66,9 @@ function StarterMark({ className }: MarkProps) {
 }
 
 /** Cloud-upload tile from dimah-s3 `apps/docs/src/app/icon.svg`. */
-function S3Mark({ className }: MarkProps) {
+function S3Mark(props: MarkProps) {
   return (
-    <Mark viewBox="0 0 32 32" className={className}>
+    <Mark viewBox="0 0 32 32" {...props}>
       <Tile>
         <g
           transform="translate(4 4)"
@@ -75,9 +88,9 @@ function S3Mark({ className }: MarkProps) {
 }
 
 /** App icon from dimah-form `apps/docs/src/app/icon.svg`. */
-function FormMark({ className }: MarkProps) {
+function FormMark(props: MarkProps) {
   return (
-    <Mark viewBox="0 0 32 32" className={className}>
+    <Mark viewBox="0 0 32 32" {...props}>
       <Tile>
         <g transform="translate(16 16) scale(0.78) translate(-16 -16)">
           <path
@@ -92,9 +105,9 @@ function FormMark({ className }: MarkProps) {
 }
 
 /** Square mark from dimah-survey `public/brand/dimah-survey-icon.svg`. */
-function SurveyMark({ className }: MarkProps) {
+function SurveyMark(props: MarkProps) {
   return (
-    <Mark viewBox="0 0 512 512" className={className}>
+    <Mark viewBox="0 0 512 512" {...props}>
       <rect width="512" height="512" rx="128" fill="#009693" />
       <g
         transform="translate(97.5 97.5) scale(19.8125) translate(1.125 0)"
@@ -111,18 +124,18 @@ function SurveyMark({ className }: MarkProps) {
   );
 }
 
-function StarterGlyph({ className }: MarkProps) {
+function StarterGlyph(props: MarkProps) {
   return (
-    <Mark viewBox="0 0 16.3 20.3" className={className}>
+    <Mark viewBox="0 0 16.3 20.3" {...props}>
       <path fill="currentColor" fillRule="evenodd" d={dimahMarkPath} />
     </Mark>
   );
 }
 
 /** Same cloud as the dimah-s3 docs nav, without the favicon tile. */
-function S3Glyph({ className }: MarkProps) {
+function S3Glyph(props: MarkProps) {
   return (
-    <Mark viewBox="0 0 24 24" className={className}>
+    <Mark viewBox="0 0 24 24" {...props}>
       <g
         fill="none"
         stroke="currentColor"
@@ -139,9 +152,9 @@ function S3Glyph({ className }: MarkProps) {
 }
 
 /** Mark from dimah-form `public/logo.svg`, in the current text color. */
-function FormGlyph({ className }: MarkProps) {
+function FormGlyph(props: MarkProps) {
   return (
-    <Mark viewBox="0 0 32 32" className={className}>
+    <Mark viewBox="0 0 32 32" {...props}>
       <path
         fill="currentColor"
         fillRule="evenodd"
@@ -152,9 +165,9 @@ function FormGlyph({ className }: MarkProps) {
 }
 
 /** Survey symbol from `brand-mark.tsx`, without the teal tile. */
-function SurveyGlyph({ className }: MarkProps) {
+function SurveyGlyph(props: MarkProps) {
   return (
-    <Mark viewBox="-1.125 0 16 16" className={className}>
+    <Mark viewBox="-1.125 0 16 16" {...props}>
       <path
         d="M3 3.25h4.2a3.55 3.55 0 1 1 0 7.1H3v-7.1Z"
         stroke="currentColor"
@@ -186,6 +199,13 @@ const glyphs = {
   survey: SurveyGlyph,
 } as const;
 
+/** Logo keys. A project's `mark` in `content/projects` and a docs folder's `icon` use these. */
+export type MarkId = keyof typeof tiles;
+
+export function isMarkId(value: string | undefined): value is MarkId {
+  return value !== undefined && Object.hasOwn(tiles, value);
+}
+
 /**
  * Product logo.
  * `tile` is the app icon. `glyph` fills a small icon slot, such as a docs card.
@@ -193,14 +213,21 @@ const glyphs = {
 export function ProjectMark({
   id,
   variant = "tile",
-  className,
-}: MarkProps & { id: ProjectId; variant?: "glyph" | "tile" }) {
+  ...props
+}: MarkProps & { id: MarkId; variant?: "glyph" | "tile" }) {
   const MarkIcon = variant === "glyph" ? glyphs[id] : tiles[id];
-  return <MarkIcon className={className} />;
+  return <MarkIcon {...props} />;
 }
 
-/** Fixed slot for page headings and project cards. */
-export function ProjectLogo({ id, className }: MarkProps & { id: ProjectId }) {
+/**
+ * Fixed slot for headings and cards. A project without a known `mark`
+ * gets its first letter on a muted tile.
+ */
+export function ProjectLogo({
+  mark,
+  name,
+  className,
+}: MarkProps & { mark?: string; name: string }) {
   return (
     <span
       className={cn(
@@ -208,7 +235,16 @@ export function ProjectLogo({ id, className }: MarkProps & { id: ProjectId }) {
         className,
       )}
     >
-      <ProjectMark id={id} className="size-full" />
+      {isMarkId(mark) ? (
+        <ProjectMark id={mark} className="size-full" />
+      ) : (
+        <span
+          aria-hidden="true"
+          className="flex size-full items-center justify-center rounded-[22%] border bg-muted font-heading text-[0.6em] font-semibold text-muted-foreground uppercase"
+        >
+          {name.slice(0, 1)}
+        </span>
+      )}
     </span>
   );
 }

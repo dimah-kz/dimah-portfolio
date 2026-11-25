@@ -1,16 +1,18 @@
 ---
 description: Portfolio copy is Fumadocs MDX
-globs: "content/**/*.{md,mdx,json},src/lib/source.ts,src/lib/site.ts"
+globs: "content/**/*.{md,mdx,json},src/lib/source.ts,src/lib/projects.ts,src/lib/site.ts,src/lib/i18n.ts"
 alwaysApply: false
 ---
 
 # Content
 
 - Docs are MDX in `content/docs`, ordered by `meta.json`, loaded in `src/lib/source.ts`.
+- Projects are `content/projects/*.mdx`, frontmatter only, validated by `projectSchema` in `src/lib/projects.ts`.
 - Blog posts are MDX in `content/blog` (Fumadocs `add blog`). Routes are `src/app/(home)/blog`. Author key is `dimah`.
 - Write only what is true of dimah-kz and the public repositories. No placeholder projects or invented biography.
 - A new document-shaped section is a new Fumadocs collection, then a route. Not a hardcoded array in a component.
-- Name, bio, locale, direction, and profile links stay in `src/lib/site.ts`.
+- Name, tagline, home copy, locale, direction, and profile links stay in `src/lib/site.ts`.
+- Interface labels are `t` in `src/lib/i18n.ts`, with an `en` and a `fa` set. Add a label to both.
 - Fumadocs APIs: https://fumadocs.dev/llms.txt
 
 Guide: [AGENTS.md](../../AGENTS.md)

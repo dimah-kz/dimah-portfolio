@@ -1,10 +1,13 @@
 import { JsonLd } from "@/components/json-ld";
+import { fumadocsI18n } from "@/lib/i18n";
 import { DirectionProvider } from "@/components/ui/direction";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toast";
 import {
   defaultTitle,
   isPreviewDeploy,
+  ogImage,
+  ogImages,
   ogLocale,
   siteJsonLd,
   siteKeywords,
@@ -19,11 +22,13 @@ import "./global.css";
 const fontLatin = Inter({
   subsets: ["latin"],
   variable: "--font-latin",
+  display: "swap",
 });
 
 const fontArabic = Noto_Sans_Arabic({
   subsets: ["arabic"],
   variable: "--font-arabic",
+  display: "swap",
 });
 
 const indexable = !isPreviewDeploy();
@@ -32,7 +37,7 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#171717" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
 };
 
@@ -61,12 +66,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     title: defaultTitle,
     description: site.description,
-    images: {
-      url: "/opengraph-image",
-      width: 1200,
-      height: 630,
-      alt: defaultTitle,
-    },
+    images: ogImages(ogImage.page("home"), defaultTitle),
   },
   twitter: {
     card: "summary_large_image",
@@ -96,11 +96,11 @@ export default function Layout({ children }: LayoutProps<"/">) {
       className={cn(fontLatin.variable, fontArabic.variable)}
       suppressHydrationWarning
     >
-      <body className="flex min-h-screen flex-col">
+      <body className="flex min-h-svh flex-col antialiased">
         <JsonLd data={siteJsonLd()} />
         <DirectionProvider direction={site.direction}>
           <TooltipProvider>
-            <RootProvider dir={site.direction}>
+            <RootProvider dir={site.direction} i18n={fumadocsI18n}>
               {children}
               <Toaster />
             </RootProvider>

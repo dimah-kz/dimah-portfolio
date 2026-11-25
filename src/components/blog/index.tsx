@@ -1,93 +1,207 @@
-import Link from "fumadocs-core/link";
-import { Image } from "fumadocs-core/framework";
+import { ProjectMark, isMarkId } from "@/components/brand";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Cover } from "@/components/cover";
+import { formatDate, t } from "@/lib/i18n";
+import { projectByTag, projectsForTags } from "@/lib/projects";
+import { site } from "@/lib/site";
+import { cn } from "cn";
 import type { TOCItemType } from "fumadocs-core/toc";
-import { TOCProvider } from "../toc";
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CornerLeftUpIcon,
-  TagIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpRightIcon,
 } from "lucide-react";
+import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
-import { cn } from "../../lib/utils";
 import type { BlogAuthor, BlogPost, BlogTag } from "../../lib/blog";
-import { projectByTag, projectsForTags } from "../../lib/projects";
-import { ProjectMark } from "../brand";
+import { TOCProvider } from "../toc";
 import { BlogPanel } from "./panel";
 
-const dateFormat = new Intl.DateTimeFormat("en-US", {
-  dateStyle: "medium",
-  timeZone: "UTC",
-});
+/* -------------------------------------------------------------------------- */
+/* Lists                                                                      */
+/* -------------------------------------------------------------------------- */
 
+/**
+ * Posts as cards, newest first. With `featured`, the newest one spans the
+ * row with its cover beside the text.
+ */
 export function BlogCards({
   posts,
+  featured = false,
   className,
-  ...props
-}: ComponentProps<"div"> & { posts: BlogPost[] }) {
+}: {
+  posts: BlogPost[];
+  featured?: boolean;
+  className?: string;
+}) {
   return (
-    <div
-      {...props}
-      className={cn(
-        "grid grid-cols-1 gap-2 md:grid-cols-3 xl:grid-cols-4",
-        className,
-      )}
-    >
-      {posts.map((post) => (
-        <BlogCard key={post.url} post={post} />
-      ))}
-    </div>
+    <ul className={cn("grid gap-5 sm:grid-cols-2 lg:grid-cols-3", className)}>
+      {posts.map((post, index) => {
+        const wide = featured && index === 0;
+        return (
+          <li key={post.url} className={cn(wide && "sm:col-span-2 lg:col-span-3")}>
+            <BlogCard post={post} wide={wide} />
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
-export function BlogCard({ post }: { post: BlogPost }) {
+export function BlogCard({ post, wide = false }: { post: BlogPost; wide?: boolean }) {
   return (
-    <Link
-      href={post.url}
-      className="group flex flex-col overflow-hidden rounded-2xl border bg-fd-card shadow-sm transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground"
-    >
-      {post.image && (
-        <Image
-          src={post.image}
-          alt=""
-          width={1200}
-          height={630}
-          sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 100vw"
-          className="aspect-video w-full object-cover"
+    <Link href={post.url} className="group block h-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <Card
+        className={cn(
+          "h-full gap-0 py-0 transition-[translate,box-shadow] duration-300 group-hover:-translate-y-1 group-hover:shadow-xl motion-reduce:transition-none",
+          wide && "lg:flex-row",
+        )}
+      >
+        <PostCover
+          post={post}
+          className={cn(
+            "aspect-[2/1] border-b",
+            wide && "lg:aspect-auto lg:min-h-80 lg:w-1/2 lg:border-e lg:border-b-0",
+          )}
         />
-      )}
-      <div className="flex flex-1 flex-col p-4">
-        <PostMarks tags={post.tags.map((tag) => tag.name)} className="mb-3" />
-        <p className="font-medium">{post.title}</p>
-        <p className="text-sm text-fd-muted-foreground empty:hidden">
-          {post.description}
-        </p>
-        <div className="mt-auto flex flex-row items-center pt-4">
-          {post.authors.map(
-            (author) =>
-              author.image && (
-                <Image
-                  key={author.name}
-                  src={author.image}
-                  alt={author.name}
-                  title={author.name}
-                  width={24}
-                  height={24}
-                  className="-ms-2 size-6 rounded-full border-2 border-fd-card first:ms-0 group-hover:border-fd-accent"
-                />
-              ),
+        <div
+          className={cn(
+            "flex flex-1 flex-col gap-3 p-5 sm:p-6",
+            wide && "lg:justify-center lg:gap-4 lg:p-10",
           )}
-          {post.date && (
-            <BlogDate
-              date={post.date}
-              className="ms-auto text-xs text-fd-primary"
-            />
-          )}
+        >
+          {wide ? (
+            <span className="w-fit rounded-full bg-brand/15 px-2 py-0.5 text-xs font-medium text-brand-text">
+              {t.blog.latest}
+            </span>
+          ) : null}
+          <PostMeta post={post} className="text-xs" />
+          <h3
+            className={cn(
+              "font-heading text-lg/snug font-semibold tracking-tight text-balance",
+              wide && "lg:text-3xl/tight",
+            )}
+          >
+            {post.title}
+          </h3>
+          {post.description ? (
+            <p
+              className={cn(
+                "line-clamp-3 text-sm/relaxed text-pretty text-muted-foreground",
+                wide && "lg:text-base/relaxed",
+              )}
+            >
+              {post.description}
+            </p>
+          ) : null}
+          <div className="mt-auto flex flex-col gap-4 pt-2">
+            {post.tags.length > 0 ? (
+              <span className="flex flex-wrap gap-1.5">
+                {post.tags.map((tag) => (
+                  <Badge key={tag.slug} variant="outline">
+                    <TagMark name={tag.name} />
+                    {tag.name}
+                  </Badge>
+                ))}
+              </span>
+            ) : null}
+            <span className="inline-flex items-center gap-1 border-t pt-4 text-sm font-medium">
+              {t.blog.read}
+              <ArrowRightIcon
+                aria-hidden="true"
+                className="size-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+              />
+            </span>
+          </div>
         </div>
-      </div>
+      </Card>
     </Link>
   );
 }
+
+/** The post's projects in the middle of a generated cover, or the author without one. */
+function PostCover({ post, className }: { post: BlogPost; className?: string }) {
+  const marks = projectsForTags(post.tags.map((tag) => tag.name))
+    .map((project) => project.mark)
+    .filter(isMarkId);
+  const author = post.authors[0];
+
+  return (
+    <Cover className={className}>
+      {marks.length > 0 ? (
+        <span className="flex items-center gap-4">
+          {marks.map((mark) => (
+            <ProjectMark key={mark} id={mark} className="size-14 drop-shadow-2xl" />
+          ))}
+        </span>
+      ) : (
+        <Avatar className="size-16 ring-1 ring-brand/40">
+          {author?.image ? <AvatarImage src={author.image} alt="" /> : null}
+          <AvatarFallback>{(author?.name ?? site.name).slice(0, 1)}</AvatarFallback>
+        </Avatar>
+      )}
+    </Cover>
+  );
+}
+
+function PostMeta({ post, className }: { post: BlogPost; className?: string }) {
+  if (!post.date && !post.readingTime) return null;
+
+  return (
+    <span
+      className={cn(
+        "flex items-center gap-2 text-muted-foreground tabular-nums",
+        className,
+      )}
+    >
+      {post.date ? <BlogDate date={post.date} /> : null}
+      {post.date && post.readingTime ? <span aria-hidden="true">·</span> : null}
+      {post.readingTime ? (
+        <span>{t.blog.readingTime(post.readingTime)}</span>
+      ) : null}
+    </span>
+  );
+}
+
+/** Tags with their number of posts, see `getTags()`. */
+export function BlogTagCloud({
+  tags,
+  active,
+}: {
+  tags: (BlogTag & { count: number })[];
+  /** slug of the current tag */
+  active?: string;
+}) {
+  return (
+    <ul className="flex flex-wrap gap-2">
+      {tags.map((tag) => (
+        <li key={tag.slug}>
+          <Badge
+            variant={tag.slug === active ? "default" : "outline"}
+            render={<Link href={tag.url} />}
+            className="h-7 gap-1.5 px-2.5 text-xs"
+          >
+            <TagMark name={tag.name} />
+            {tag.name}
+            <span className="tabular-nums opacity-60">{tag.count}</span>
+          </Badge>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function TagMark({ name }: { name: string }) {
+  const mark = projectByTag(name)?.mark;
+  if (!isMarkId(mark)) return null;
+  return <ProjectMark id={mark} className="size-3.5" />;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Post page                                                                  */
+/* -------------------------------------------------------------------------- */
 
 export interface BlogPageProps extends ComponentProps<"article"> {
   /** shows a floating panel with the table of contents */
@@ -99,9 +213,9 @@ export function BlogPage({ toc, className, ...props }: BlogPageProps) {
     <article
       {...props}
       className={cn(
-        "mx-auto flex w-full max-w-[900px] flex-col gap-6 px-4 py-8",
-        // room for the panel
-        toc && "pb-24",
+        "mx-auto flex w-full max-w-3xl flex-col gap-10 px-4 pt-12 sm:pt-16",
+        // room for the floating panel
+        toc ? "pb-32" : "pb-16",
         className,
       )}
     />
@@ -116,32 +230,31 @@ export function BlogPage({ toc, className, ...props }: BlogPageProps) {
   );
 }
 
-/** the card on top of blog pages */
-export function BlogHeader(props: ComponentProps<"div">) {
+export function BlogHeader(props: ComponentProps<"header">) {
   return (
-    <div
+    <header
       {...props}
-      className={cn(
-        "flex flex-col items-start gap-4 border-y bg-fd-card px-4 pt-3.5 pb-6 text-fd-card-foreground shadow-inner max-sm:-mx-4 sm:rounded-xl sm:border",
-        props.className,
-      )}
+      className={cn("flex flex-col gap-5 border-b pb-8", props.className)}
     />
   );
 }
 
 export function BlogBackLink({
-  children = "Back to Blog",
-  ...props
-}: ComponentProps<typeof Link>) {
+  href = "/blog",
+  children = t.blog.back,
+}: {
+  href?: string;
+  children?: ReactNode;
+}) {
   return (
     <Link
-      {...props}
-      className={cn(
-        "inline-flex items-center gap-2 text-sm text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground",
-        props.className,
-      )}
+      href={href}
+      className="group inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
     >
-      <CornerLeftUpIcon className="size-3.5" />
+      <ArrowLeftIcon
+        aria-hidden="true"
+        className="size-4 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180 rtl:group-hover:translate-x-0.5"
+      />
       {children}
     </Link>
   );
@@ -149,7 +262,13 @@ export function BlogBackLink({
 
 export function BlogTitle(props: ComponentProps<"h1">) {
   return (
-    <h1 {...props} className={cn("text-2xl font-semibold", props.className)} />
+    <h1
+      {...props}
+      className={cn(
+        "font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl",
+        props.className,
+      )}
+    />
   );
 }
 
@@ -157,229 +276,156 @@ export function BlogDescription(props: ComponentProps<"p">) {
   return (
     <p
       {...props}
-      className={cn("text-fd-muted-foreground empty:hidden", props.className)}
+      className={cn(
+        "text-lg text-pretty text-muted-foreground empty:hidden",
+        props.className,
+      )}
     />
   );
 }
 
-export function BlogAuthors({
-  authors,
-  className,
-  ...props
-}: ComponentProps<"div"> & { authors: BlogAuthor[] }) {
+/** Authors, date, and reading time under the title. */
+export function BlogByline({ post }: { post: BlogPost }) {
   return (
-    <div
-      {...props}
-      className={cn("flex flex-row flex-wrap gap-x-6 gap-y-2", className)}
-    >
-      {authors.map((author) => {
-        const content = (
-          <>
-            {author.image && (
-              <Image
-                src={author.image}
-                alt=""
-                width={28}
-                height={28}
-                className="size-7 rounded-full"
-              />
-            )}
-            <span className="flex flex-col leading-tight">
-              <span className="font-medium">{author.name}</span>
-              {author.title && (
-                <span className="text-xs text-fd-muted-foreground">
-                  {author.title}
-                </span>
-              )}
-            </span>
-          </>
-        );
-
-        return author.url ? (
-          <a
-            key={author.name}
-            href={author.url}
-            className="inline-flex items-center gap-2 text-sm transition-colors hover:text-fd-primary"
-          >
-            {content}
-          </a>
-        ) : (
-          <span
-            key={author.name}
-            className="inline-flex items-center gap-2 text-sm"
-          >
-            {content}
-          </span>
-        );
-      })}
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-sm">
+      {post.authors.map((author) => (
+        <BlogAuthorLink key={author.name} author={author} />
+      ))}
+      <PostMeta post={post} className="text-sm" />
     </div>
   );
 }
 
-export function BlogTags({
-  tags,
-  className,
-  ...props
-}: ComponentProps<"div"> & { tags: BlogTag[] }) {
-  if (tags.length === 0) return;
+function BlogAuthorLink({ author }: { author: BlogAuthor }) {
+  const content = (
+    <>
+      <Avatar size="sm">
+        {author.image ? <AvatarImage src={author.image} alt="" /> : null}
+        <AvatarFallback>{author.name.slice(0, 1)}</AvatarFallback>
+      </Avatar>
+      <span className="font-medium">{author.name}</span>
+    </>
+  );
+
+  return author.url ? (
+    <a
+      href={author.url}
+      className="inline-flex items-center gap-2 transition-colors hover:text-muted-foreground"
+    >
+      {content}
+    </a>
+  ) : (
+    <span className="inline-flex items-center gap-2">{content}</span>
+  );
+}
+
+export function BlogTags({ tags }: { tags: BlogTag[] }) {
+  if (tags.length === 0) return null;
 
   return (
-    <div
-      {...props}
-      className={cn("flex flex-row flex-wrap items-center gap-2", className)}
-    >
-      <TagIcon className="size-4 text-fd-muted-foreground" />
+    <ul aria-label={t.blog.tags} className="flex flex-wrap gap-1.5">
       {tags.map((tag) => (
-        <Link
-          key={tag.slug}
-          href={tag.url}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-fd-primary py-0.5 ps-1 pe-1.5 font-mono text-sm text-fd-primary-foreground"
-        >
-          <TagMark name={tag.name} />
-          {tag.name}
-        </Link>
+        <li key={tag.slug}>
+          <Badge variant="outline" render={<Link href={tag.url} />}>
+            <TagMark name={tag.name} />
+            {tag.name}
+          </Badge>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
 
 export function BlogDate({
   date,
   ...props
-}: Omit<ComponentProps<"time">, "children"> & { date: Date | string }) {
-  const value = new Date(date);
-
+}: Omit<ComponentProps<"time">, "children"> & { date: Date }) {
   return (
-    <time dateTime={value.toISOString()} {...props}>
-      {dateFormat.format(value)}
+    <time dateTime={date.toISOString()} {...props}>
+      {formatDate(date)}
     </time>
   );
 }
 
-/** adds typography styles */
+/** Typography for the MDX body. */
 export function BlogBody(props: ComponentProps<"div">) {
   return <div {...props} className={cn("prose min-w-0", props.className)} />;
 }
 
-/** links to the newer and older posts */
+/** Links to the newer and older posts. */
 export function BlogPostNav({
   newer,
   older,
-  className,
-  ...props
-}: ComponentProps<"nav"> & { newer?: BlogPost; older?: BlogPost }) {
-  if (!newer && !older) return;
+}: {
+  newer?: BlogPost;
+  older?: BlogPost;
+}) {
+  if (!newer && !older) return null;
 
   return (
-    <nav {...props} className={cn("grid gap-2 sm:grid-cols-2", className)}>
-      {newer && (
-        <PostLink post={newer}>
-          <ChevronLeftIcon className="size-3.5 rtl:rotate-180" />
-          Newer post
-        </PostLink>
-      )}
-      {older && (
-        <PostLink post={older} className="sm:col-start-2 sm:items-end">
-          Older post
-          <ChevronRightIcon className="size-3.5 rtl:rotate-180" />
-        </PostLink>
-      )}
+    <nav className="grid gap-3 border-t pt-10 sm:grid-cols-2">
+      {newer ? (
+        <PostNavLink post={newer} label={t.blog.newer} direction="previous" />
+      ) : null}
+      {older ? (
+        <PostNavLink
+          post={older}
+          label={t.blog.older}
+          direction="next"
+          className="sm:col-start-2"
+        />
+      ) : null}
     </nav>
   );
 }
 
-function PostLink({
+function PostNavLink({
   post,
+  label,
+  direction,
   className,
-  children,
 }: {
   post: BlogPost;
+  label: string;
+  direction: "previous" | "next";
   className?: string;
-  children: ReactNode;
 }) {
+  const Arrow = direction === "previous" ? ArrowLeftIcon : ArrowRightIcon;
+
   return (
     <Link
       href={post.url}
       className={cn(
-        "flex flex-col gap-1 rounded-xl border bg-fd-card p-4 text-fd-card-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground",
+        "group flex flex-col gap-1.5 rounded-lg border bg-card p-4 transition-colors hover:bg-muted/50",
+        direction === "next" && "sm:items-end sm:text-end",
         className,
       )}
     >
-      <span className="inline-flex items-center gap-1 text-xs text-fd-muted-foreground">
-        {children}
+      <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+        {direction === "previous" ? (
+          <Arrow aria-hidden="true" className="size-3.5 rtl:rotate-180" />
+        ) : null}
+        {label}
+        {direction === "next" ? (
+          <Arrow aria-hidden="true" className="size-3.5 rtl:rotate-180" />
+        ) : null}
       </span>
-      <span className="font-medium">{post.title}</span>
+      <span className="font-heading text-sm font-medium text-balance">
+        {post.title}
+      </span>
     </Link>
   );
 }
 
-/** tags with their number of posts, see `getTags()` */
-export function BlogTagCards({
-  tags,
-  className,
-  ...props
-}: ComponentProps<"div"> & { tags: (BlogTag & { count: number })[] }) {
+/** RSS link for the blog header. */
+export function BlogFeedLink() {
   return (
-    <div
-      {...props}
-      className={cn(
-        "grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6",
-        className,
-      )}
+    <a
+      href="/feed.xml"
+      className="group inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
     >
-      {tags.map((tag) => (
-        <Link
-          key={tag.slug}
-          href={tag.url}
-          className="flex flex-row items-center gap-2 rounded-lg border bg-fd-card px-2 py-1 font-mono text-fd-card-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground"
-        >
-          <TagMark name={tag.name} className="size-4" />
-          <span className="font-medium">{tag.name}</span>
-          <span className="ms-auto text-sm text-fd-muted-foreground">
-            {tag.count}
-          </span>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-function TagMark({ name, className }: { name: string; className?: string }) {
-  const project = projectByTag(name);
-  if (!project) return null;
-
-  return (
-    <span
-      className={cn(
-        "inline-flex size-3.5 shrink-0 items-center justify-center",
-        className,
-      )}
-    >
-      <ProjectMark id={project.id} className="size-full" />
-    </span>
-  );
-}
-
-function PostMarks({
-  tags,
-  className,
-}: {
-  tags: string[];
-  className?: string;
-}) {
-  const matched = projectsForTags(tags);
-  if (matched.length === 0) return null;
-
-  return (
-    <div className={cn("flex gap-1.5", className)}>
-      {matched.map((project) => (
-        <span
-          key={project.id}
-          className="inline-flex size-6 shrink-0 items-center justify-center"
-        >
-          <ProjectMark id={project.id} className="size-full" />
-        </span>
-      ))}
-    </div>
+      {t.blog.rss}
+      <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
+    </a>
   );
 }

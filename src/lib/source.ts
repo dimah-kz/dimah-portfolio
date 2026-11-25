@@ -1,11 +1,10 @@
-import { ProjectMark } from '@/components/brand';
+import { isMarkId, ProjectMark } from '@/components/brand';
 import { llms, loader } from 'fumadocs-core/source';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
 import { defineCollections, defineDocs } from 'fumadocs-mdx/macro';
 import { icons } from 'lucide-react';
 import { createElement } from 'react';
 import { type BlogAuthor, blogPageSchema } from './blog';
-import { isProjectId } from './projects';
 import { docsRoute } from './shared';
 import { site } from './site';
 
@@ -28,7 +27,7 @@ export const source = loader({
   source: docs.toFumadocsSource(),
   icon(icon) {
     if (!icon) return;
-    if (isProjectId(icon)) return createElement(ProjectMark, { id: icon });
+    if (isMarkId(icon)) return createElement(ProjectMark, { id: icon });
     if (icon in icons) return createElement(icons[icon as keyof typeof icons]);
   },
 });
@@ -53,7 +52,7 @@ export const blogSource = loader({
 export const blogAuthors = {
   dimah: {
     name: site.author.name,
-    title: site.description,
+    title: site.author.tagline,
     url: site.author.githubUrl,
     image: site.author.avatarUrl,
   },

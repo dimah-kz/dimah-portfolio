@@ -1,5 +1,9 @@
 'use client';
-import { ChevronDown, ShareIcon } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
+import { toast } from '@/components/ui/toast';
+import { t } from '@/lib/i18n';
+import { cn } from 'cn';
+import { ChevronDownIcon, ListIcon, Share2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { TOCScrollArea, useTOCItems } from '../toc';
 import { TOCItem, TOCItems } from '../toc/default';
@@ -8,30 +12,37 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../ui/collapsible';
-import { useCopyButton } from 'fumadocs-ui/utils/use-copy-button';
-import { cn } from '../../lib/utils';
 
-const buttonClass =
-  'inline-flex items-center gap-2 rounded-lg px-3 py-2 font-medium transition-all duration-150 hover:bg-fd-accent hover:text-fd-accent-foreground active:scale-95';
-
-/** the table of contents and share button of a post, floating at the bottom */
+/** The table of contents and share button of a post, floating at the bottom. */
 export function BlogPanel() {
   const items = useTOCItems();
   const [open, setOpen] = useState(false);
-  const [shared, onShare] = useCopyButton(() =>
-    navigator.share
-      ? navigator.share({ title: document.title, url: location.href })
-      : navigator.clipboard.writeText(location.href),
-  );
+
+  async function onShare() {
+    const data = { title: document.title, url: location.href };
+    if (navigator.share && navigator.canShare?.(data)) {
+      try {
+        await navigator.share(data);
+      } catch {
+        // dismissed
+      }
+      return;
+    }
+    await navigator.clipboard.writeText(location.href);
+    toast.add({ title: t.blog.copied, type: 'success' });
+  }
 
   return (
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className="fixed bottom-2 left-1/2 z-20 w-full max-w-[calc(100%-1rem)] -translate-x-1/2 rounded-xl border bg-fd-secondary/80 p-1 text-sm shadow-md backdrop-blur-sm sm:bottom-4 sm:max-w-[400px]"
+      className={cn(
+        'fixed inset-x-0 bottom-3 z-20 mx-auto rounded-xl border bg-background/85 p-1 text-sm shadow-lg backdrop-blur-md sm:bottom-5',
+        items.length > 0 ? 'w-[calc(100%-1.5rem)] sm:max-w-sm' : 'w-fit',
+      )}
     >
       <CollapsibleContent>
-        <TOCScrollArea className="max-h-[min(600px,calc(100vh-7.5rem))]">
+        <TOCScrollArea className="max-h-[min(600px,calc(100vh-7.5rem))] px-2">
           <TOCItems>
             {items.map((item) => (
               <TOCItem key={item.url} item={item} onClick={() => setOpen(false)} />
@@ -39,25 +50,29 @@ export function BlogPanel() {
           </TOCItems>
         </TOCScrollArea>
       </CollapsibleContent>
-      <div className="flex flex-row gap-2">
-        {items.length > 0 && (
-          <CollapsibleTrigger className={cn(buttonClass, 'min-w-0')}>
-            <span className="truncate">Table of Contents</span>
-            <ChevronDown
-              className={cn(
-                'size-3.5 shrink-0 text-fd-muted-foreground transition-transform',
-                open && 'rotate-180',
-              )}
+      <div className="flex flex-row gap-1">
+        {items.length > 0 ? (
+          <CollapsibleTrigger
+            className={cn(buttonVariants({ variant: 'ghost', size: 'lg' }), 'min-w-0')}
+          >
+            <ListIcon data-icon="inline-start" />
+            <span className="truncate">{t.blog.toc}</span>
+            <ChevronDownIcon
+              data-icon="inline-end"
+              className={cn('transition-transform', open && 'rotate-180')}
             />
           </CollapsibleTrigger>
-        )}
+        ) : null}
         <button
           type="button"
-          className={cn(buttonClass, 'ms-auto text-fd-muted-foreground')}
+          className={cn(
+            buttonVariants({ variant: 'ghost', size: 'lg' }),
+            'ms-auto text-muted-foreground',
+          )}
           onClick={onShare}
         >
-          <ShareIcon className="size-3.5 shrink-0" />
-          {shared ? 'Copied' : 'Share'}
+          <Share2Icon data-icon="inline-start" />
+          {t.blog.share}
         </button>
       </div>
     </Collapsible>

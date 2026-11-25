@@ -8,6 +8,13 @@
 
 html {
   scrollbar-gutter: stable;
+  scroll-padding-top: 5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 html > body[data-scroll-locked] {
@@ -18,6 +25,9 @@ html > body[data-scroll-locked] {
 @theme inline {
   --font-heading: var(--font-latin), var(--font-arabic);
   --font-sans: var(--font-latin), var(--font-arabic);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-text: var(--brand-text);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -83,6 +93,11 @@ html > body[data-scroll-locked] {
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
+  /* Accent sampled from public/dimah-avatar.png. Decorative: dots, marks, selection. */
+  --brand: oklch(0.71 0.146 94);
+  --brand-foreground: oklch(0.21 0.04 94);
+  /* The accent as text: dark enough for 4.5:1 on the background. */
+  --brand-text: oklch(0.53 0.11 86);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -109,6 +124,9 @@ html > body[data-scroll-locked] {
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --brand: oklch(0.8 0.15 94);
+  --brand-foreground: oklch(0.21 0.04 94);
+  --brand-text: oklch(0.84 0.14 94);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -140,4 +158,37 @@ html > body[data-scroll-locked] {
   html {
     @apply font-sans;
   }
+}
+
+@layer base {
+  ::selection {
+    background-color: color-mix(in oklch, var(--brand) 35%, transparent);
+  }
+}
+
+/*
+ * Glass header (Fumadocs `#nd-nav`, `transparentMode: "always"`): the page
+ * shows through, blurred, tinted, and saturated. In the base layer, so the
+ * solid background Fumadocs adds while the mobile menu is open still wins.
+ */
+@layer base {
+  #nd-nav > nav {
+    background-color: color-mix(in oklch, var(--background) 55%, transparent);
+    border-color: color-mix(in oklch, var(--border) 70%, transparent);
+    --tw-backdrop-saturate: saturate(1.6);
+  }
+}
+
+/* Hairline grid behind the hero and page headers. Fades out toward the bottom. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+  /* `[--grid-origin:50%]` centers the fade, for a card cover. */
+  mask-image: radial-gradient(
+    ellipse 80% 70% at 50% var(--grid-origin, 0%),
+    black 40%,
+    transparent 100%
+  );
 }

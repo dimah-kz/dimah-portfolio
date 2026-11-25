@@ -5,7 +5,8 @@ alwaysApply: true
 
 # Portfolio template
 
-- Sample identity is Dimah, from https://github.com/dimah-kz. It lives in `src/lib/site.ts`. Long-form copy lives in `content/**/*.mdx`.
+- Sample identity is Dimah, from https://github.com/dimah-kz. It lives in `src/lib/site.ts`. Projects, docs, and posts live in `content/**/*.mdx`.
 - Do not invent a biography, employer, location, or metric that is not already in `site.ts` or MDX.
+- Interface labels come from `t` in `src/lib/i18n.ts`. Do not hardcode English in a component.
 - Making the template yours means editing those files, not adding a parallel config.
 - Guide: [AGENTS.md](../../AGENTS.md)
