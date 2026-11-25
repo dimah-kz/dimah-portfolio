@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "home": "خانه",
+    "projects": "پروژه‌ها",
+    "blog": "بلاگ",
+    "skipToContent": "رفتن به محتوا"
+  },
+  "locale": {
+    "label": "زبان"
+  },
+  "hero": {
+    "viewProjects": "دیدن پروژه‌ها",
+    "readBlog": "خواندن بلاگ",
+    "latest": "تازه"
+  },
+  "stats": {
+    "projects": "{count, plural, other {# پروژه}}",
+    "projectsLabel": "پروژه",
+    "postsLabel": "نوشته"
+  },
+  "profile": {
+    "resume": "رزومه"
+  },
+  "profiles": {
+    "github": "گیت‌هاب",
+    "linkedin": "لینکدین",
+    "x": "X",
+    "telegram": "تلگرام",
+    "email": "ایمیل",
+    "website": "وب‌سایت"
+  },
+  "work": {
+    "eyebrow": "کارها",
+    "title": "کارهای منتخب",
+    "description": "پروژه‌های برگزیده، هرکدام با پیوند به نسخه زنده و کد منبع.",
+    "more": "پروژه‌های دیگر",
+    "all": "همه پروژه‌ها"
+  },
+  "experience": {
+    "eyebrow": "سابقه",
+    "title": "جاهایی که کار کرده‌ام",
+    "description": "نقش‌ها و تیم‌ها، از تازه‌ترین.",
+    "present": "اکنون"
+  },
+  "principles": {
+    "eyebrow": "اصول",
+    "title": "چطور می‌سازم",
+    "description": "ایده‌هایی که پروژه‌های اینجا در آن مشترک‌اند."
+  },
+  "writing": {
+    "eyebrow": "بلاگ",
+    "title": "نوشته‌ها",
+    "description": "یادداشت‌هایی درباره پروژه‌ها و تصمیم‌های پشت آن‌ها.",
+    "all": "همه نوشته‌ها"
+  },
+  "contact": {
+    "eyebrow": "تماس",
+    "title": "در تماس باشیم",
+    "cta": {
+      "github": "دنبال کردن در گیت‌هاب",
+      "linkedin": "ارتباط در لینکدین",
+      "x": "پیام در X",
+      "telegram": "پیام در تلگرام",
+      "email": "ارسال ایمیل",
+      "website": "دیدن وب‌سایت"
+    }
+  },
+  "project": {
+    "live": "نسخه زنده",
+    "source": "کد منبع",
+    "stack": "فناوری‌ها",
+    "liveFor": "نسخه زنده {name}",
+    "sourceFor": "کد منبع {name}",
+    "status": {
+      "active": "فعال",
+      "beta": "بتا",
+      "archived": "بایگانی‌شده"
+    }
+  },
+  "projects": {
+    "title": "پروژه‌ها",
+    "description": "پروژه‌ها، با نسخه زنده و کد منبع.",
+    "featured": "برگزیده",
+    "other": "منتشرشده‌های دیگر",
+    "empty": "هنوز پروژه‌ای اضافه نشده."
+  },
+  "blog": {
+    "title": "بلاگ",
+    "description": "یادداشت‌هایی درباره پروژه‌ها و تصمیم‌های پشت آن‌ها.",
+    "back": "همه نوشته‌ها",
+    "newer": "نوشته جدیدتر",
+    "older": "نوشته قدیمی‌تر",
+    "toc": "در این صفحه",
+    "share": "اشتراک‌گذاری",
+    "copied": "پیوند کپی شد",
+    "tags": "برچسب‌ها",
+    "allTags": "همه برچسب‌ها",
+    "taggedTitle": "برچسب «{tag}»",
+    "taggedDescription": "نوشته‌های با برچسب {tag}.",
+    "tagsDescription": "همه موضوع‌های بلاگ.",
+    "readingTime": "{minutes, number} دقیقه مطالعه",
+    "read": "خواندن نوشته",
+    "latest": "تازه",
+    "posts": "{count, plural, other {# نوشته}}",
+    "rss": "خوراک RSS",
+    "empty": "هنوز نوشته‌ای منتشر نشده."
+  },
+  "footer": {
+    "builtWith": "ساخته‌شده با Next.js و Fumadocs.",
+    "source": "کد منبع",
+    "social": "شبکه‌ها",
+    "pages": "صفحه‌ها",
+    "feeds": "خوراک‌ها"
+  },
+  "agents": {
+    "full": "همه صفحه‌های سایت در یک فایل Markdown.",
+    "sitemap": "نقشه سایت",
+    "languages": "زبان‌های دیگر"
+  },
+  "notFound": {
+    "title": "صفحه پیدا نشد",
+    "description": "صفحه‌ای که دنبالش هستید جابه‌جا شده، تغییر نام داده یا وجود نداشته است.",
+    "home": "بازگشت به خانه"
+  }
+}

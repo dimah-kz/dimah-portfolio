@@ -1,16 +1,23 @@
+import type { Locale } from "@/i18n/locales";
 import { canonicalUrl } from "./seo";
 
 /**
  * Headers for Markdown and `llms.txt` responses. Search engines skip them
- * (`noindex`); with `canonical`, the `Link` header points them at the HTML page.
+ * (`noindex`). With `page`, the `Link` header names the HTML page as canonical.
  */
 export function markdownHeaders(
-  path: string,
-  { canonical = false }: { canonical?: boolean } = {},
+  locale: Locale,
+  {
+    type = "markdown",
+    page,
+  }: { type?: "markdown" | "text"; page?: string } = {},
 ): HeadersInit {
   return {
-    "Content-Type": `${path.endsWith(".txt") ? "text/plain" : "text/markdown"}; charset=utf-8`,
+    "Content-Type": `${type === "text" ? "text/plain" : "text/markdown"}; charset=utf-8`,
+    "Content-Language": locale,
     "X-Robots-Tag": "noindex",
-    ...(canonical ? { Link: `<${canonicalUrl(path)}>; rel="canonical"` } : {}),
+    ...(page
+      ? { Link: `<${canonicalUrl(page, locale)}>; rel="canonical"` }
+      : {}),
   };
 }

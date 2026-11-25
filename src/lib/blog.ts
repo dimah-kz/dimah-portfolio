@@ -1,5 +1,4 @@
 import type { StructuredData } from "fumadocs-core/mdx-plugins/remark-structure";
-import { createGetUrl } from "fumadocs-core/source";
 import { pageSchema } from "fumadocs-core/source/schema";
 import { z } from "zod";
 
@@ -28,12 +27,15 @@ export interface BlogTag {
   name: string;
   /** URL segment, see `tagSlug()` */
   slug: string;
-  /** URL of the tag page */
-  url: string;
+  /** path of the tag page, without the language: `/blog/tags/<slug>` */
+  path: string;
 }
 
 export interface BlogPost {
-  url: string;
+  /** file name, the last segment of `path` */
+  slug: string;
+  /** path of the post, without the language: `/blog/<slug>` */
+  path: string;
   title: string;
   description?: string;
   date?: Date;
@@ -46,8 +48,7 @@ export interface BlogPost {
 }
 
 interface BlogPage {
-  url: string;
-  locale?: string;
+  slugs: string[];
   data: z.output<typeof blogPageSchema> & { structuredData?: StructuredData };
 }
 
@@ -62,13 +63,6 @@ export function readingTime(
   }
   return Math.max(1, Math.round(words / wordsPerMinute));
 }
-
-/**
- * URL of blog routes, like `getBlogUrl(['tags'], locale)` for the tags page.
- *
- * With i18n, pass your config to it: `createGetUrl('/blog', i18n)`.
- */
-export const getBlogUrl = createGetUrl("/blog");
 
 /** lowercase, whitespace replaced by `-` */
 export function tagSlug(tag: string): string {
@@ -88,9 +82,11 @@ export function getPosts(
 ): BlogPost[] {
   const posts: BlogPost[] = [];
 
-  for (const { url, locale, data } of pages) {
+  for (const { slugs, data } of pages) {
+    const slug = slugs.join("/");
     const post: BlogPost = {
-      url,
+      slug,
+      path: `/blog/${slug}`,
       title: data.title,
       description: data.description,
       date: data.date === undefined ? undefined : new Date(data.date),
@@ -103,8 +99,8 @@ export function getPosts(
     };
 
     for (const name of data.tags ?? []) {
-      const slug = tagSlug(name);
-      post.tags.push({ name, slug, url: getBlogUrl(["tags", slug], locale) });
+      const tag = tagSlug(name);
+      post.tags.push({ name, slug: tag, path: `/blog/tags/${tag}` });
     }
     for (const id of data.authors ?? [])
       post.authors.push(authors[id] ?? { name: id });
@@ -118,12 +114,12 @@ export function getPosts(
   );
 }
 
-/** the post of `url`, and the posts published right after (`newer`) and before (`older`) it */
+/** the post of `slug`, and the posts published right after (`newer`) and before (`older`) it */
 export function findPost(
   posts: BlogPost[],
-  url: string,
+  slug: string,
 ): { post: BlogPost; newer?: BlogPost; older?: BlogPost } | undefined {
-  const index = posts.findIndex((post) => post.url === url);
+  const index = posts.findIndex((post) => post.slug === slug);
   const post = posts[index];
   if (!post) return;
 

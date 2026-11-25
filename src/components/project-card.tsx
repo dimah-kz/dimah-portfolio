@@ -21,9 +21,9 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import { t } from "@/lib/i18n";
 import type { Project } from "@/lib/projects";
 import { ArrowUpRightIcon, CheckIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 function ExternalLink({
@@ -51,6 +51,7 @@ function ExternalLink({
 }
 
 function ProjectLinks({ project }: { project: Project }) {
+  const t = useTranslations("project");
   const { live, repository } = project.links;
 
   return (
@@ -58,20 +59,20 @@ function ProjectLinks({ project }: { project: Project }) {
       {live ? (
         <ExternalLink
           href={live}
-          label={t.project.liveFor(project.name)}
+          label={t("liveFor", { name: project.name })}
           variant="outline"
         >
-          {t.project.live}
+          {t("live")}
           <ArrowUpRightIcon data-icon="inline-end" />
         </ExternalLink>
       ) : null}
       {repository ? (
         <ExternalLink
           href={repository}
-          label={t.project.sourceFor(project.name)}
+          label={t("sourceFor", { name: project.name })}
         >
           <GitHubIcon data-icon="inline-start" />
-          {t.project.source}
+          {t("source")}
         </ExternalLink>
       ) : null}
     </>
@@ -83,12 +84,15 @@ function hasLinks(project: Project) {
 }
 
 function ProjectStatus({ project }: { project: Project }) {
+  const t = useTranslations("project.status");
   if (!project.status) return null;
-  return <Badge variant="outline">{t.project.status[project.status]}</Badge>;
+  return <Badge variant="outline">{t(project.status)}</Badge>;
 }
 
 /** Large card for a featured project: highlights, stack, and links. */
 export function ProjectCard({ project }: { project: Project }) {
+  const t = useTranslations("project");
+
   return (
     <SpotlightCard>
       <Card className="h-full">
@@ -104,7 +108,7 @@ export function ProjectCard({ project }: { project: Project }) {
                 href={project.links.live}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={t.project.liveFor(project.name)}
+                aria-label={t("liveFor", { name: project.name })}
                 className={buttonVariants({ variant: "ghost", size: "icon" })}
               >
                 <ArrowUpRightIcon />
@@ -131,7 +135,7 @@ export function ProjectCard({ project }: { project: Project }) {
             </ul>
           ) : null}
           {project.stack.length > 0 ? (
-            <ul className="flex flex-wrap gap-1.5" aria-label={t.project.stack}>
+            <ul className="flex flex-wrap gap-1.5" aria-label={t("stack")}>
               {project.stack.map((item) => (
                 <li key={item}>
                   <Badge variant="secondary">{item}</Badge>

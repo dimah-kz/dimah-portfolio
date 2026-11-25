@@ -1,6 +1,6 @@
 ---
 description: Portfolio copy is Fumadocs MDX
-globs: "content/**/*.{md,mdx},src/lib/source.ts,src/lib/projects.ts,src/lib/experience.ts,src/lib/site.ts,src/lib/i18n.ts,src/lib/agents.ts"
+globs: "content/**/*.{md,mdx},messages/*.json,src/lib/source.ts,src/lib/projects.ts,src/lib/experience.ts,src/lib/site.ts,src/lib/agents.ts"
 alwaysApply: false
 ---
 
@@ -11,8 +11,9 @@ alwaysApply: false
 - Blog posts are MDX in `content/blog` (Fumadocs `add blog`). Routes are `src/app/(home)/blog`. A post without `authors` is by the site's author.
 - Write only what is true of dimah-kz and the public repositories. No placeholder projects, roles, or invented biography.
 - A new document-shaped section is a new Fumadocs collection, then a route. Not a hardcoded array in a component.
-- Name, tagline, home copy, locale, direction, profile links, and contact stay in `src/lib/site.ts`.
-- Interface labels are `t` in `src/lib/i18n.ts`, with an `en` and a `fa` set. Add a label to both.
+- Name, profile links, and contact stay in `src/lib/site.ts`; description, tagline, and home copy are in `site.copy`, once per language.
+- Translations sit next to the original: `<name>.<locale>.mdx`. A project or role translation holds only the fields that change; a post translation is the whole post.
+- Interface labels are in `messages/en.json` and `messages/fa.json`. Add a label to every file.
 - A new page gets a Markdown version in `markdownPages()` in `src/lib/agents.ts`.
 - Fumadocs APIs: https://fumadocs.dev/llms.txt
 

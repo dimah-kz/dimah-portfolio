@@ -12,12 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatDate, t } from "@/lib/i18n";
+import { Link } from "@/i18n/navigation";
+import { localizePath } from "@/i18n/paths";
+import { feedPath } from "@/lib/links";
 import { projectByTag, projectsForTags } from "@/lib/projects";
 import { cn } from "cn";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-react";
-import Link from "next/link";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import type { ComponentProps, ReactNode } from "react";
 import type { BlogAuthor, BlogPost, BlogTag } from "@/lib/blog";
 import { TOCProvider } from "@/components/toc";
@@ -30,19 +32,21 @@ import { BlogPanel } from "./panel";
 /** Posts as cards of one size, newest first. The newest post gets a ribbon. */
 export function BlogCards({
   posts,
-  latestUrl,
+  latestSlug,
   className,
 }: {
   posts: BlogPost[];
-  /** URL of the newest post on the site, marked with a ribbon. */
-  latestUrl?: string;
+  /** Slug of the newest post in the language, marked with a ribbon. */
+  latestSlug?: string;
   className?: string;
 }) {
+  const t = useTranslations("blog");
+
   if (posts.length === 0) {
     return (
       <Empty className="border">
         <EmptyHeader>
-          <EmptyTitle>{t.blog.empty}</EmptyTitle>
+          <EmptyTitle>{t("empty")}</EmptyTitle>
         </EmptyHeader>
       </Empty>
     );
@@ -51,8 +55,8 @@ export function BlogCards({
   return (
     <ul className={cn("grid gap-5 sm:grid-cols-2 lg:grid-cols-3", className)}>
       {posts.map((post) => (
-        <li key={post.url}>
-          <BlogCard post={post} latest={post.url === latestUrl} />
+        <li key={post.slug}>
+          <BlogCard post={post} latest={post.slug === latestSlug} />
         </li>
       ))}
     </ul>
@@ -66,14 +70,16 @@ export function BlogCard({
   post: BlogPost;
   latest?: boolean;
 }) {
+  const t = useTranslations("blog");
+
   return (
     <Link
-      href={post.url}
+      href={post.path}
       className="group block h-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <SpotlightCard>
         <Card className="relative h-full">
-          {latest ? <Ribbon>{t.blog.latest}</Ribbon> : null}
+          {latest ? <Ribbon>{t("latest")}</Ribbon> : null}
           {/* With the ribbon, the header keeps clear of the corner. */}
           <CardHeader className={cn("gap-3", latest && "pe-14")}>
             <div className="flex items-center gap-2.5">
@@ -100,7 +106,7 @@ export function BlogCard({
           ) : null}
           <CardFooter className="mt-auto border-t">
             <span className="inline-flex items-center gap-1 text-sm font-medium">
-              {t.blog.read}
+              {t("read")}
               <ArrowRightIcon
                 aria-hidden="true"
                 className="size-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
@@ -115,7 +121,9 @@ export function BlogCard({
 
 /** Logos of the projects a post is about, from its tags. */
 function PostMarks({ tags }: { tags: string[] }) {
-  const projects = projectsForTags(tags).filter((project) => project.logo);
+  const projects = projectsForTags(useLocale(), tags).filter(
+    (project) => project.logo,
+  );
   if (projects.length === 0) return null;
 
   return (
@@ -128,6 +136,7 @@ function PostMarks({ tags }: { tags: string[] }) {
 }
 
 function PostMeta({ post, className }: { post: BlogPost; className?: string }) {
+  const t = useTranslations("blog");
   if (!post.date && !post.readingTime) return null;
 
   return (
@@ -140,7 +149,7 @@ function PostMeta({ post, className }: { post: BlogPost; className?: string }) {
       {post.date ? <BlogDate date={post.date} /> : null}
       {post.date && post.readingTime ? <span aria-hidden="true">·</span> : null}
       {post.readingTime ? (
-        <span>{t.blog.readingTime(post.readingTime)}</span>
+        <span>{t("readingTime", { minutes: post.readingTime })}</span>
       ) : null}
     </span>
   );
@@ -161,7 +170,7 @@ export function BlogTagCloud({
         <li key={tag.slug}>
           <Badge
             variant={tag.slug === active ? "default" : "outline"}
-            render={<Link href={tag.url} />}
+            render={<Link href={tag.path} />}
             className="h-7 gap-1.5 px-2.5 text-xs"
           >
             <TagMark name={tag.name} />
@@ -175,7 +184,7 @@ export function BlogTagCloud({
 }
 
 function TagMark({ name }: { name: string }) {
-  const project = projectByTag(name);
+  const project = projectByTag(useLocale(), name);
   if (!project?.logo) return null;
   return <ProjectLogo project={project} className="size-3.5" />;
 }
@@ -222,11 +231,13 @@ export function BlogHeader(props: ComponentProps<"header">) {
 
 export function BlogBackLink({
   href = "/blog",
-  children = t.blog.back,
+  children,
 }: {
   href?: string;
   children?: ReactNode;
 }) {
+  const t = useTranslations("blog");
+
   return (
     <Link
       href={href}
@@ -236,7 +247,7 @@ export function BlogBackLink({
         aria-hidden="true"
         className="size-4 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180 rtl:group-hover:translate-x-0.5"
       />
-      {children}
+      {children ?? t("back")}
     </Link>
   );
 }
@@ -301,13 +312,14 @@ function BlogAuthorLink({ author }: { author: BlogAuthor }) {
 }
 
 export function BlogTags({ tags }: { tags: BlogTag[] }) {
+  const t = useTranslations("blog");
   if (tags.length === 0) return null;
 
   return (
-    <ul aria-label={t.blog.tags} className="flex flex-wrap gap-1.5">
+    <ul aria-label={t("tags")} className="flex flex-wrap gap-1.5">
       {tags.map((tag) => (
         <li key={tag.slug}>
-          <Badge variant="outline" render={<Link href={tag.url} />}>
+          <Badge variant="outline" render={<Link href={tag.path} />}>
             <TagMark name={tag.name} />
             {tag.name}
           </Badge>
@@ -321,9 +333,11 @@ export function BlogDate({
   date,
   ...props
 }: Omit<ComponentProps<"time">, "children"> & { date: Date }) {
+  const format = useFormatter();
+
   return (
     <time dateTime={date.toISOString()} {...props}>
-      {formatDate(date)}
+      {format.dateTime(date, "date")}
     </time>
   );
 }
@@ -341,17 +355,18 @@ export function BlogPostNav({
   newer?: BlogPost;
   older?: BlogPost;
 }) {
+  const t = useTranslations("blog");
   if (!newer && !older) return null;
 
   return (
     <nav className="grid gap-3 border-t pt-10 sm:grid-cols-2">
       {newer ? (
-        <PostNavLink post={newer} label={t.blog.newer} direction="previous" />
+        <PostNavLink post={newer} label={t("newer")} direction="previous" />
       ) : null}
       {older ? (
         <PostNavLink
           post={older}
-          label={t.blog.older}
+          label={t("older")}
           direction="next"
           className="sm:col-start-2"
         />
@@ -375,7 +390,7 @@ function PostNavLink({
 
   return (
     <Link
-      href={post.url}
+      href={post.path}
       className={cn(
         "group flex flex-col gap-1.5 rounded-lg border bg-card p-4 transition-colors hover:bg-muted/50",
         direction === "next" && "sm:items-end sm:text-end",
@@ -400,12 +415,14 @@ function PostNavLink({
 
 /** RSS link for the blog header. */
 export function BlogFeedLink() {
+  const t = useTranslations("blog");
+
   return (
     <a
-      href="/feed.xml"
+      href={localizePath(feedPath, useLocale())}
       className="group inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
     >
-      {t.blog.rss}
+      {t("rss")}
       <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
     </a>
   );

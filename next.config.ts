@@ -1,7 +1,9 @@
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const withMDX = createMDX();
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const config: NextConfig = {
   reactStrictMode: true,
@@ -13,13 +15,15 @@ const config: NextConfig = {
     ];
   },
   async rewrites() {
-    return [
-      { source: "/favicon.ico", destination: "/icon.png" },
-      // `<page>.md` is the Markdown of a page, see `src/lib/agents.ts`.
-      { source: "/:path*.md", destination: "/llms.mdx/:path*" },
-    ];
+    // `.md` URLs and languages are routed by `src/proxy.ts`.
+    return [{ source: "/favicon.ico", destination: "/icon.png" }];
   },
   serverExternalPackages: ["@takumi-rs/core"],
+  experimental: {
+    // `app/[locale]/layout.tsx` is the root layout, so URLs outside every
+    // language get `app/global-not-found.tsx`.
+    globalNotFound: true,
+  },
 };
 
-export default withMDX(config);
+export default withNextIntl(withMDX(config));

@@ -4,29 +4,31 @@ import {
   TelegramIcon,
   XIcon,
 } from "@/components/icons";
-import { BotIcon, GlobeIcon, MailIcon, RssIcon } from "lucide-react";
+import type { Locale } from "@/i18n/locales";
+import { GlobeIcon, MailIcon } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
-import { t } from "./i18n";
 import { site } from "./site";
 import type { ProfileId } from "./site-config";
-import { posts } from "./source";
+import { postsIn } from "./source";
 
-export interface NavLink {
+export type Icon = ComponentType<SVGProps<SVGSVGElement>>;
+
+export interface IconLink {
   label: string;
   href: string;
+  icon: Icon;
 }
 
-export interface IconLink extends NavLink {
-  icon: ComponentType<SVGProps<SVGSVGElement>>;
-}
-
-export interface Profile extends IconLink {
+/** A profile from `site.profiles`. Its label is `profiles.<id>` in the messages. */
+export interface Profile {
   id: ProfileId;
+  href: string;
+  icon: Icon;
   /** The username, for profiles addressed by one (GitHub, X, Telegram). */
   handle?: string;
 }
 
-const profileIcons: Record<ProfileId, IconLink["icon"]> = {
+const profileIcons: Record<ProfileId, Icon> = {
   github: GitHubIcon,
   linkedin: LinkedInIcon,
   x: XIcon,
@@ -50,7 +52,6 @@ export const profiles: Profile[] = Object.entries(site.profiles).flatMap(
     return [
       {
         id,
-        label: t.profiles[id],
         href: id === "email" ? `mailto:${value}` : value,
         icon: profileIcons[id],
         handle: handleOf(id, value),
@@ -72,24 +73,31 @@ export const headerProfiles = profiles.filter(
   (profile) => profile.id === "github" || profile.id === "x",
 );
 
-/** Pages in the header, the footer, and the 404 page. The blog shows once it has a post. */
-export const navLinks: NavLink[] = [
-  { label: t.nav.projects, href: "/projects" },
-  ...(posts.length > 0 ? [{ label: t.nav.blog, href: "/blog" }] : []),
-];
+export interface NavLink {
+  /** Its label is `nav.<key>` in the messages. */
+  key: "home" | "projects" | "blog";
+  /** Path without the language, for `Link`. */
+  href: string;
+}
 
-export const feedLink: IconLink = {
-  label: t.blog.rss,
-  href: "/feed.xml",
-  icon: RssIcon,
-};
+/**
+ * Pages in the header, the footer, and the 404 page. The blog shows once the
+ * language has a post.
+ */
+export function navLinks(locale: Locale): NavLink[] {
+  return [
+    { key: "projects", href: "/projects" },
+    ...(postsIn(locale).length > 0
+      ? [{ key: "blog" as const, href: "/blog" }]
+      : []),
+  ];
+}
 
-/** The index for AI agents, see `src/lib/agents.ts`. */
-export const llmsLink: IconLink = {
-  label: "llms.txt",
-  href: "/llms.txt",
-  icon: BotIcon,
-};
+/** The feed of a language, before `localizePath`. */
+export const feedPath = "/feed.xml";
+
+/** The index for AI agents, before `localizePath`. See `src/lib/agents.ts`. */
+export const llmsPath = "/llms.txt";
 
 /** `true` for links that leave the site. */
 export function isExternal(href: string): boolean {

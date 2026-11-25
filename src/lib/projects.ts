@@ -1,5 +1,7 @@
+import type { Locale } from "@/i18n/locales";
 import { defineCollections } from "fumadocs-mdx/macro";
 import { z } from "zod";
+import { localizedEntries } from "./localized-entries";
 
 /** Frontmatter of one `.mdx` file per project in `content/projects`. */
 export const projectSchema = z.object({
@@ -34,40 +36,51 @@ export const projectSchema = z.object({
   stack: z.array(z.string()).default([]),
 });
 
-// A `doc` collection, read for its frontmatter only. (`type: 'meta'` with YAML
-// would fit better, but fumadocs-mdx 15.6 does not load macro meta collections.)
+/** A translation, `<project>.<locale>.mdx`: only the fields that read differently. */
+export const projectTranslationSchema = projectSchema
+  .pick({ name: true, description: true, highlights: true })
+  .partial();
+
+// Read for its frontmatter only. (`type: 'meta'` with YAML would fit better,
+// but fumadocs-mdx 15.6 does not load macro meta collections.)
 const collection = defineCollections({
   type: "doc",
   dir: "content/projects",
-  schema: projectSchema,
 });
 
 export type Project = z.output<typeof projectSchema> & {
-  /** File name without the extension. */
+  /** File name without the extension and language. */
   slug: string;
 };
 
-/** Every project, ordered by `order`, then by name. */
-export const projects: Project[] = collection.entries
-  .map((entry) => ({
-    ...projectSchema.parse(entry),
-    slug: entry.info.path.replace(/\.mdx?$/, ""),
-  }))
-  .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+const entries = localizedEntries(collection.entries, {
+  base: projectSchema,
+  translation: projectTranslationSchema,
+  dir: "content/projects",
+});
 
-export const featuredProjects = projects.filter((project) => project.featured);
-export const otherProjects = projects.filter((project) => !project.featured);
+/** Every project in a language, ordered by `order`, then by name. */
+export function getProjects(locale: Locale): Project[] {
+  return [...entries(locale)].sort(
+    (a, b) => a.order - b.order || a.name.localeCompare(b.name),
+  );
+}
 
-export function projectByTag(tag: string): Project | undefined {
+export function projectByTag(locale: Locale, tag: string): Project | undefined {
   const key = tag.toLowerCase();
-  return projects.find((project) => project.tag?.toLowerCase() === key);
+  return getProjects(locale).find(
+    (project) => project.tag?.toLowerCase() === key,
+  );
 }
 
 /** Projects of a post's tags, each once, in tag order. */
-export function projectsForTags(tags: readonly string[]): Project[] {
+export function projectsForTags(
+  locale: Locale,
+  tags: readonly string[],
+): Project[] {
   const matches = new Set<Project>();
   for (const tag of tags) {
-    const project = projectByTag(tag);
+    const project = projectByTag(locale, tag);
     if (project) matches.add(project);
   }
   return [...matches];

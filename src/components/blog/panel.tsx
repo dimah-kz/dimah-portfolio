@@ -1,9 +1,9 @@
 "use client";
 import { buttonVariants } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { t } from "@/lib/i18n";
 import { cn } from "cn";
 import { ChevronDownIcon, ListIcon, Share2Icon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { TOCScrollArea, useTOCItems } from "@/components/toc";
 import { TOCItem, TOCItems } from "@/components/toc/default";
@@ -15,6 +15,7 @@ import {
 
 /** The table of contents and share button of a post, floating at the bottom. */
 export function BlogPanel() {
+  const t = useTranslations("blog");
   const items = useTOCItems();
   const [open, setOpen] = useState(false);
 
@@ -29,7 +30,7 @@ export function BlogPanel() {
       return;
     }
     await navigator.clipboard.writeText(location.href);
-    toast.add({ title: t.blog.copied, type: "success" });
+    toast.add({ title: t("copied"), type: "success" });
   }
 
   return (
@@ -63,7 +64,7 @@ export function BlogPanel() {
             )}
           >
             <ListIcon data-icon="inline-start" />
-            <span className="truncate">{t.blog.toc}</span>
+            <span className="truncate">{t("toc")}</span>
             <ChevronDownIcon
               data-icon="inline-end"
               className={cn("transition-transform", open && "rotate-180")}
@@ -79,7 +80,7 @@ export function BlogPanel() {
           onClick={onShare}
         >
           <Share2Icon data-icon="inline-start" />
-          {t.blog.share}
+          {t("share")}
         </button>
       </div>
     </Collapsible>

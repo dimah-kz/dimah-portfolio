@@ -1,26 +1,32 @@
+import type { Locale } from "@/i18n/locales";
+import { localizePath } from "@/i18n/paths";
+
 /**
  * Where the Markdown of a page lives. Kept free of content imports, so the
  * proxy (`src/proxy.ts`) can use it without bundling the site.
  *
- * - Public URL: the page path plus `.md`, and `/index.md` for the home page.
- * - Route: `src/app/llms.mdx/[...path]`, reached by the `.md` rewrite in
- *   `next.config.ts` or by the proxy for `Accept: text/markdown`.
+ * - Public URL: the page's URL plus `.md`; `/index.md` and `/fa/index.md` for
+ *   the home pages.
+ * - Route: `src/app/[locale]/llms.mdx/[...path]`, reached through the proxy,
+ *   for a `.md` URL or a page requested with `Accept: text/markdown`.
  */
 
-function trim(pathname: string): string {
-  return pathname.replace(/\/+$/, "");
+function trim(path: string): string {
+  return path.replace(/\/+$/, "") || "/";
 }
 
-/** `/` → `/index.md`, `/blog/post` → `/blog/post.md`. */
-export function markdownUrl(pathname: string): string {
-  const path = trim(pathname);
-  return path === "" ? "/index.md" : `${path}.md`;
+/** `("/", "fa")` → `/fa/index.md`, `("/blog/post", "en")` → `/blog/post.md`. */
+export function markdownUrl(path: string, locale: Locale): string {
+  const page = trim(path);
+  return page === "/"
+    ? `${localizePath("/", locale).replace(/\/$/, "")}/index.md`
+    : `${localizePath(page, locale)}.md`;
 }
 
-/** `/` → `/llms.mdx/index`, `/blog/post` → `/llms.mdx/blog/post`. */
-export function markdownRoute(pathname: string): string {
-  const path = trim(pathname);
-  return `/llms.mdx${path === "" ? "/index" : path}`;
+/** `("/", "en")` → `/en/llms.mdx/index`, `("/blog/post", "fa")` → `/fa/llms.mdx/blog/post`. */
+export function markdownRoute(path: string, locale: Locale): string {
+  const page = trim(path);
+  return `/${locale}/llms.mdx${page === "/" ? "/index" : page}`;
 }
 
 /** The page path of a Markdown route's segments: `["index"]` → `/`. */

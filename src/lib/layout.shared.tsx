@@ -1,9 +1,18 @@
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import type { Locale } from "@/i18n/locales";
+import { localizePath } from "@/i18n/paths";
 import { site } from "@/lib/site";
 import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
 import Image from "next/image";
-import { headerProfiles, navLinks } from "./links";
+import { headerProfiles, type NavLink, navLinks } from "./links";
+import type { ProfileId } from "./site-config";
 
-/** Avatar and name, linked to `/` by the layout. */
+/** Labels the header reads: `t` from `useTranslations()`. */
+type HeaderLabels = (
+  key: `nav.${NavLink["key"]}` | `profiles.${ProfileId}`,
+) => string;
+
+/** Avatar and name, linked to the language's home by the layout. */
 function BrandTitle() {
   return (
     <span className="inline-flex items-center gap-2.5">
@@ -23,28 +32,36 @@ function BrandTitle() {
   );
 }
 
-/** The header: the name, the pages in `navLinks`, then `headerProfiles` as icons. */
-export function baseOptions(): BaseLayoutProps {
+/**
+ * The header in a language: the name, the pages in `navLinks`, the language
+ * switcher, then `headerProfiles` as icons.
+ */
+export function baseOptions(locale: Locale, t: HeaderLabels): BaseLayoutProps {
   return {
     nav: {
       title: <BrandTitle />,
+      url: localizePath("/", locale),
       // Glass: the hero runs under the header. Tint and blur are in `global.css`.
       transparentMode: "always",
     },
     links: [
-      ...navLinks.map((link): LinkItemType => ({
-        text: link.label,
-        url: link.href,
+      ...navLinks(locale).map((link): LinkItemType => ({
+        text: t(`nav.${link.key}`),
+        url: localizePath(link.href, locale),
         active: "nested-url",
       })),
-      ...headerProfiles.map(({ label, href, icon: Icon }): LinkItemType => ({
-        type: "icon",
-        text: label,
-        label,
-        url: href,
-        icon: <Icon />,
-        external: true,
-      })),
+      { type: "custom", secondary: true, children: <LocaleSwitcher /> },
+      ...headerProfiles.map(({ id, href, icon: Icon }): LinkItemType => {
+        const label = t(`profiles.${id}`);
+        return {
+          type: "icon",
+          text: label,
+          label,
+          url: href,
+          icon: <Icon />,
+          external: true,
+        };
+      }),
     ],
   };
 }

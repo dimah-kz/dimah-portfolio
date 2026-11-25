@@ -1,2 +1,5 @@
 allowBuilds:
   esbuild: true
+  # Pulled in by next-intl for message extraction, which this site does not use.
+  "@parcel/watcher": false
+  "@swc/core": false

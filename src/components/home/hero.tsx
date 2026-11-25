@@ -15,12 +15,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { BlogPost } from "@/lib/blog";
-import { t } from "@/lib/i18n";
 import { primaryContact, profiles } from "@/lib/links";
-import { site } from "@/lib/site";
+import { Link } from "@/i18n/navigation";
+import { site, siteCopy } from "@/lib/site";
 import { cn } from "cn";
 import { ArrowRightIcon, FileTextIcon, SparklesIcon } from "lucide-react";
-import Link from "next/link";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 
 export interface HeroStat {
   value: number;
@@ -47,6 +47,9 @@ export function Hero({
   latest?: BlogPost;
   stats: HeroStat[];
 }) {
+  const t = useTranslations("hero");
+  const { home } = siteCopy(useLocale());
+
   return (
     <section
       aria-labelledby="hero-title"
@@ -63,12 +66,12 @@ export function Hero({
             <div className={cn(enter, "max-w-full")}>
               <Badge
                 variant="outline"
-                render={<Link href={latest.url} />}
+                render={<Link href={latest.path} />}
                 className="group h-7 max-w-full gap-1.5 bg-background/60 px-3 text-xs backdrop-blur-sm"
               >
                 <SparklesIcon data-icon="inline-start" className="text-brand" />
                 <AnimatedShinyText className="truncate">
-                  {t.hero.latest} · {latest.title}
+                  {t("latest")} · {latest.title}
                 </AnimatedShinyText>
                 <ArrowRightIcon
                   data-icon="inline-end"
@@ -85,9 +88,9 @@ export function Hero({
               "font-heading text-[clamp(2.5rem,4vw+1rem,4.25rem)] font-semibold text-balance delay-100 ltr:leading-[1.05] ltr:tracking-tight rtl:leading-[1.3]",
             )}
           >
-            {site.home.headline}{" "}
+            {home.headline}{" "}
             <span className="bg-linear-to-r from-brand-text to-brand bg-clip-text text-transparent">
-              {site.home.headlineAccent}
+              {home.headlineAccent}
             </span>
           </h1>
 
@@ -97,7 +100,7 @@ export function Hero({
               "max-w-xl text-base/relaxed text-pretty text-muted-foreground delay-200 sm:text-lg/relaxed",
             )}
           >
-            {site.home.intro}
+            {home.intro}
           </p>
 
           <div
@@ -113,7 +116,7 @@ export function Hero({
                 "h-10 px-4 text-sm",
               )}
             >
-              {t.hero.viewProjects}
+              {t("viewProjects")}
               <ArrowRightIcon
                 data-icon="inline-end"
                 className="rtl:rotate-180"
@@ -127,7 +130,7 @@ export function Hero({
                   "h-10 px-4 text-sm",
                 )}
               >
-                {t.hero.readBlog}
+                {t("readBlog")}
               </Link>
             ) : null}
           </div>
@@ -143,8 +146,10 @@ export function Hero({
 
 /** Who this is, what is here in numbers, and the quickest way to say hello. */
 function ProfileCard({ stats }: { stats: HeroStat[] }) {
+  const t = useTranslations("profile");
+  const format = useFormatter();
+  const { tagline, availability, resume } = siteCopy(useLocale());
   const others = profiles.filter((profile) => profile !== primaryContact);
-  const { availability, resume } = site.author;
 
   return (
     <SpotlightCard>
@@ -155,9 +160,7 @@ function ProfileCard({ stats }: { stats: HeroStat[] }) {
             <AvatarFallback>{site.author.name.slice(0, 1)}</AvatarFallback>
           </Avatar>
           <CardTitle className="text-base">{site.author.name}</CardTitle>
-          <CardDescription className="text-sm">
-            {site.author.tagline}
-          </CardDescription>
+          <CardDescription className="text-sm">{tagline}</CardDescription>
           {availability ? (
             <Badge variant="outline" className="col-span-2 mt-3 w-fit gap-1.5">
               <span
@@ -179,7 +182,7 @@ function ProfileCard({ stats }: { stats: HeroStat[] }) {
                     className="flex h-full flex-col gap-0.5 rounded-md bg-muted/50 px-3 py-2.5 transition-colors hover:bg-muted"
                   >
                     <span className="font-heading text-2xl font-semibold tabular-nums">
-                      {stat.value.toLocaleString(site.locale)}
+                      {format.number(stat.value)}
                     </span>
                     <span className="text-xs leading-snug text-muted-foreground">
                       {stat.label}
@@ -204,10 +207,10 @@ function ProfileCard({ stats }: { stats: HeroStat[] }) {
               )}
             >
               <FileTextIcon data-icon="inline-start" />
-              {t.profile.resume}
+              {t("resume")}
             </a>
           ) : null}
-          <SocialLinks links={others} className="justify-center" />
+          <SocialLinks profiles={others} className="justify-center" />
         </CardFooter>
       </Card>
     </SpotlightCard>

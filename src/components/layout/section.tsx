@@ -1,6 +1,6 @@
 import { cn } from "cn";
 import { ArrowRightIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { ComponentProps, ReactNode } from "react";
 
 /** Page-width block. Lines up with the header through `--fd-layout-width`. */

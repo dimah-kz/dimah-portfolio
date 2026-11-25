@@ -1,7 +1,7 @@
 import { buttonVariants } from "@/components/ui/button";
-import { t } from "@/lib/i18n";
 import { isExternal, type Profile } from "@/lib/links";
 import { cn } from "cn";
+import { useTranslations } from "next-intl";
 
 /** The main call to action for a profile, such as "Message on Telegram". */
 export function ContactButton({
@@ -14,6 +14,7 @@ export function ContactButton({
   showHandle?: boolean;
   className?: string;
 }) {
+  const t = useTranslations("contact.cta");
   const { icon: Icon } = profile;
 
   return (
@@ -29,7 +30,7 @@ export function ContactButton({
       )}
     >
       <Icon data-icon="inline-start" />
-      {t.contact.cta[profile.id]}
+      {t(profile.id)}
       {showHandle && profile.handle ? (
         <span dir="ltr" className="text-xs opacity-60">
           @{profile.handle}

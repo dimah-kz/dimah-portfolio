@@ -1,5 +1,7 @@
+import type { Locale } from "@/i18n/locales";
 import { defineCollections } from "fumadocs-mdx/macro";
 import { z } from "zod";
+import { localizedEntries } from "./localized-entries";
 
 const month = z
   .string()
@@ -21,11 +23,15 @@ export const experienceSchema = z.object({
   stack: z.array(z.string()).default([]),
 });
 
+/** A translation, `<role>.<locale>.mdx`: only the fields that read differently. */
+export const experienceTranslationSchema = experienceSchema
+  .pick({ role: true, company: true, location: true, summary: true })
+  .partial();
+
 // Read for its frontmatter only, like `content/projects`.
 const collection = defineCollections({
   type: "doc",
   dir: "content/experience",
-  schema: experienceSchema,
 });
 
 export type Role = Omit<z.output<typeof experienceSchema>, "start" | "end"> & {
@@ -35,24 +41,28 @@ export type Role = Omit<z.output<typeof experienceSchema>, "start" | "end"> & {
   end?: Date;
 };
 
+const entries = localizedEntries(collection.entries, {
+  base: experienceSchema,
+  translation: experienceTranslationSchema,
+  dir: "content/experience",
+});
+
 function parseMonth(value: string): Date {
   const [year, month] = value.split("-").map(Number);
   return new Date(Date.UTC(year, month - 1));
 }
 
-/** Work history, current roles first, then by start month, newest first. */
-export const experience: Role[] = collection.entries
-  .map((entry) => {
-    const data = experienceSchema.parse(entry);
-    return {
-      ...data,
-      slug: entry.info.path.replace(/\.mdx?$/, ""),
-      start: parseMonth(data.start),
-      end: data.end ? parseMonth(data.end) : undefined,
-    };
-  })
-  .sort(
-    (a, b) =>
-      Number(Boolean(a.end)) - Number(Boolean(b.end)) ||
-      b.start.getTime() - a.start.getTime(),
-  );
+/** Work history in a language: current roles first, then the newest. */
+export function getExperience(locale: Locale): Role[] {
+  return entries(locale)
+    .map((role) => ({
+      ...role,
+      start: parseMonth(role.start),
+      end: role.end ? parseMonth(role.end) : undefined,
+    }))
+    .sort(
+      (a, b) =>
+        Number(Boolean(a.end)) - Number(Boolean(b.end)) ||
+        b.start.getTime() - a.start.getTime(),
+    );
+}

@@ -29,26 +29,30 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import type { BlogPost } from "@/lib/blog";
-import { type Role, experience } from "@/lib/experience";
-import { formatMonth, t } from "@/lib/i18n";
+import { getExperience, type Role } from "@/lib/experience";
 import { findProfile, primaryContact, profiles } from "@/lib/links";
-import { featuredProjects, otherProjects } from "@/lib/projects";
-import { site } from "@/lib/site";
+import { getProjects } from "@/lib/projects";
+import { siteCopy } from "@/lib/site";
 import { cn } from "cn";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 
 /** Featured projects as cards, the rest as rows. Hidden without projects. */
 export function WorkSection() {
-  if (featuredProjects.length === 0 && otherProjects.length === 0) return null;
+  const t = useTranslations("work");
+  const projects = getProjects(useLocale());
+  const featuredProjects = projects.filter((project) => project.featured);
+  const otherProjects = projects.filter((project) => !project.featured);
+  if (projects.length === 0) return null;
 
   return (
     <Section id="work" aria-labelledby="work-title">
       <BlurFade inView>
         <SectionHeader
           id="work-title"
-          eyebrow={t.work.eyebrow}
-          title={t.work.title}
-          description={t.work.description}
-          action={<SectionLink href="/projects">{t.work.all}</SectionLink>}
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          description={t("description")}
+          action={<SectionLink href="/projects">{t("all")}</SectionLink>}
         />
       </BlurFade>
       {featuredProjects.length > 0 ? (
@@ -64,7 +68,7 @@ export function WorkSection() {
         <BlurFade inView className="flex flex-col gap-4">
           {featuredProjects.length > 0 ? (
             <h3 className="font-heading text-sm font-medium text-muted-foreground">
-              {t.work.more}
+              {t("more")}
             </h3>
           ) : null}
           <ProjectList projects={otherProjects} />
@@ -75,18 +79,21 @@ export function WorkSection() {
 }
 
 function RoleDates({ role }: { role: Role }) {
+  const t = useTranslations("experience");
+  const format = useFormatter();
+
   return (
     <span className="text-sm text-muted-foreground tabular-nums">
       <time dateTime={role.start.toISOString().slice(0, 7)}>
-        {formatMonth(role.start)}
+        {format.dateTime(role.start, "month")}
       </time>
       {" – "}
       {role.end ? (
         <time dateTime={role.end.toISOString().slice(0, 7)}>
-          {formatMonth(role.end)}
+          {format.dateTime(role.end, "month")}
         </time>
       ) : (
-        t.experience.present
+        t("present")
       )}
     </span>
   );
@@ -94,6 +101,8 @@ function RoleDates({ role }: { role: Role }) {
 
 /** Work history from `content/experience`. Hidden without roles. */
 export function ExperienceSection() {
+  const t = useTranslations();
+  const experience = getExperience(useLocale());
   if (experience.length === 0) return null;
 
   return (
@@ -101,9 +110,9 @@ export function ExperienceSection() {
       <BlurFade inView>
         <SectionHeader
           id="experience-title"
-          eyebrow={t.experience.eyebrow}
-          title={t.experience.title}
-          description={t.experience.description}
+          eyebrow={t("experience.eyebrow")}
+          title={t("experience.title")}
+          description={t("experience.description")}
         />
       </BlurFade>
       <BlurFade inView delay={0.08}>
@@ -147,7 +156,7 @@ export function ExperienceSection() {
                 <ItemFooter>
                   <ul
                     className="flex flex-wrap gap-1.5"
-                    aria-label={t.project.stack}
+                    aria-label={t("project.stack")}
                   >
                     {role.stack.map((item) => (
                       <li key={item}>
@@ -165,40 +174,40 @@ export function ExperienceSection() {
   );
 }
 
-/** `site.home.principles` as cards. Hidden when the list is empty. */
+/** The language's `home.principles` as cards. Hidden when the list is empty. */
 export function PrinciplesSection() {
-  if (site.home.principles.length === 0) return null;
+  const t = useTranslations("principles");
+  const { principles } = siteCopy(useLocale()).home;
+  if (principles.length === 0) return null;
 
   return (
     <Section aria-labelledby="principles-title">
       <BlurFade inView>
         <SectionHeader
           id="principles-title"
-          eyebrow={t.principles.eyebrow}
-          title={t.principles.title}
-          description={t.principles.description}
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          description={t("description")}
         />
       </BlurFade>
       <ul className="grid gap-5 md:grid-cols-3">
-        {site.home.principles.map(
-          ({ icon: Icon, title, description }, index) => (
-            <li key={title}>
-              <BlurFade inView delay={index * 0.08} className="h-full">
-                <Card className="h-full">
-                  <CardHeader className="gap-2">
-                    <span className="mb-2 flex size-10 items-center justify-center rounded-lg bg-brand/12 text-brand-text">
-                      <Icon aria-hidden="true" className="size-5" />
-                    </span>
-                    <CardTitle className="text-base">{title}</CardTitle>
-                    <CardDescription className="text-sm/relaxed text-pretty">
-                      {description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </BlurFade>
-            </li>
-          ),
-        )}
+        {principles.map(({ icon: Icon, title, description }, index) => (
+          <li key={title}>
+            <BlurFade inView delay={index * 0.08} className="h-full">
+              <Card className="h-full">
+                <CardHeader className="gap-2">
+                  <span className="mb-2 flex size-10 items-center justify-center rounded-lg bg-brand/12 text-brand-text">
+                    <Icon aria-hidden="true" className="size-5" />
+                  </span>
+                  <CardTitle className="text-base">{title}</CardTitle>
+                  <CardDescription className="text-sm/relaxed text-pretty">
+                    {description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </BlurFade>
+          </li>
+        ))}
       </ul>
     </Section>
   );
@@ -206,6 +215,7 @@ export function PrinciplesSection() {
 
 /** The newest posts. Hidden without posts. */
 export function WritingSection({ posts }: { posts: BlogPost[] }) {
+  const t = useTranslations("writing");
   if (posts.length === 0) return null;
 
   return (
@@ -213,14 +223,14 @@ export function WritingSection({ posts }: { posts: BlogPost[] }) {
       <BlurFade inView>
         <SectionHeader
           id="writing-title"
-          eyebrow={t.writing.eyebrow}
-          title={t.writing.title}
-          description={t.writing.description}
-          action={<SectionLink href="/blog">{t.writing.all}</SectionLink>}
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          description={t("description")}
+          action={<SectionLink href="/blog">{t("all")}</SectionLink>}
         />
       </BlurFade>
       <BlurFade inView delay={0.08}>
-        <BlogCards posts={posts} latestUrl={posts[0]?.url} />
+        <BlogCards posts={posts} latestSlug={posts[0]?.slug} />
       </BlurFade>
     </Section>
   );
@@ -228,6 +238,8 @@ export function WritingSection({ posts }: { posts: BlogPost[] }) {
 
 /** The main contact button, then email, then the other profiles as icons. */
 export function ContactSection() {
+  const t = useTranslations("contact");
+  const copy = siteCopy(useLocale());
   if (!primaryContact) return null;
 
   const email = findProfile("email");
@@ -246,12 +258,12 @@ export function ContactSection() {
               className="absolute inset-0 -z-10 bg-wash"
             />
             <CardHeader className="gap-3 px-6 pt-6 sm:px-10 sm:pt-10">
-              <Eyebrow>{t.contact.eyebrow}</Eyebrow>
+              <Eyebrow>{t("eyebrow")}</Eyebrow>
               <CardTitle className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-                <h2 id="contact-title">{t.contact.title}</h2>
+                <h2 id="contact-title">{t("title")}</h2>
               </CardTitle>
               <CardDescription className="max-w-xl text-sm/relaxed text-pretty sm:text-base/relaxed">
-                {site.contact.description}
+                {copy.contact}
               </CardDescription>
             </CardHeader>
             <CardFooter className="flex-wrap gap-3 px-6 pb-6 sm:px-10 sm:pb-10">
@@ -265,10 +277,10 @@ export function ContactSection() {
                   )}
                 >
                   <email.icon data-icon="inline-start" />
-                  {t.contact.cta.email}
+                  {t("cta.email")}
                 </a>
               ) : null}
-              <SocialLinks links={others} />
+              <SocialLinks profiles={others} />
             </CardFooter>
           </Card>
         </SpotlightCard>

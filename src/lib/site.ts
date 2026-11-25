@@ -1,5 +1,6 @@
+import type { Locale } from "@/i18n/locales";
 import { KeyRoundIcon, LanguagesIcon, ServerIcon } from "lucide-react";
-import type { SiteConfig } from "./site-config";
+import type { SiteConfig, SiteCopy } from "./site-config";
 
 /**
  * Who this site is about, and the home page copy.
@@ -14,14 +15,10 @@ import type { SiteConfig } from "./site-config";
  */
 export const site: SiteConfig = {
   name: "dimah",
-  description: "Open-source, server-first tools for React and Next.js.",
   url: "https://dimah.dev",
-  locale: "en",
-  direction: "ltr",
 
   author: {
     name: "dimah",
-    tagline: "Believer in open source.",
     avatar: "/avatar.png",
   },
 
@@ -34,39 +31,86 @@ export const site: SiteConfig = {
 
   contact: {
     primary: "telegram",
-    description:
-      "The quickest way to reach me is a message on Telegram. For a question about a project, an issue on its repository works too.",
   },
 
   repository: "https://github.com/dimah-kz/dimah-portfolio",
 
-  home: {
-    headline: "Server-first tools for",
-    headlineAccent: "React and Next.js.",
-    intro:
-      "I build and publish open-source tools under dimah-kz. Most of that work is dimah-starter, a multi-tenant SaaS starter for Next.js 16, and dimah-s3, an S3 upload toolkit that keeps credentials on the server.",
-    principles: [
-      {
-        icon: ServerIcon,
-        title: "Server-first",
-        description:
-          "Pages read the session in Server Components and every write is a Server Action. Permission checks run on each read, not only in a layout.",
+  copy: {
+    en: {
+      description: "Open-source, server-first tools for React and Next.js.",
+      tagline: "Believer in open source.",
+      contact:
+        "The quickest way to reach me is a message on Telegram. For a question about a project, an issue on its repository works too.",
+      home: {
+        headline: "Server-first tools for",
+        headlineAccent: "React and Next.js.",
+        intro:
+          "I build and publish open-source tools under dimah-kz. Most of that work is dimah-starter, a multi-tenant SaaS starter for Next.js 16, and dimah-s3, an S3 upload toolkit that keeps credentials on the server.",
+        principles: [
+          {
+            icon: ServerIcon,
+            title: "Server-first",
+            description:
+              "Pages read the session in Server Components and every write is a Server Action. Permission checks run on each read, not only in a layout.",
+          },
+          {
+            icon: KeyRoundIcon,
+            title: "Credentials stay on the backend",
+            description:
+              "The server signs an upload and the browser talks to the bucket. Auth, quotas, and database rules live in server hooks.",
+          },
+          {
+            icon: LanguagesIcon,
+            title: "Both directions",
+            description:
+              "English and Persian ship together. Direction is set once on the document, so the same layout reads left-to-right and right-to-left.",
+          },
+        ],
       },
-      {
-        icon: KeyRoundIcon,
-        title: "Credentials stay on the backend",
-        description:
-          "The server signs an upload and the browser talks to the bucket. Auth, quotas, and database rules live in server hooks.",
+    },
+
+    fa: {
+      description: "ابزارهای متن‌باز و سرورمحور برای React و Next.js.",
+      tagline: "باورمند به نرم‌افزار متن‌باز.",
+      contact:
+        "سریع‌ترین راه تماس با من، پیام در تلگرام است. برای سؤال درباره یک پروژه، باز کردن issue در مخزن همان پروژه هم کار می‌کند.",
+      home: {
+        headline: "ابزارهای سرورمحور برای",
+        headlineAccent: "React و Next.js.",
+        intro:
+          "ابزارهای متن‌باز را با نام dimah-kz می‌سازم و منتشر می‌کنم. بیشتر این کار در dimah-starter است، یک استارتر SaaS چندمستأجری برای Next.js 16، و dimah-s3، ابزاری برای آپلود در S3 که کلیدهای دسترسی را روی سرور نگه می‌دارد.",
+        principles: [
+          {
+            icon: ServerIcon,
+            title: "سرورمحور",
+            description:
+              "صفحه‌ها نشست کاربر را در Server Components می‌خوانند و هر تغییر داده یک Server Action است. بررسی دسترسی در هر خواندن انجام می‌شود، نه فقط در layout.",
+          },
+          {
+            icon: KeyRoundIcon,
+            title: "کلیدها روی سرور می‌مانند",
+            description:
+              "سرور آپلود را امضا می‌کند و مرورگر مستقیم با باکت حرف می‌زند. احراز هویت، سهمیه‌ها و قواعد پایگاه داده در hookهای سرور هستند.",
+          },
+          {
+            icon: LanguagesIcon,
+            title: "هر دو جهت",
+            description:
+              "انگلیسی و فارسی با هم عرضه می‌شوند. جهت یک بار روی سند تنظیم می‌شود، پس همان چیدمان هم چپ‌به‌راست خوانده می‌شود و هم راست‌به‌چپ.",
+          },
+        ],
       },
-      {
-        icon: LanguagesIcon,
-        title: "Both directions",
-        description:
-          "English and Persian ship together. Direction is set once on the document, so the same layout reads left-to-right and right-to-left.",
-      },
-    ],
+    },
   },
 };
 
+/** The copy of one language. */
+export function siteCopy(locale: Locale): SiteCopy {
+  return site.copy[locale];
+}
+
 /** The whole hero title, for browser titles and share cards. */
-export const headline = `${site.home.headline} ${site.home.headlineAccent}`;
+export function headline(locale: Locale): string {
+  const { home } = siteCopy(locale);
+  return `${home.headline} ${home.headlineAccent}`;
+}

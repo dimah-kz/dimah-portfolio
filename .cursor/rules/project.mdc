@@ -7,7 +7,8 @@ alwaysApply: true
 
 - Sample identity is Dimah, from https://github.com/dimah-kz. It lives in `src/lib/site.ts`, typed by `src/lib/site-config.ts`. Projects, roles, and posts live in `content/**/*.mdx`.
 - Do not invent a biography, employer, location, or metric that is not already in `site.ts` or MDX. `content/experience` is empty on purpose.
-- Interface labels come from `t` in `src/lib/i18n.ts`. Do not hardcode English in a component.
+- Interface labels come from `messages/<locale>.json` through next-intl (`useTranslations`, `getTranslations`). Do not hardcode English in a component.
+- Languages are listed in `src/i18n/locales.ts`. Pages live under `src/app/[locale]`; internal links use `Link` from `@/i18n/navigation` with paths without the language.
 - Components never name a platform: read `primaryContact`, `profiles`, and `findProfile()` from `src/lib/links.ts`. Empty content hides its UI.
 - Every page has a share image and a Markdown version (`src/lib/agents.ts`).
 - Guide: [AGENTS.md](../../AGENTS.md)

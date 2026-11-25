@@ -1,49 +1,39 @@
 import { Container } from "@/components/layout/section";
 import { SocialLinks } from "@/components/social-links";
-import { t } from "@/lib/i18n";
-import {
-  feedLink,
-  llmsLink,
-  navLinks,
-  profiles,
-  type NavLink,
-} from "@/lib/links";
-import { site } from "@/lib/site";
+import { Link } from "@/i18n/navigation";
+import { localizePath } from "@/i18n/paths";
+import { feedPath, llmsPath, navLinks, profiles } from "@/lib/links";
+import { site, siteCopy } from "@/lib/site";
+import { RssIcon } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import type { ReactNode } from "react";
 
 const linkClass =
   "text-sm text-muted-foreground transition-colors hover:text-foreground";
 
-function FooterNav({ title, links }: { title: string; links: NavLink[] }) {
-  if (links.length === 0) return null;
-
+function FooterNav({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <nav aria-label={title} className="flex flex-col gap-3">
       <h2 className="text-xs font-medium tracking-wide text-muted-foreground/80 uppercase">
         {title}
       </h2>
-      <ul className="flex flex-col gap-2">
-        {links.map((link) => (
-          <li key={link.href}>
-            {link.href.startsWith("/") && !/\.\w+$/.test(link.href) ? (
-              <Link href={link.href} className={linkClass}>
-                {link.label}
-              </Link>
-            ) : (
-              <a href={link.href} className={linkClass}>
-                {link.label}
-              </a>
-            )}
-          </li>
-        ))}
-      </ul>
+      <ul className="flex flex-col gap-2">{children}</ul>
     </nav>
   );
 }
 
 export function SiteFooter() {
+  const t = useTranslations();
+  const locale = useLocale();
   const year = new Date().getUTCFullYear();
+  const feed = localizePath(feedPath, locale);
 
   return (
     <footer className="mt-auto border-t">
@@ -63,20 +53,50 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="text-sm text-pretty text-muted-foreground">
-            {site.description}
+            {siteCopy(locale).description}
           </p>
-          <SocialLinks links={[...profiles, feedLink]} className="-ms-2" />
+          <SocialLinks
+            extra={[{ label: t("blog.rss"), href: feed, icon: RssIcon }]}
+            className="-ms-2"
+          />
         </div>
 
-        <FooterNav
-          title={t.footer.pages}
-          links={[{ label: t.nav.home, href: "/" }, ...navLinks]}
-        />
-        <FooterNav title={t.footer.social} links={profiles} />
-        <FooterNav
-          title={t.footer.feeds}
-          links={[{ label: t.blog.rss, href: feedLink.href }, llmsLink]}
-        />
+        <FooterNav title={t("footer.pages")}>
+          {[{ key: "home" as const, href: "/" }, ...navLinks(locale)].map(
+            (link) => (
+              <li key={link.href}>
+                <Link href={link.href} className={linkClass}>
+                  {t(`nav.${link.key}`)}
+                </Link>
+              </li>
+            ),
+          )}
+        </FooterNav>
+
+        {profiles.length > 0 ? (
+          <FooterNav title={t("footer.social")}>
+            {profiles.map((profile) => (
+              <li key={profile.id}>
+                <a href={profile.href} className={linkClass}>
+                  {t(`profiles.${profile.id}`)}
+                </a>
+              </li>
+            ))}
+          </FooterNav>
+        ) : null}
+
+        <FooterNav title={t("footer.feeds")}>
+          <li>
+            <a href={feed} className={linkClass}>
+              {t("blog.rss")}
+            </a>
+          </li>
+          <li>
+            <a href={localizePath(llmsPath, locale)} className={linkClass}>
+              llms.txt
+            </a>
+          </li>
+        </FooterNav>
       </Container>
 
       <div className="border-t">
@@ -85,7 +105,7 @@ export function SiteFooter() {
             © {year} {site.author.name}
           </p>
           <p>
-            {t.footer.builtWith}
+            {t("footer.builtWith")}
             {site.repository ? (
               <>
                 {" "}
@@ -93,7 +113,7 @@ export function SiteFooter() {
                   href={site.repository}
                   className="underline underline-offset-4 transition-colors hover:text-foreground"
                 >
-                  {t.footer.source}
+                  {t("footer.source")}
                 </a>
               </>
             ) : null}

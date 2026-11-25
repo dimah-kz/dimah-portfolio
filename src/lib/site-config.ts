@@ -1,3 +1,4 @@
+import type { Locale } from "@/i18n/locales";
 import type { LucideIcon } from "lucide-react";
 
 /**
@@ -5,11 +6,6 @@ import type { LucideIcon } from "lucide-react";
  * does. Optional fields can be left out; the parts of the site that use them
  * are hidden.
  */
-
-/** Locales with interface labels in `src/lib/i18n.ts`. */
-export type Locale = "en" | "fa";
-
-export type Direction = "ltr" | "rtl";
 
 /**
  * Profiles the site has an icon and a label for, in `src/lib/links.ts`.
@@ -25,28 +21,39 @@ export interface Principle {
   description: string;
 }
 
+/** Everything the site says about you, in one language. */
+export interface SiteCopy {
+  /** One line. The meta description, and the summary in the feed and `llms.txt`. */
+  description: string;
+  /** Short line under your name: the profile card, posts, and structured data. */
+  tagline: string;
+  /** A badge on the profile card, such as "Open to new roles". Leave out to hide it. */
+  availability?: string;
+  /** A CV in `public/` (such as `/resume.pdf`) or a URL. Adds a button to the profile card. */
+  resume?: string;
+  /** The paragraph in the contact section. */
+  contact: string;
+  /** Home page copy. */
+  home: {
+    /** The hero title. `headlineAccent` follows it in the brand color. */
+    headline: string;
+    headlineAccent: string;
+    intro: string;
+    /** Cards in the "How I build" section. An empty list hides the section. */
+    principles: Principle[];
+  };
+}
+
 export interface SiteConfig {
   /** Short name. Shown in the header, browser titles, share images, and the footer. */
   name: string;
-  /** One line. The meta description, and the summary in the feed and `llms.txt`. */
-  description: string;
   /** Public origin of the deployed site, without a trailing slash. */
   url: string;
-  /** Document language. Picks the set of labels in `src/lib/i18n.ts`. */
-  locale: Locale;
-  /** `rtl` with `locale: "fa"` flips the whole site. */
-  direction: Direction;
 
   author: {
     name: string;
-    /** Short line under the name: the profile card, posts, and structured data. */
-    tagline: string;
     /** Square image in `public/`, such as `/avatar.png`. */
     avatar: string;
-    /** A badge on the profile card, such as "Open to new roles". Leave out to hide it. */
-    availability?: string;
-    /** A CV in `public/` (such as `/resume.pdf`) or a URL. Adds a button to the profile card. */
-    resume?: string;
   };
 
   /**
@@ -58,20 +65,11 @@ export interface SiteConfig {
   contact: {
     /** The profile behind the main button in the hero and the contact section. */
     primary: ProfileId;
-    /** The paragraph in the contact section. */
-    description: string;
   };
 
   /** Source of this site. The footer links to it. Leave out to hide the link. */
   repository?: string;
 
-  /** Home page copy. */
-  home: {
-    /** The hero title. `headlineAccent` follows it in the brand color. */
-    headline: string;
-    headlineAccent: string;
-    intro: string;
-    /** Cards in the "How I build" section. An empty list hides the section. */
-    principles: Principle[];
-  };
+  /** The copy, once per language in `src/i18n/locales.ts`. */
+  copy: Record<Locale, SiteCopy>;
 }

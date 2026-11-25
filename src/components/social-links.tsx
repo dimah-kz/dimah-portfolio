@@ -4,17 +4,33 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { type IconLink, isExternal, profiles } from "@/lib/links";
+import {
+  type IconLink,
+  isExternal,
+  type Profile,
+  profiles as allProfiles,
+} from "@/lib/links";
 import { cn } from "cn";
+import { useTranslations } from "next-intl";
 
-/** Icon buttons with a tooltip on each. Every profile by default. */
+/**
+ * Icon buttons with a tooltip on each: `profiles` (every profile by default),
+ * then any `extra` links, such as the feed.
+ */
 export function SocialLinks({
-  links = profiles,
+  profiles = allProfiles,
+  extra = [],
   className,
 }: {
-  links?: IconLink[];
+  profiles?: Profile[];
+  extra?: IconLink[];
   className?: string;
 }) {
+  const t = useTranslations("profiles");
+  const links: IconLink[] = [
+    ...profiles.map(({ id, href, icon }) => ({ label: t(id), href, icon })),
+    ...extra,
+  ];
   if (links.length === 0) return null;
 
   return (

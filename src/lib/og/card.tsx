@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { extname, join } from "node:path";
+import { type Locale, localeConfig } from "@/i18n/locales";
 import type { ReactNode } from "react";
 import type { Project } from "../projects";
 import { site } from "../site";
@@ -66,6 +67,8 @@ function keepHyphens(text: string): ReactNode {
 }
 
 type OgCardProps = {
+  /** The language of the card: its direction and text. */
+  locale: Locale;
   /** Section label after the name, like `Blog` or `Projects`. */
   eyebrow?: string;
   title: string;
@@ -82,10 +85,11 @@ type OgCardProps = {
  * The 1200×630 share card: the site's gold wash, the avatar and the section on
  * top, a large title, the facts and the domain at the bottom, and a tile with
  * the avatar or a project logo on the end side.
- * It lays out in `site.direction`, so a Persian card reads right to left with
+ * It lays out in the language's direction, so a Persian card reads right to left with
  * the art on the left. Title and description stop with an ellipsis.
  */
 export function OgCard({
+  locale,
   eyebrow,
   title,
   titleAccent,
@@ -93,12 +97,13 @@ export function OgCard({
   meta = [],
   art,
 }: OgCardProps) {
+  const { dir } = localeConfig[locale];
   const fullTitle = titleAccent ? `${title} ${titleAccent}` : title;
 
   return (
     <div
-      dir={site.direction}
-      lang={site.locale}
+      dir={dir}
+      lang={locale}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -170,7 +175,7 @@ export function OgCard({
               fontSize: titleSize(fullTitle, Boolean(art)),
               fontWeight: 650,
               lineHeight: 1.08,
-              letterSpacing: site.direction === "ltr" ? "-0.035em" : 0,
+              letterSpacing: dir === "ltr" ? "-0.035em" : 0,
             }}
           >
             <div

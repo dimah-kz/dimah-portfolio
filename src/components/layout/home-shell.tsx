@@ -1,6 +1,6 @@
 "use client";
 
-import { t } from "@/lib/i18n";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 
 /**
@@ -12,6 +12,8 @@ import type { ComponentProps } from "react";
  * page content.
  */
 export function HomeShell({ children }: ComponentProps<"main">) {
+  const t = useTranslations("nav");
+
   return (
     <div
       id="nd-home-layout"
@@ -21,7 +23,7 @@ export function HomeShell({ children }: ComponentProps<"main">) {
         href="#main"
         className="sr-only z-50 rounded-md bg-background px-3 py-2 text-sm font-medium ring-2 ring-ring focus:not-sr-only focus:fixed focus:start-4 focus:top-4"
       >
-        {t.nav.skipToContent}
+        {t("skipToContent")}
       </a>
       {children}
     </div>
