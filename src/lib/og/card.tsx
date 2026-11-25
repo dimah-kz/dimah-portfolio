@@ -16,7 +16,8 @@ export const ogColors = {
   muted: "#a3a3a3",
   subtle: "#737373",
   border: "rgba(255, 255, 255, 0.12)",
-  grid: "rgba(255, 255, 255, 0.07)",
+  /** A card on the background, like `--card`. */
+  surface: "#141414",
   /** `--brand`, the gold of the avatar. */
   brand: "#d6b52d",
   brandGlow: "rgba(214, 181, 45, 0.22)",
@@ -66,8 +67,9 @@ type OgCardProps = {
 };
 
 /**
- * The 1200×630 share card: the hero's grid and gold glow, the avatar and the
- * section on top, a large title, and the facts and the domain at the bottom.
+ * The 1200×630 share card: the site's gold wash, the avatar and the section on
+ * top, a large title, the facts and the domain at the bottom, and a tile with
+ * the avatar or a project logo on the end side.
  * It lays out in `site.direction`, so a Persian card reads right to left with
  * the art on the left. Title and description stop with an ellipsis.
  */
@@ -96,15 +98,8 @@ export function OgCard({
         fontFamily: ogFontFamily,
         color: ogColors.foreground,
         backgroundColor: ogColors.background,
-        // Gold glow from the top, the grid fading out below it, as in the hero.
-        backgroundImage: [
-          `radial-gradient(ellipse 60% 55% at 50% 0%, ${ogColors.brandGlow}, transparent 100%)`,
-          `radial-gradient(ellipse 80% 75% at 50% 0%, transparent 0%, ${ogColors.background} 100%)`,
-          `linear-gradient(to right, ${ogColors.grid} 1px, transparent 1px)`,
-          `linear-gradient(to bottom, ${ogColors.grid} 1px, transparent 1px)`,
-        ].join(", "),
-        backgroundSize: "100% 100%, 100% 100%, 64px 64px, 64px 64px",
-        backgroundPosition: "0 0, 0 0, center 0, center 0",
+        // The site's wash: a soft light of the brand color from the top.
+        backgroundImage: `radial-gradient(60% 100% at 50% 0%, ${ogColors.brandGlow}, transparent)`,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
@@ -235,68 +230,44 @@ export function OgCard({
   );
 }
 
-/** Concentric rings, every other one dashed, fading outward. As in the hero. */
-function Rings({ size }: { size: number }) {
-  const radii = [0.24, 0.33, 0.42, 0.5];
-
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      style={{ position: "absolute", top: 0, left: 0 }}
-    >
-      {radii.map((radius, index) => (
-        <circle
-          key={radius}
-          cx={size / 2}
-          cy={size / 2}
-          r={size * radius - 1}
-          fill="none"
-          stroke={ogColors.brand}
-          strokeOpacity={0.5 - index * 0.11}
-          strokeWidth={1.5}
-          strokeDasharray={index % 2 === 1 ? "4 8" : undefined}
-        />
-      ))}
-    </svg>
-  );
-}
-
-/** Something centered in rings, over a soft gold halo. */
-function Halo({ size = 380, children }: { size?: number; children: ReactNode }) {
+/**
+ * A raised square, like a shadcn `Card`: a hairline border, a faint gold light
+ * from the top, and whatever the card is about in the middle.
+ */
+function Tile({ children }: { children: ReactNode }) {
   return (
     <div
       style={{
         display: "flex",
-        position: "relative",
         alignItems: "center",
         justifyContent: "center",
-        width: size,
-        height: size,
-        borderRadius: 999,
-        backgroundImage: `radial-gradient(circle closest-side, ${ogColors.brandGlow}, transparent 70%)`,
+        width: 300,
+        height: 300,
+        borderRadius: 56,
+        border: `2px solid ${ogColors.border}`,
+        backgroundColor: ogColors.surface,
+        backgroundImage: `radial-gradient(80% 60% at 50% 0%, ${ogColors.brandGlow}, transparent)`,
+        boxShadow: "0 40px 80px rgba(0, 0, 0, 0.55)",
       }}
     >
-      <Rings size={size} />
       {children}
     </div>
   );
 }
 
-/** The avatar in its rings, for the home card. */
+/** The avatar on a tile, for the home and blog cards. */
 export function OgAvatarArt() {
   return (
-    <Halo>
+    <Tile>
       {/* eslint-disable-next-line @next/next/no-img-element -- Takumi renders <img>, not next/image. */}
       <img
         src={avatarSrc}
-        width={150}
-        height={150}
+        width={168}
+        height={168}
         alt=""
         style={{ borderRadius: 999, border: `3px solid ${ogColors.brandRing}` }}
       />
-    </Halo>
+    </Tile>
   );
 }
 
@@ -326,32 +297,32 @@ function ProjectTile({ project, size }: { project: Project; size: number }) {
   );
 }
 
-/** One project's logo in rings, for its docs and its blog tag. */
+/** One project's logo on a tile, for its docs and its blog tag. */
 export function OgProjectArt({ project }: { project: Project }) {
   return (
-    <Halo>
-      <ProjectTile project={project} size={132} />
-    </Halo>
+    <Tile>
+      <ProjectTile project={project} size={150} />
+    </Tile>
   );
 }
 
-/** Up to four project logos in a grid, for `/projects`. */
+/** Up to four project logos on a tile, for `/projects` and the docs overview. */
 export function OgProjectsArt({ projects }: { projects: Project[] }) {
   return (
-    <Halo size={400}>
+    <Tile>
       <div
         style={{
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
-          gap: 20,
-          width: 220,
+          gap: 24,
+          width: 224,
         }}
       >
         {projects.slice(0, 4).map((project) => (
           <ProjectTile key={project.slug} project={project} size={100} />
         ))}
       </div>
-    </Halo>
+    </Tile>
   );
 }

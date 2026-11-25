@@ -1,16 +1,26 @@
-import { Rings } from "@/components/rings";
+import { TelegramIcon } from "@/components/icons";
+import { Container } from "@/components/layout/section";
+import { SocialLinks } from "@/components/social-links";
+import { SpotlightCard } from "@/components/spotlight-card";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import type { BlogPost } from "@/lib/blog";
 import { t } from "@/lib/i18n";
+import { socialLinks } from "@/lib/links";
 import { site } from "@/lib/site";
 import { cn } from "cn";
-import { ArrowRightIcon, ChevronRightIcon } from "lucide-react";
+import { ArrowRightIcon, SparklesIcon } from "lucide-react";
 import Link from "next/link";
-
-/** Fades and lifts in on load. Each step waits a little longer. */
-const enter =
-  "animate-in fade-in slide-in-from-bottom-3 fill-mode-backwards duration-700 motion-reduce:animate-none";
 
 export interface HeroStat {
   value: number;
@@ -19,9 +29,16 @@ export interface HeroStat {
 }
 
 /**
- * The first screen, header included: the hero runs under the glass header
- * (`-mt-14 pt-14`). The avatar sits in rings, then the newest post, the title
- * with its accent, the intro, two actions, and what is here in numbers.
+ * Blur-fade entrance in CSS (tw-animate-css), so the hero shows before
+ * hydration. Sections further down use Magic UI's `BlurFade` when in view.
+ */
+const enter =
+  "animate-in fade-in blur-in-sm slide-in-from-bottom-2 fill-mode-backwards duration-700 ease-out motion-reduce:animate-none";
+
+/**
+ * The first screen: the newest post, the title with its accent, the intro and
+ * two actions on one side; a profile card with live counts on the other. It
+ * runs under the glass header (`-mt-14 pt-14`), on the brand wash.
  */
 export function Hero({
   latest,
@@ -33,106 +50,132 @@ export function Hero({
   return (
     <section
       aria-labelledby="hero-title"
-      className="relative isolate -mt-14 flex min-h-[min(100svh,60rem)] flex-col overflow-hidden pt-14"
+      className="relative isolate -mt-14 overflow-hidden pt-14"
     >
-      <div aria-hidden="true" className="absolute inset-0 -z-20 bg-grid" />
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-[40rem] bg-wash" />
 
-      <div className="mx-auto flex w-full max-w-(--fd-layout-width) flex-1 flex-col items-center justify-center px-4 pt-16 pb-10 text-center sm:pt-20 sm:pb-12">
-        <div className={cn(enter, "relative mb-8")}>
-          <Rings pulse className="size-[44rem] sm:size-[56rem]" />
-          <Avatar className="size-24 shadow-2xl shadow-brand/20 ring-1 ring-brand/40">
+      <Container className="grid gap-12 pt-16 pb-20 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-center lg:gap-16 lg:pt-28 lg:pb-28">
+        <div className="flex flex-col items-start gap-6">
+          {latest ? (
+            <div className={cn(enter, "max-w-full")}>
+              <Badge
+                variant="outline"
+                render={<Link href={latest.url} />}
+                className="group h-7 max-w-full gap-1.5 bg-background/60 px-3 text-xs backdrop-blur-sm"
+              >
+                <SparklesIcon data-icon="inline-start" className="text-brand" />
+                <AnimatedShinyText className="truncate">
+                  {t.hero.latest} · {latest.title}
+                </AnimatedShinyText>
+                <ArrowRightIcon
+                  data-icon="inline-end"
+                  className="transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+                />
+              </Badge>
+            </div>
+          ) : null}
+
+          <h1
+              id="hero-title"
+              className={cn(
+                enter,
+                "font-heading text-[clamp(2.5rem,4vw+1rem,4.25rem)] font-semibold text-balance delay-100 ltr:leading-[1.05] ltr:tracking-tight rtl:leading-[1.3]",
+              )}
+            >
+              {site.home.headline}{" "}
+              <span className="bg-linear-to-r from-brand-text to-brand bg-clip-text text-transparent">
+                {site.home.headlineAccent}
+              </span>
+            </h1>
+
+          <p
+            className={cn(
+              enter,
+              "max-w-xl text-base/relaxed text-pretty text-muted-foreground delay-200 sm:text-lg/relaxed",
+            )}
+          >
+            {site.home.intro}
+          </p>
+
+          <div className={cn(enter, "flex flex-wrap items-center gap-3 pt-2 delay-300")}>
+            <Link
+              href="/projects"
+              className={cn(buttonVariants({ size: "lg" }), "h-10 px-4 text-sm")}
+            >
+              {t.hero.viewProjects}
+              <ArrowRightIcon data-icon="inline-end" className="rtl:rotate-180" />
+            </Link>
+            <Link
+              href="/blog"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "h-10 px-4 text-sm",
+              )}
+            >
+              {t.hero.readBlog}
+            </Link>
+          </div>
+        </div>
+
+        <div className={cn(enter, "w-full max-w-sm delay-500 lg:max-w-none")}>
+          <ProfileCard stats={stats} />
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/** Who this is, what is here in numbers, and the quickest way to say hello. */
+function ProfileCard({ stats }: { stats: HeroStat[] }) {
+  const profiles = socialLinks.filter((link) => link.href !== site.author.telegramUrl);
+
+  return (
+    <SpotlightCard>
+      <Card className="h-full">
+        <CardHeader className="grid-cols-[auto_1fr] items-center gap-x-3">
+          <Avatar className="row-span-2 size-12">
             <AvatarImage src={site.author.avatarUrl} alt={site.author.name} />
             <AvatarFallback>{site.author.name.slice(0, 1)}</AvatarFallback>
           </Avatar>
-        </div>
-
-        {latest ? (
-          <Link
-            href={latest.url}
-            className={cn(
-              enter,
-              "group mb-6 inline-flex max-w-full items-center gap-2 rounded-full border bg-background/60 py-1 ps-1 pe-3 text-xs backdrop-blur-sm transition-colors [animation-delay:75ms] hover:bg-muted/60",
-            )}
-          >
-            <span className="rounded-full bg-brand/15 px-2 py-0.5 font-medium text-brand-text">
-              {t.hero.latest}
-            </span>
-            <span className="truncate text-muted-foreground transition-colors group-hover:text-foreground">
-              {latest.title}
-            </span>
-            <ChevronRightIcon
-              aria-hidden="true"
-              className="size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
-            />
-          </Link>
-        ) : null}
-
-        <h1
-          id="hero-title"
-          className={cn(
-            enter,
-            "max-w-4xl font-heading text-[clamp(2.5rem,4.5vw+1rem,4.75rem)] font-semibold text-balance delay-150 ltr:leading-[1.04] ltr:tracking-tight rtl:leading-[1.3]",
-          )}
-        >
-          {site.home.headline}{" "}
-          <span className="bg-linear-to-b from-brand-text to-brand bg-clip-text text-transparent">
-            {site.home.headlineAccent}
-          </span>
-        </h1>
-
-        <p
-          className={cn(
-            enter,
-            "mt-6 max-w-2xl text-base/relaxed text-pretty text-muted-foreground delay-200 sm:text-lg/relaxed",
-          )}
-        >
-          {site.home.intro}
-        </p>
-
-        <div
-          className={cn(enter, "mt-9 flex flex-wrap items-center justify-center gap-3 delay-300")}
-        >
-          <Link
-            href="/projects"
-            className={cn(buttonVariants({ size: "lg" }), "h-10 px-4 text-sm")}
-          >
-            {t.hero.viewProjects}
-            <ArrowRightIcon data-icon="inline-end" className="rtl:rotate-180" />
-          </Link>
-          <Link
-            href="/blog"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "h-10 bg-background/60 px-4 text-sm backdrop-blur-sm",
-            )}
-          >
-            {t.hero.readBlog}
-          </Link>
-        </div>
+          <CardTitle className="text-base">{site.author.name}</CardTitle>
+          <CardDescription className="text-sm">{site.author.tagline}</CardDescription>
+        </CardHeader>
 
         {stats.length > 0 ? (
-          <ul
-            className={cn(
-              enter,
-              "mt-14 grid w-full max-w-2xl grid-cols-3 border-y delay-500 sm:mt-16",
-            )}
-          >
-            {stats.map((stat) => (
-              <li key={stat.href} className="border-s first:border-s-0">
-                <Link
-                  href={stat.href}
-                  className="flex h-full flex-col items-center gap-1 px-2 py-5 transition-colors hover:bg-muted/40"
-                >
-                  <span className="font-heading text-2xl font-semibold tabular-nums sm:text-3xl">
-                    {stat.value.toLocaleString(site.locale)}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{stat.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <CardContent>
+            <ul className="grid grid-cols-3 gap-2">
+              {stats.map((stat) => (
+                <li key={stat.href}>
+                  <Link
+                    href={stat.href}
+                    className="flex h-full flex-col gap-0.5 rounded-md bg-muted/50 px-3 py-2.5 transition-colors hover:bg-muted"
+                  >
+                    <span className="font-heading text-2xl font-semibold tabular-nums">
+                      {stat.value.toLocaleString(site.locale)}
+                    </span>
+                    <span className="text-xs leading-snug text-muted-foreground">
+                      {stat.label}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
         ) : null}
-      </div>
-    </section>
+
+        <CardFooter className="flex-col items-stretch gap-3 border-t">
+          <a
+            href={site.author.telegramUrl}
+            target="_blank"
+            rel="noreferrer"
+            className={cn(buttonVariants({ size: "lg" }), "h-10 gap-2 text-sm")}
+          >
+            <TelegramIcon data-icon="inline-start" />
+            {t.contact.telegram}
+          </a>
+          <SocialLinks links={profiles} className="justify-center" />
+        </CardFooter>
+      </Card>
+    </SpotlightCard>
   );
 }

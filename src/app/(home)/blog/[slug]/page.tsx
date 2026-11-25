@@ -32,7 +32,7 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
     <main id="main" className="relative isolate flex flex-1 flex-col">
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 -top-14 -z-10 h-[32rem] bg-grid"
+        className="absolute inset-x-0 -top-14 -z-10 h-[28rem] bg-wash"
       />
       <JsonLd
         data={articleJsonLd({

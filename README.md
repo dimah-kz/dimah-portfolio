@@ -6,18 +6,19 @@ The sample content is [dimah](https://github.com/dimah-kz): the bio, the four op
 
 ## Features
 
-- **Home page**: a full-screen hero under a glass header (avatar in rings, newest post, headline with a gold accent, live counts), featured projects, principles, latest posts, and contact with Telegram first. Every section reads from config or content.
+- **Home page**: a hero under a glass header (newest post, headline with a gold accent, a profile card with live counts and Telegram), featured projects, principles, latest posts, and contact. Every section reads from config or content.
 - **Projects** as a content collection: one `.mdx` file of frontmatter per project, with logo, highlights, stack, and links.
 - **Docs** with [Fumadocs](https://fumadocs.dev): sidebar, search, table of contents, copy as Markdown, and `llms.txt`.
-- **Blog** as cards with generated covers, the newest post featured, tags, reading time, newer/older links, a floating table of contents, and an RSS feed.
-- **Share images** for every page, rendered at build with [Takumi](https://www.npmjs.com/package/takumi-js): the hero's grid and glow, the title, and the project's logo. Persian cards read right to left.
+- **Blog** as cards with a ribbon on the newest post, tags, reading time, newer/older links, a floating table of contents, and an RSS feed.
+- **shadcn-first design**: shadcn/ui on Base UI for every surface, and [Magic UI](https://magicui.design) for motion (blur-fade entrances, a gold spotlight border on cards, shiny text).
+- **Share images** for every page, rendered at build with [Takumi](https://www.npmjs.com/package/takumi-js): the gold wash, the title, and the avatar or the project's logo on a tile. Persian cards read right to left.
 - **SEO**: per-page metadata, canonical URLs, JSON-LD, sitemap, robots. Preview deploys are `noindex`.
 - **Right-to-left ready**: logical CSS everywhere, and English and Persian interface labels. Two lines in the config flip the site.
 - **Light and dark** themes on shadcn/ui tokens, one accent color, and a custom 404 page.
 
 ## Stack
 
-Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Fumadocs MDX · shadcn/ui (`base-mira`, Base UI) · lucide
+Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Fumadocs MDX · shadcn/ui (`base-mira`, Base UI) · Magic UI · Takumi · lucide
 
 ## Make it yours
 
@@ -88,9 +89,8 @@ src/
   components/
     home/        home page sections
     layout/      header slot, footer, page and section shells
-    cover.tsx    generated card cover (grid, rings, logos)
+    ui/          shadcn/ui and Magic UI components (CLI-managed)
     blog/        post list, post page, table of contents panel
-    ui/          shadcn/ui primitives
   lib/
     site.ts      identity and home copy
     i18n.ts      interface labels and date formats
@@ -110,7 +110,7 @@ pnpm types:check
 pnpm build
 ```
 
-Add a shadcn component with `pnpm dlx shadcn@latest add <name>` from this directory. Coding agents should follow [`AGENTS.md`](AGENTS.md).
+Add a shadcn component with `pnpm dlx shadcn@latest add <name>`, or a Magic UI one with `pnpm dlx shadcn@latest add @magicui/<name>`, from this directory. Coding agents should follow [`AGENTS.md`](AGENTS.md).
 
 ## Deploy
 

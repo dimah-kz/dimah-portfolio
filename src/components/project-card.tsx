@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -23,8 +24,8 @@ import type { Project } from "@/lib/projects";
 import { ArrowUpRightIcon, BookOpenIcon, CheckIcon } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Cover } from "./cover";
 import { GitHubIcon } from "./icons";
+import { SpotlightCard } from "./spotlight-card";
 
 function ExternalLink({
   href,
@@ -84,27 +85,35 @@ function ProjectLinks({ project }: { project: Project }) {
   );
 }
 
-/** Large card for a featured project: a cover, highlights, stack, and links. */
+/** Large card for a featured project: highlights, stack, and links. */
 export function ProjectCard({ project }: { project: Project }) {
   return (
-    <Card className="group h-full gap-0 py-0 transition-[translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-reduce:transition-none">
-      <Cover className="h-44 border-b">
-        <ProjectLogo
-          mark={project.mark}
-          name={project.name}
-          className="size-16 drop-shadow-2xl"
-        />
-      </Cover>
+    <SpotlightCard>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3 text-base">
+            <ProjectLogo mark={project.mark} name={project.name} className="size-10" />
+            {project.name}
+          </CardTitle>
+          {project.links.live ? (
+            <CardAction>
+              <a
+                href={project.links.live}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={t.project.liveFor(project.name)}
+                className={buttonVariants({ variant: "ghost", size: "icon" })}
+              >
+                <ArrowUpRightIcon />
+              </a>
+            </CardAction>
+          ) : null}
+        </CardHeader>
 
-      <CardHeader className="gap-1.5 pt-5">
-        <CardTitle className="text-base">{project.name}</CardTitle>
-        <CardDescription className="text-sm/relaxed text-pretty">
-          {project.description}
-        </CardDescription>
-      </CardHeader>
-
-      {project.highlights.length > 0 || project.stack.length > 0 ? (
-        <CardContent className="flex flex-col gap-5 pt-5 pb-5">
+        <CardContent className="flex flex-col gap-5">
+          <CardDescription className="text-sm/relaxed text-pretty">
+            {project.description}
+          </CardDescription>
           {project.highlights.length > 0 ? (
             <ul className="flex flex-col gap-2 text-sm">
               {project.highlights.map((highlight) => (
@@ -122,18 +131,18 @@ export function ProjectCard({ project }: { project: Project }) {
             <ul className="flex flex-wrap gap-1.5" aria-label="Stack">
               {project.stack.map((item) => (
                 <li key={item}>
-                  <Badge variant="outline">{item}</Badge>
+                  <Badge variant="secondary">{item}</Badge>
                 </li>
               ))}
             </ul>
           ) : null}
         </CardContent>
-      ) : null}
 
-      <CardFooter className="mt-auto flex-wrap gap-1.5 border-t pb-4">
-        <ProjectLinks project={project} />
-      </CardFooter>
-    </Card>
+        <CardFooter className="mt-auto flex-wrap gap-1.5 border-t">
+          <ProjectLinks project={project} />
+        </CardFooter>
+      </Card>
+    </SpotlightCard>
   );
 }
 

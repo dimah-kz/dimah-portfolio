@@ -25,7 +25,7 @@ export default function BlogIndexPage() {
         </div>
       </PageHeader>
       <Container className="py-12 sm:py-16">
-        <BlogCards posts={posts} featured />
+        <BlogCards posts={posts} latestUrl={posts[0]?.url} />
       </Container>
     </main>
   );

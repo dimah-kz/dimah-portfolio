@@ -42,7 +42,7 @@ export default async function BlogTagPage(props: PageProps<"/blog/tags/[tag]">) 
         </div>
       </PageHeader>
       <Container className="py-12 sm:py-16">
-        <BlogCards posts={result.posts} />
+        <BlogCards posts={result.posts} latestUrl={posts[0]?.url} />
       </Container>
     </main>
   );

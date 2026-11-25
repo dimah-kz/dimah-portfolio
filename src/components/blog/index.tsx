@@ -1,11 +1,18 @@
 import { ProjectMark, isMarkId } from "@/components/brand";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Cover } from "@/components/cover";
+import { Ribbon } from "@/components/ribbon";
+import { SpotlightCard } from "@/components/spotlight-card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { formatDate, t } from "@/lib/i18n";
 import { projectByTag, projectsForTags } from "@/lib/projects";
-import { site } from "@/lib/site";
 import { cn } from "cn";
 import type { TOCItemType } from "fumadocs-core/toc";
 import {
@@ -23,126 +30,89 @@ import { BlogPanel } from "./panel";
 /* Lists                                                                      */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Posts as cards, newest first. With `featured`, the newest one spans the
- * row with its cover beside the text.
- */
+/** Posts as cards of one size, newest first. The newest post gets a ribbon. */
 export function BlogCards({
   posts,
-  featured = false,
+  latestUrl,
   className,
 }: {
   posts: BlogPost[];
-  featured?: boolean;
+  /** URL of the newest post on the site, marked with a ribbon. */
+  latestUrl?: string;
   className?: string;
 }) {
   return (
     <ul className={cn("grid gap-5 sm:grid-cols-2 lg:grid-cols-3", className)}>
-      {posts.map((post, index) => {
-        const wide = featured && index === 0;
-        return (
-          <li key={post.url} className={cn(wide && "sm:col-span-2 lg:col-span-3")}>
-            <BlogCard post={post} wide={wide} />
-          </li>
-        );
-      })}
+      {posts.map((post) => (
+        <li key={post.url}>
+          <BlogCard post={post} latest={post.url === latestUrl} />
+        </li>
+      ))}
     </ul>
   );
 }
 
-export function BlogCard({ post, wide = false }: { post: BlogPost; wide?: boolean }) {
+export function BlogCard({ post, latest = false }: { post: BlogPost; latest?: boolean }) {
   return (
-    <Link href={post.url} className="group block h-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring">
-      <Card
-        className={cn(
-          "h-full gap-0 py-0 transition-[translate,box-shadow] duration-300 group-hover:-translate-y-1 group-hover:shadow-xl motion-reduce:transition-none",
-          wide && "lg:flex-row",
-        )}
-      >
-        <PostCover
-          post={post}
-          className={cn(
-            "aspect-[2/1] border-b",
-            wide && "lg:aspect-auto lg:min-h-80 lg:w-1/2 lg:border-e lg:border-b-0",
-          )}
-        />
-        <div
-          className={cn(
-            "flex flex-1 flex-col gap-3 p-5 sm:p-6",
-            wide && "lg:justify-center lg:gap-4 lg:p-10",
-          )}
-        >
-          {wide ? (
-            <span className="w-fit rounded-full bg-brand/15 px-2 py-0.5 text-xs font-medium text-brand-text">
-              {t.blog.latest}
-            </span>
-          ) : null}
-          <PostMeta post={post} className="text-xs" />
-          <h3
-            className={cn(
-              "font-heading text-lg/snug font-semibold tracking-tight text-balance",
-              wide && "lg:text-3xl/tight",
-            )}
-          >
-            {post.title}
-          </h3>
-          {post.description ? (
-            <p
-              className={cn(
-                "line-clamp-3 text-sm/relaxed text-pretty text-muted-foreground",
-                wide && "lg:text-base/relaxed",
-              )}
-            >
-              {post.description}
-            </p>
-          ) : null}
-          <div className="mt-auto flex flex-col gap-4 pt-2">
-            {post.tags.length > 0 ? (
-              <span className="flex flex-wrap gap-1.5">
-                {post.tags.map((tag) => (
-                  <Badge key={tag.slug} variant="outline">
-                    <TagMark name={tag.name} />
-                    {tag.name}
-                  </Badge>
-                ))}
-              </span>
+    <Link
+      href={post.url}
+      className="group block h-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <SpotlightCard>
+        <Card className="relative h-full">
+          {latest ? <Ribbon>{t.blog.latest}</Ribbon> : null}
+          {/* With the ribbon, the header keeps clear of the corner. */}
+          <CardHeader className={cn("gap-3", latest && "pe-14")}>
+            <div className="flex items-center gap-2.5">
+              <PostMarks tags={post.tags.map((tag) => tag.name)} />
+              <PostMeta post={post} className="text-xs" />
+            </div>
+            <CardTitle className="font-heading text-lg/snug font-semibold tracking-tight text-balance">
+              {post.title}
+            </CardTitle>
+            {post.description ? (
+              <CardDescription className="line-clamp-3 text-sm/relaxed text-pretty">
+                {post.description}
+              </CardDescription>
             ) : null}
-            <span className="inline-flex items-center gap-1 border-t pt-4 text-sm font-medium">
+          </CardHeader>
+          {post.tags.length > 0 ? (
+            <CardContent className="flex flex-wrap gap-1.5">
+              {post.tags.map((tag) => (
+                <Badge key={tag.slug} variant="secondary">
+                  {tag.name}
+                </Badge>
+              ))}
+            </CardContent>
+          ) : null}
+          <CardFooter className="mt-auto border-t">
+            <span className="inline-flex items-center gap-1 text-sm font-medium">
               {t.blog.read}
               <ArrowRightIcon
                 aria-hidden="true"
                 className="size-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
               />
             </span>
-          </div>
-        </div>
-      </Card>
+          </CardFooter>
+        </Card>
+      </SpotlightCard>
     </Link>
   );
 }
 
-/** The post's projects in the middle of a generated cover, or the author without one. */
-function PostCover({ post, className }: { post: BlogPost; className?: string }) {
-  const marks = projectsForTags(post.tags.map((tag) => tag.name))
+/** Logos of the projects a post is about, from its tags. */
+function PostMarks({ tags }: { tags: string[] }) {
+  const marks = projectsForTags(tags)
     .map((project) => project.mark)
     .filter(isMarkId);
-  const author = post.authors[0];
+  if (marks.length === 0) return null;
 
   return (
-    <Cover className={className}>
-      {marks.length > 0 ? (
-        <span className="flex items-center gap-4">
-          {marks.map((mark) => (
-            <ProjectMark key={mark} id={mark} className="size-14 drop-shadow-2xl" />
-          ))}
-        </span>
-      ) : (
-        <Avatar className="size-16 ring-1 ring-brand/40">
-          {author?.image ? <AvatarImage src={author.image} alt="" /> : null}
-          <AvatarFallback>{(author?.name ?? site.name).slice(0, 1)}</AvatarFallback>
-        </Avatar>
-      )}
-    </Cover>
+    <span className="flex shrink-0 gap-1">
+      {marks.map((mark) => (
+        <ProjectMark key={mark} id={mark} className="size-5" />
+      ))}
+    </span>
   );
 }
 

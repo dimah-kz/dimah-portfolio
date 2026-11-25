@@ -1,4 +1,5 @@
 import { JsonLd } from "@/components/json-ld";
+import { MotionProvider } from "@/components/motion-provider";
 import { fumadocsI18n } from "@/lib/i18n";
 import { DirectionProvider } from "@/components/ui/direction";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -101,8 +102,10 @@ export default function Layout({ children }: LayoutProps<"/">) {
         <DirectionProvider direction={site.direction}>
           <TooltipProvider>
             <RootProvider dir={site.direction} i18n={fumadocsI18n}>
-              {children}
-              <Toaster />
+              <MotionProvider>
+                {children}
+                <Toaster />
+              </MotionProvider>
             </RootProvider>
           </TooltipProvider>
         </DirectionProvider>

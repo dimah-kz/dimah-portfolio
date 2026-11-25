@@ -6,12 +6,13 @@ alwaysApply: false
 
 # UI
 
+- Design is shadcn-first: an installed shadcn component, then one added with the CLI, then a Magic UI item (`@magicui`), then a small composition. See AGENTS.md, "Design is shadcn-first".
 - Primitives are shadcn/ui on Base UI (`base-mira`) in `src/components/ui`. Add more with `pnpm dlx shadcn@latest add <name>`. Not Radix: `render` instead of `asChild`. `nativeButton={false}` is for a non-button tag that is still a button. A link that looks like a button uses `buttonVariants()` on `Link`, not `Button`.
 - `import { cn } from "cn"`. Icons from `lucide-react`. Inside a component, `data-icon="inline-start"` or `"inline-end"` and no size class.
 - Logical properties only: `ms`/`me`, `ps`/`pe`, `start`/`end`, `text-start`, `border-s`. `gap-*`, not `space-x-*` or `space-y-*`. `size-*` when width and height match.
 - `lang` and `dir` come from `site.direction` / `site.locale` on `<html>`, also passed to `DirectionProvider` and Fumadocs `RootProvider`.
 - Pages render `<main id="main">` inside `SiteLayout`. Use `Container`, `Section`, `SectionHeader`, and `PageHeader` from `src/components/layout/section.tsx` for widths and headings.
-- Colors are tokens. `--brand` is the accent for marks and icons, not body text. Directional arrows get `rtl:rotate-180`.
+- Colors are tokens. `--brand` is the accent for marks and icons, not body text. No background patterns; `bg-wash` is the only backdrop. Directional arrows get `rtl:rotate-180`.
 - Leave the pointer-cursor rule in `src/app/global.css`. Toast with `toast.add` from `@/components/ui/toast`.
 
 Guide: [AGENTS.md](../../AGENTS.md)

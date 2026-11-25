@@ -19,7 +19,7 @@ export function Section({
   ...props
 }: ComponentProps<"section">) {
   return (
-    <section className={cn("py-20 sm:py-24", className)} {...props}>
+    <section className={cn("py-16 sm:py-20", className)} {...props}>
       <Container className="flex flex-col gap-10">{children}</Container>
     </section>
   );
@@ -107,11 +107,7 @@ export function PageHeader({
 }) {
   return (
     <header className="relative isolate -mt-14 overflow-hidden border-b pt-14">
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-grid" />
-      <div
-        aria-hidden="true"
-        className="absolute -top-56 left-1/2 -z-10 size-[40rem] -translate-x-1/2 rounded-full bg-brand/10 blur-3xl"
-      />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-wash" />
       <Container className="flex flex-col gap-4 pt-16 pb-12 sm:pt-20">
         {eyebrow}
         <h1 className="font-heading text-4xl font-semibold tracking-tight text-balance sm:text-5xl">

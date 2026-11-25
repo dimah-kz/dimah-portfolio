@@ -66,6 +66,15 @@ html > body[data-scroll-locked] {
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-shiny-text: shiny-text 8s infinite;
+  @keyframes shiny-text {
+  0%, 90%, 100% {
+    background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+  30%, 60% {
+    background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
 }
 
 :root {
@@ -179,16 +188,11 @@ html > body[data-scroll-locked] {
   }
 }
 
-/* Hairline grid behind the hero and page headers. Fades out toward the bottom. */
-@utility bg-grid {
-  background-image:
-    linear-gradient(to right, var(--border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
-  background-size: 3rem 3rem;
-  /* `[--grid-origin:50%]` centers the fade, for a card cover. */
-  mask-image: radial-gradient(
-    ellipse 80% 70% at 50% var(--grid-origin, 0%),
-    black 40%,
-    transparent 100%
+/* A soft light of the brand color from the top, under the glass header. */
+@utility bg-wash {
+  background-image: radial-gradient(
+    60% 100% at 50% 0%,
+    color-mix(in oklch, var(--brand) 14%, transparent),
+    transparent
   );
 }
