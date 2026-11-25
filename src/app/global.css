@@ -23,8 +23,8 @@ html > body[data-scroll-locked] {
 }
 
 @theme inline {
-  --font-heading: var(--font-latin), var(--font-arabic);
-  --font-sans: var(--font-latin), var(--font-arabic);
+  --font-heading: var(--font-text);
+  --font-sans: var(--font-text);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-text: var(--brand-text);
@@ -168,8 +168,28 @@ html > body[data-scroll-locked] {
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-  html {
-    @apply font-sans;
+  /*
+   * The text stack, by language. Latin first by default. In Persian, Vazirmatn
+   * comes first: otherwise Persian falls to the Latin font's local fallback
+   * (Arial has Arabic glyphs on some systems), and Latin words inside Persian
+   * text match its letters. Another Arabic-script language joins `:lang(fa)`.
+   */
+  :root {
+    --font-text: var(--font-latin), var(--font-arabic);
+  }
+  :lang(fa) {
+    --font-text: var(--font-arabic), var(--font-latin);
+  }
+  html,
+  [lang]:lang(fa) {
+    font-family: var(--font-text);
+  }
+  /* Code reads left to right, also inside right-to-left text. */
+  code,
+  kbd,
+  samp {
+    direction: ltr;
+    unicode-bidi: isolate;
   }
 }
 

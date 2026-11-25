@@ -17,8 +17,8 @@ The sample content is [dimah](https://github.com/dimah-kz), deployed at [dimah.d
 - **Multilingual** with [next-intl](https://next-intl.dev): English at `/`, Persian at `/fa`, each language indexed on its own with `hreflang`, a flag language switcher, and one file to add or remove a language. See [Languages](#languages).
 - **Readable by AI agents**: `llms.txt`, `llms-full.txt`, a `.md` version of every page, `Accept: text/markdown` content negotiation, and JSON-LD for the person, the projects, and each post. See [For AI agents](#for-ai-agents).
 - **Share images** for every page in every language, rendered at build time with [Takumi](https://www.npmjs.com/package/takumi-js), which shapes Persian and mixed-direction text.
-- **SEO**: per-page metadata, canonical URLs, `hreflang`, a sitemap with language alternates, and robots. Preview deploys are `noindex`.
-- **Right-to-left ready**: logical CSS everywhere, so a right-to-left language needs no CSS pass.
+- **SEO**: per-page metadata, canonical URLs, `hreflang`, a sitemap with language alternates, and robots. Preview deploys are `noindex`. Baseline security headers are set in `next.config.ts`.
+- **Right-to-left ready**: logical CSS everywhere, so a right-to-left language needs no CSS pass. Persian is set in [Vazirmatn](https://github.com/rastikerdar/vazirmatn), with normal letter-spacing and code kept left to right.
 - **shadcn-first design** on Base UI, with [Magic UI](https://magicui.design) for motion, light and dark themes, and one accent color.
 
 ## Stack
@@ -155,7 +155,7 @@ The site ships in English (the default) and Persian. Routing, labels, and format
 
 TypeScript reports any step that is missing, including a key missing from the new messages file. To remove a language, undo the same steps and delete its `.<code>.mdx` files. To change the default language, set `defaultLocale`; its pages take the unprefixed URLs.
 
-Inter covers Latin and Noto Sans Arabic covers Arabic script. Another script needs its font in [`src/app/fonts.ts`](src/app/fonts.ts).
+Inter covers Latin and Vazirmatn covers Persian and Arabic. Share images use the same files, in `src/lib/og/fonts`. Another script needs its font in [`src/app/fonts.ts`](src/app/fonts.ts).
 
 ## Structure
 
@@ -209,16 +209,17 @@ src/
 | `pnpm build`        | Production build                |
 | `pnpm lint`         | ESLint                          |
 | `pnpm types:check`  | Route types and TypeScript      |
+| `pnpm test`         | Unit tests (Vitest)             |
 | `pnpm format`       | Prettier, with class sorting    |
 | `pnpm format:check` | Prettier, without writing       |
 
-CI runs `format:check`, `lint`, `types:check`, and `build` on every pull request ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
+CI runs `format:check`, `lint`, `types:check`, `test`, and `build` on every pull request ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 Add a shadcn component with `pnpm dlx shadcn@latest add <name>`, or a Magic UI one with `pnpm dlx shadcn@latest add @magicui/<name>`, from this directory. Coding agents should follow [`AGENTS.md`](AGENTS.md).
 
 ## Deploy
 
-This is a standard Next.js app and deploys on Vercel with no extra configuration. Set `url` in [`src/lib/site.ts`](src/lib/site.ts) to your domain first, so canonical URLs, `hreflang`, share images, the sitemap, and `llms.txt` point to it.
+This is a standard Next.js app (Node.js 20.9 or newer) and deploys on Vercel with no extra configuration. Set `url` in [`src/lib/site.ts`](src/lib/site.ts) to your domain first, so canonical URLs, `hreflang`, share images, the sitemap, and `llms.txt` point to it.
 
 ```bash
 vercel link

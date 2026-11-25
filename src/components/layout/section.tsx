@@ -55,7 +55,7 @@ export function SectionHeader({
         {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
         <h2
           id={id}
-          className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl"
+          className="font-heading text-2xl font-semibold sm:text-3xl ltr:tracking-tight rtl:leading-snug"
         >
           {title}
         </h2>
@@ -110,7 +110,7 @@ export function PageHeader({
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-wash" />
       <Container className="flex flex-col gap-4 pt-16 pb-12 sm:pt-20">
         {eyebrow}
-        <h1 className="font-heading text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+        <h1 className="font-heading text-4xl font-semibold text-balance sm:text-5xl ltr:tracking-tight rtl:leading-snug">
           {title}
         </h1>
         {description ? (

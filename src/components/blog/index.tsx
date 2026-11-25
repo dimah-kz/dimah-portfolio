@@ -86,7 +86,7 @@ export function BlogCard({
               <PostMarks tags={post.tags.map((tag) => tag.name)} />
               <PostMeta post={post} className="text-xs" />
             </div>
-            <CardTitle className="font-heading text-lg/snug font-semibold tracking-tight text-balance">
+            <CardTitle className="font-heading text-lg/snug font-semibold text-balance ltr:tracking-tight">
               {post.title}
             </CardTitle>
             {post.description ? (
@@ -257,7 +257,7 @@ export function BlogTitle(props: ComponentProps<"h1">) {
     <h1
       {...props}
       className={cn(
-        "font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl",
+        "font-heading text-3xl font-semibold text-balance sm:text-4xl ltr:tracking-tight rtl:leading-snug",
         props.className,
       )}
     />

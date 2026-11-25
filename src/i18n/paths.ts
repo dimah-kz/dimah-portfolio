@@ -10,13 +10,16 @@ export function localizePath(path: string, locale: Locale): string {
   return path === "/" ? `/${locale}` : `/${locale}${path}`;
 }
 
-/** The language of a URL path and the path without it. */
+/**
+ * The language of a URL path and the path without it. A prefix of the default
+ * language (`/en/blog`) is read too, though its pages live without one.
+ */
 export function splitLocalePath(pathname: string): {
   locale: Locale;
   path: string;
 } {
   const [, first, ...rest] = pathname.split("/");
-  if (first && first !== defaultLocale && isLocale(first)) {
+  if (isLocale(first)) {
     return { locale: first, path: `/${rest.join("/")}` };
   }
   return { locale: defaultLocale, path: pathname || "/" };

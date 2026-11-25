@@ -7,6 +7,9 @@
   "author": "dimah-kz",
   "homepage": "https://dimah.dev",
   "packageManager": "pnpm@12.23.0",
+  "engines": {
+    "node": ">=20.9"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dimah-kz/dimah-portfolio.git"
@@ -17,6 +20,7 @@
     "start": "next start",
     "lint": "eslint",
     "types:check": "next typegen && tsc --noEmit",
+    "test": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -53,6 +57,7 @@
     "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.3.5",
-    "typescript": "npm:@typescript/typescript6@^6.0.2"
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "5.1.1"
   }
 }

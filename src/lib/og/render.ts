@@ -11,20 +11,20 @@ export const ogFontFamily = "Site Sans";
 const fontsDir = join(process.cwd(), "src/lib/og/fonts");
 
 // Read once at module scope, so prerendering does no I/O per image. These are
-// the files `next/font` serves the site: Inter for Latin, Noto Sans Arabic for
-// Persian and Arabic. Registered without a weight, a variable font keeps its
-// axes, so `fontWeight` picks any weight from 100 to 900.
+// the files `next/font` serves the site (see `src/app/fonts.ts`): Inter for
+// Latin, Vazirmatn for Persian and Arabic. Registered without a weight, a
+// variable font keeps its axes, so `fontWeight` picks any weight from 100 to 900.
 const readFont = (file: string) => readFile(join(fontsDir, file));
-const [interLatin, interLatinExt, notoArabic] = await Promise.all([
+const [interLatin, interLatinExt, vazirmatnArabic] = await Promise.all([
   readFont("inter-latin.woff2"),
   readFont("inter-latin-ext.woff2"),
-  readFont("noto-sans-arabic.woff2"),
+  readFont("vazirmatn-arabic.woff2"),
 ]);
 
 const fonts = [
   {
     name: ogFontFamily,
-    data: notoArabic,
+    data: vazirmatnArabic,
     unicodeRange: [
       [0x0600, 0x06ff],
       [0x0750, 0x077f],

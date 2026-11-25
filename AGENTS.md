@@ -42,6 +42,7 @@ Next.js 16, React 19, Tailwind CSS 4. Exact versions are in `package.json`.
 | Dev server             | `pnpm dev`                                                         |
 | Lint                   | `pnpm lint`                                                        |
 | Types                  | `pnpm types:check`                                                 |
+| Unit tests             | `pnpm test` (Vitest, `src/**/*.test.ts`)                           |
 | Format                 | `pnpm format` (Prettier with the Tailwind plugin)                  |
 | Format check           | `pnpm format:check`                                                |
 | Production build       | `pnpm build`                                                       |
@@ -72,11 +73,11 @@ Keep the look calm: no background patterns (grids, dots, rings), one accent (`--
 6. **shadcn first.** Follow [Design is shadcn-first](#design-is-shadcn-first). Compose at the call site. `className` on a primitive is for layout and size, not for its colors or radius.
 7. **Base UI, not Radix.** Custom triggers use `render`, not `asChild`. `nativeButton={false}` is for a non-button tag that should still be a button. A link that should look like a button uses `className={buttonVariants()}` on `Link`. Do not pass a link to `Button`'s `render` prop — Base UI forces `role="button"` on it.
 8. **Logical properties everywhere.** `ms-*` / `me-*`, `ps-*` / `pe-*`, `start-*` / `end-*`, `text-start`, `border-s`, `rounded-s`. `gap-*`, not `space-x-*` or `space-y-*`. Equal width and height is `size-*`. A directional arrow gets `rtl:rotate-180`. This is what makes a right-to-left language work without a restyle.
-9. **Direction is set once per language.** `lang` and `dir` go on `<html>` in `src/app/[locale]/layout.tsx`, from `localeConfig`. Pass the same `dir` to `DirectionProvider` and to Fumadocs `RootProvider`. Do not set `dir` on nested elements, except `dir="ltr"` on a handle or a URL.
+9. **Direction is set once per language.** `lang` and `dir` go on `<html>` in `src/app/[locale]/layout.tsx`, from `localeConfig`. Pass the same `dir` to `DirectionProvider` and to Fumadocs `RootProvider`. Do not set `dir` on nested elements, except `dir="ltr"` on a handle or a URL; code is left to right through a base rule in `global.css`. Negative letter-spacing breaks Persian letter joins, so tight tracking on text is `ltr:tracking-tight`.
 10. **Icons inside a component get `data-icon` and no size class.** `data-icon="inline-start"` or `data-icon="inline-end"`. Pass the component (`icon={CheckIcon}`), not a string.
 11. **Feedback uses the installed toast.** `import { toast } from "@/components/ui/toast"`, then `toast.add({ title, type })`. `Toaster` is already mounted in the root layout. Do not add Sonner.
 12. **Colors are tokens.** `bg-background`, `text-muted-foreground`, `border-border`. No raw palette classes for UI chrome. `--brand` (`bg-brand`, `text-brand`) is the accent sampled from the avatar; use it for marks, icons, and glows, not for body text. Project logos are image files with their own background, so they read on both themes.
-13. **Fonts.** `--font-latin` is Inter, `--font-arabic` is Noto Sans Arabic, and both `font-sans` and `font-heading` use that stack. Persian and Arabic glyphs already resolve. Do not put a second font-family on `<html>`.
+13. **Fonts.** `--font-latin` is Inter, `--font-arabic` is Vazirmatn (Persian and Arabic), and both `font-sans` and `font-heading` use that stack. Persian and Arabic glyphs already resolve. Do not put a second font-family on `<html>`.
 14. **Every page renders its own `<main id="main">`.** `SiteLayout` wraps `(home)` routes and the 404 page with the header and the footer. The skip link targets `#main`. Content width is `--fd-layout-width`, so the header and the page line up; use `Container` instead of a new `max-w-*`. The header is glass (`transparentMode: "always"` plus the `#nd-nav` rule in `global.css`), and the first block of a page runs under it with `-mt-14 pt-14` on `bg-wash`, as `Hero` and `PageHeader` do.
 15. **Every page has a share image.** A new route passes its card URL as `image` in the last argument of `pageMeta` (`ogImage.page(page, locale)`, `ogImage.post`, `ogImage.tag`), and a new kind of page adds a route under `src/app/[locale]/og` that renders `OgCard` with the `locale`. Do not go back to `next/og`: Satori does not shape Persian. Images cannot read CSS variables, so keep `ogColors` in step with `global.css`.
 16. **Every page lives in every language.** A page goes under `src/app/[locale]`, calls `setRequestLocale(locale)` in its page and layout, and passes the locale to `pageMeta` with the languages it exists in (`translations`), which writes canonical and `hreflang`. Internal links use `Link` from `@/i18n/navigation` with a path without the language (`/blog/my-post`). Outside components, `localizePath(path, locale)` from `src/i18n/paths.ts` builds the same URL. Do not prefix paths by hand and do not import `next/link` for internal pages.
@@ -107,7 +108,7 @@ Adding a language is five steps, listed at the top of `src/i18n/locales.ts`; Typ
 
 ## Check
 
-`pnpm format:check`, `pnpm lint`, and `pnpm types:check` pass. UI changes are checked in the running app, including `/`, `/projects`, and `/blog`, and their Persian pages under `/fa`, in light and dark and at phone width. Content changes are also checked in `/llms.txt` and the page's `.md`, and SEO changes in the page's `hreflang` and `/sitemap.xml`.
+`pnpm format:check`, `pnpm lint`, `pnpm types:check`, and `pnpm test` pass. A change to a plain helper (paths, URLs, content parsing) comes with a test next to it. UI changes are checked in the running app, including `/`, `/projects`, and `/blog`, and their Persian pages under `/fa`, in light and dark and at phone width. Content changes are also checked in `/llms.txt` and the page's `.md`, and SEO changes in the page's `hreflang` and `/sitemap.xml`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

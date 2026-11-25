@@ -21,7 +21,7 @@ function FooterNav({
 }) {
   return (
     <nav aria-label={title} className="flex flex-col gap-3">
-      <h2 className="text-xs font-medium tracking-wide text-muted-foreground/80 uppercase">
+      <h2 className="text-xs font-medium text-muted-foreground/80 ltr:tracking-wide ltr:uppercase">
         {title}
       </h2>
       <ul className="flex flex-col gap-2">{children}</ul>

@@ -259,7 +259,7 @@ export function ContactSection() {
             />
             <CardHeader className="gap-3 px-6 pt-6 sm:px-10 sm:pt-10">
               <Eyebrow>{t("eyebrow")}</Eyebrow>
-              <CardTitle className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              <CardTitle className="font-heading text-2xl font-semibold sm:text-3xl ltr:tracking-tight rtl:leading-snug">
                 <h2 id="contact-title">{t("title")}</h2>
               </CardTitle>
               <CardDescription className="max-w-xl text-sm/relaxed text-pretty sm:text-base/relaxed">
