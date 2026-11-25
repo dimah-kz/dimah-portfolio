@@ -13,12 +13,20 @@ export const experienceSchema = z.object({
   company: z.string(),
   /** The company's site. */
   url: z.url().optional(),
+  /**
+   * Square image in `public/`, such as `/logos/my-company.svg`, drawn on light
+   * and dark pages, so give it its own background. Leave it out to show none.
+   */
+  logo: z
+    .string()
+    .startsWith("/", "A path in `public/`, starting with `/`.")
+    .optional(),
   location: z.string().optional(),
   /** First month, as `YYYY-MM`. */
   start: month,
   /** Last month, as `YYYY-MM`. Leave it out for a current role. */
   end: month.optional(),
-  /** One or two sentences on what you did. */
+  /** One or two sentences on what you did. A link is written `[text](https://…)`. */
   summary: z.string().optional(),
   stack: z.array(z.string()).default([]),
 });

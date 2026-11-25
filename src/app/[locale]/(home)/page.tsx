@@ -3,7 +3,6 @@ import { Hero } from "@/components/home/hero";
 import {
   AboutSection,
   ContactSection,
-  ExperienceSection,
   JourneySection,
   WorkSection,
   WritingSection,
@@ -34,7 +33,6 @@ export default async function HomePage(props: PageProps<"/[locale]">) {
       <WorkSection />
       <AboutSection />
       <JourneySection />
-      <ExperienceSection />
       <WritingSection posts={postsIn(locale).slice(0, latestPostCount)} />
       <ContactSection />
     </main>

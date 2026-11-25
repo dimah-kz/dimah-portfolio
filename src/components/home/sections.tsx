@@ -1,5 +1,6 @@
 import { BlogList } from "@/components/blog";
 import { ContactButton } from "@/components/contact-button";
+import { InlineText } from "@/components/inline-text";
 import {
   Section,
   SectionHeader,
@@ -18,21 +19,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemFooter,
-  ItemTitle,
-} from "@/components/ui/item";
 import type { BlogPost } from "@/lib/blog";
-import { getExperience, type Role } from "@/lib/experience";
 import { findProfile, primaryContact, profiles } from "@/lib/links";
 import { getProjects } from "@/lib/projects";
 import { site, siteCopy } from "@/lib/site";
 import { cn } from "cn";
-import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 /** Projects on the home page. All of them are on `/projects`. */
 const homeProjectCount = 5;
@@ -56,7 +48,7 @@ export function AboutSection() {
               key={paragraph}
               className="text-[0.9375rem]/7 text-pretty text-muted-foreground"
             >
-              {paragraph}
+              <InlineText text={paragraph} />
             </p>
           ))}
         </BlurFade>
@@ -117,102 +109,6 @@ export function WorkSection() {
       </BlurFade>
       <BlurFade inView delay={0.06}>
         <ProjectGrid projects={shown} />
-      </BlurFade>
-    </Section>
-  );
-}
-
-function RoleDates({ role }: { role: Role }) {
-  const t = useTranslations("experience");
-  const format = useFormatter();
-
-  return (
-    <span className="text-sm text-muted-foreground tabular-nums">
-      <time dateTime={role.start.toISOString().slice(0, 7)}>
-        {format.dateTime(role.start, "month")}
-      </time>
-      {" – "}
-      {role.end ? (
-        <time dateTime={role.end.toISOString().slice(0, 7)}>
-          {format.dateTime(role.end, "month")}
-        </time>
-      ) : (
-        t("present")
-      )}
-    </span>
-  );
-}
-
-/** Work history from `content/experience`. Hidden without roles. */
-export function ExperienceSection() {
-  const t = useTranslations();
-  const experience = getExperience(useLocale());
-  if (experience.length === 0) return null;
-
-  return (
-    <Section aria-labelledby="experience-title">
-      <BlurFade inView>
-        <SectionHeader
-          id="experience-title"
-          title={t("experience.title")}
-          description={t("experience.description")}
-        />
-      </BlurFade>
-      <BlurFade inView delay={0.06}>
-        <ul className="flex flex-col gap-3">
-          {experience.map((role) => (
-            <li key={role.slug}>
-              <Item variant="outline" className="items-start px-4 py-3.5">
-                <ItemContent>
-                  <ItemTitle className="text-[0.9375rem]">
-                    {role.role}
-                  </ItemTitle>
-                  <ItemDescription className="text-sm">
-                    {role.url ? (
-                      <a
-                        href={role.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-medium text-foreground underline-offset-4 hover:underline"
-                      >
-                        {role.company}
-                      </a>
-                    ) : (
-                      <span className="font-medium text-foreground">
-                        {role.company}
-                      </span>
-                    )}
-                    {role.location ? ` · ${role.location}` : null}
-                  </ItemDescription>
-                  {role.summary ? (
-                    <p className="pt-1 text-sm/relaxed text-pretty text-muted-foreground">
-                      {role.summary}
-                    </p>
-                  ) : null}
-                </ItemContent>
-                <ItemActions>
-                  <RoleDates role={role} />
-                </ItemActions>
-                {role.stack.length > 0 ? (
-                  <ItemFooter>
-                    <ul
-                      className="flex flex-wrap gap-1.5"
-                      aria-label={t("project.stack")}
-                    >
-                      {role.stack.map((item) => (
-                        <li key={item}>
-                          <Badge variant="secondary" className="font-normal">
-                            {item}
-                          </Badge>
-                        </li>
-                      ))}
-                    </ul>
-                  </ItemFooter>
-                ) : null}
-              </Item>
-            </li>
-          ))}
-        </ul>
       </BlurFade>
     </Section>
   );

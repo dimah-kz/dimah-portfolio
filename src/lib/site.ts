@@ -68,6 +68,7 @@ export const site: SiteConfig = {
         paragraphs: [
           "I'm Dimah, a full-stack developer born in Shiraz in 2006 and a computer engineering student at Shiraz University. Mathematics was my first love, and the same pull toward logic and problem-solving led me to programming, which has been my passion ever since.",
           "My work centers on the React ecosystem, with Next.js as my main framework. I write TypeScript end to end, from the interface to the APIs and databases behind it, and I aim for code that is clear, well structured, and easy for a team to maintain. My background in UI design with Figma helps me bring design and code together, building precise, polished interfaces that work equally well in English and Persian, left to right and right to left.",
+          "I have solid experience delivering production software, including a complete customer loyalty platform, an education dashboard, and other projects built to production standards and deployed. Most of them were delivered as part of a team.",
           "I'm a firm believer in open source. Working in the open keeps code transparent, invites review and contributions, and lets others learn from it and build on it. That's why I publish most of my work under dimah-kz, with documentation written for both people and coding agents.",
         ],
         journey: [
@@ -105,7 +106,7 @@ export const site: SiteConfig = {
             period: "Today",
             title: "Full-stack development and open source",
             description:
-              "From WordPress and UI design I moved into programming. Today I build full-stack applications with React and Next.js and maintain open-source tools.",
+              "From WordPress and UI design I moved into programming. Today I head the engineering department at [Nothing](https://nothing.pub) and build open-source tools for React and Next.js.",
           },
         ],
       },
@@ -128,6 +129,7 @@ export const site: SiteConfig = {
         paragraphs: [
           "دیماه هستم، توسعه‌دهنده فول‌استک، متولد ۱۳۸۵ در شیراز و دانشجوی مهندسی کامپیوتر دانشگاه شیراز. ریاضی اولین عشقم بود و همان علاقه به منطق و حل مسئله مرا به برنامه‌نویسی رساند؛ کاری که از آن روز تا امروز عاشقش هستم.",
           "تمرکز کارم روی اکوسیستم React است و فریم‌ورک اصلی‌ام Next.js. با TypeScript از رابط کاربری تا API و دیتابیس پشت آن را می‌نویسم و دنبال کدی هستم که خوانا، ساختارمند و برای کار تیمی قابل نگهداری باشد. سابقه‌ام در طراحی رابط کاربری با فیگما کمک می‌کند طراحی و کد را به هم نزدیک کنم و رابط‌هایی دقیق و تمیز بسازم که به فارسی و انگلیسی، راست‌به‌چپ و چپ‌به‌راست، به یک اندازه درست کار کنند.",
+          "در توسعه و تحویل نرم‌افزارهای عملیاتی تجربه جدی دارم؛ از جمله یک باشگاه مشتریان کامل، یک داشبورد آموزشی و پروژه‌های دیگری که در سطح پروداکشن پیاده‌سازی و مستقر شده‌اند. بیشتر این پروژه‌ها حاصل کار تیمی بوده‌اند.",
           "به متن‌باز باور عمیقی دارم. کدی که آشکارا منتشر می‌شود شفاف‌تر است، بازبینی و مشارکت دیگران را به همراه دارد و به همه اجازه می‌دهد از آن یاد بگیرند و رویش بسازند. برای همین بیشتر کارهایم را با نام dimah-kz متن‌باز منتشر می‌کنم، همراه با مستنداتی که هم برای آدم‌ها نوشته شده و هم برای ایجنت‌های برنامه‌نویسی.",
         ],
         journey: [
@@ -165,7 +167,7 @@ export const site: SiteConfig = {
             period: "امروز",
             title: "توسعه فول‌استک و متن‌باز",
             description:
-              "از وردپرس و طراحی رابط کاربری به برنامه‌نویسی رسیدم. امروز با React و Next.js اپلیکیشن‌های فول‌استک می‌سازم و ابزارهای متن‌باز توسعه می‌دهم و نگهداری می‌کنم.",
+              "از وردپرس و طراحی رابط کاربری به برنامه‌نویسی رسیدم. امروز مدیر دپارتمان برنامه‌نویسی [Nothing](https://nothing.pub) هستم و ابزارهای متن‌باز برای React و Next.js می‌سازم.",
           },
         ],
       },

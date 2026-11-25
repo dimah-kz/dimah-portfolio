@@ -18,6 +18,7 @@ export interface Milestone {
   /** When, in your own words: an age, a year, or "Today". */
   period?: string;
   title: string;
+  /** A link is written `[text](https://…)`. */
   description?: string;
 }
 
@@ -45,6 +46,7 @@ export interface SiteCopy {
   };
   /** The About section. With no paragraphs and no milestones, it is hidden. */
   about: {
+    /** A link is written `[text](https://…)`. */
     paragraphs: string[];
     /** The timeline under the paragraphs, oldest first. An empty list hides it. */
     journey: Milestone[];

@@ -45,7 +45,7 @@
   "contact": {
     "title": "Get in touch",
     "cta": {
-      "github": "GitHub",
+      "github": "My GitHub",
       "linkedin": "Connect on LinkedIn",
       "x": "Message on X",
       "telegram": "Message on Telegram",
@@ -68,7 +68,7 @@
   },
   "projects": {
     "title": "Projects",
-    "description": "Open-source tools and templates I build and maintain.",
+    "description": "Products and open-source tools I build and maintain.",
     "empty": "No projects yet."
   },
   "blog": {

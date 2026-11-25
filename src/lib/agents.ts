@@ -155,7 +155,6 @@ function home(ctx: Context): string {
   const { locale, t } = ctx;
   const copy = siteCopy(locale);
   const projects = getProjects(locale);
-  const experience = getExperience(locale);
   const posts = postsIn(locale);
 
   return blocks(
@@ -173,12 +172,6 @@ function home(ctx: Context): string {
         `## ${t("work.title")}`,
         ...projects.map((project) => projectSection(project, ctx, "###")),
         link(t("work.all"), markdownLink("/projects", locale)),
-      ).trimEnd(),
-
-    experience.length > 0 &&
-      blocks(
-        `## ${t("experience.title")}`,
-        ...experience.map((role) => roleSection(role, ctx)),
       ).trimEnd(),
 
     posts.length > 0 &&
@@ -202,12 +195,25 @@ function home(ctx: Context): string {
 function projectsPage(ctx: Context): string {
   const { locale, t } = ctx;
   const projects = getProjects(locale);
+  const experience = getExperience(locale);
+  const experienceBlock =
+    experience.length > 0 &&
+    blocks(
+      `## ${t("experience.title")}`,
+      ...experience.map((role) => roleSection(role, ctx)),
+    ).trimEnd();
+
   if (projects.length === 0) {
-    return blocks(heading(t("projects.title")), t("projects.empty"));
+    return blocks(
+      heading(t("projects.title")),
+      t("projects.empty"),
+      experienceBlock,
+    );
   }
   return blocks(
     heading(t("projects.title"), t("projects.description")),
     ...projects.map((project) => projectSection(project, ctx)),
+    experienceBlock,
   );
 }
 
