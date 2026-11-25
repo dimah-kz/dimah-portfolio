@@ -1,3 +1,4 @@
+import { InlineText } from "@/components/inline-text";
 import type { Milestone } from "@/lib/site-config";
 import { cn } from "cn";
 
@@ -40,7 +41,7 @@ export function Timeline({ items }: { items: Milestone[] }) {
             <h3 className="text-[0.9375rem] font-medium">{item.title}</h3>
             {item.description ? (
               <p className="text-sm/relaxed text-pretty text-muted-foreground">
-                {item.description}
+                <InlineText text={item.description} />
               </p>
             ) : null}
           </li>
