@@ -1,22 +1,31 @@
 ---
+# One file per project, read by the home page and /projects.
+# Fields: `projectSchema` in src/lib/projects.ts. Only the frontmatter is used.
 name: dimah-s3
 description: >-
-  Full-stack S3 toolkit for the React ecosystem, powered by AWS SDK v3.
-  The server signs the upload, the browser talks to the bucket.
+  A full-stack S3 toolkit for the React ecosystem. The server signs each upload,
+  the browser sends the file straight to the bucket, and credentials never leave
+  the backend.
+# Square image in public/. Without one, the card shows the first letter.
 logo: /logos/dimah-s3.svg
+# The main project: a large card at the top of the projects.
 featured: true
-order: 2
+order: 1
+# Blog posts with this tag show the project's logo.
 tag: dimah-s3
 links:
   live: https://s3.dimah.dev
   repository: https://github.com/dimah-kz/dimah-s3
 highlights:
-  - Credentials never leave the backend
-  - Server hooks for auth, quotas, and database rules
-  - Headless React hooks, optional shadcn UI
-  - Amazon S3, Cloudflare R2, MinIO, and other S3-compatible stores
+  - Typed server routes with guards and signed upload tickets
+  - Upload, download, and delete, including resumable multipart
+  - Headless React hooks, with optional shadcn/ui components
+  - Optional database tracking, folders, and expiring share links
+  - Server hooks for auth, quotas, confirmation, and cleanup
+  - Amazon S3, Cloudflare R2, MinIO, ArvanCloud, and more
 stack:
   - AWS SDK v3
   - React
+  - Node.js
   - shadcn/ui
 ---

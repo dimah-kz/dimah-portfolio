@@ -7,21 +7,24 @@ import { site } from "../site";
 import { ogFontFamily } from "./render";
 
 /**
- * The site's dark theme in plain colors: images cannot read CSS variables.
- * Keep them close to `src/app/global.css`.
+ * The site's light theme in plain colors: images cannot read CSS variables.
+ * Keep them close to `:root` in `src/app/global.css`.
  */
 export const ogColors = {
-  background: "#0a0a0a",
-  foreground: "#fafafa",
-  muted: "#a3a3a3",
-  subtle: "#737373",
-  border: "rgba(255, 255, 255, 0.12)",
-  /** A card on the background, like `--card`. */
-  surface: "#141414",
+  /** Around the sheet, like `--muted`. */
+  canvas: "#f5f5f5",
+  /** The sheet, like `--card`. */
+  background: "#ffffff",
+  foreground: "#0a0a0a",
+  /** `--muted-foreground`. */
+  muted: "#737373",
+  subtle: "#a3a3a3",
+  /** `--border`. */
+  border: "#e5e5e5",
   /** `--brand`, the gold of the avatar. */
-  brand: "#d6b52d",
-  brandGlow: "rgba(214, 181, 45, 0.22)",
-  brandRing: "rgba(214, 181, 45, 0.55)",
+  brand: "#c09f00",
+  /** The soft light of `bg-wash`. */
+  brandGlow: "rgba(192, 159, 0, 0.12)",
 } as const;
 
 const imageTypes: Record<string, string> = {
@@ -45,9 +48,9 @@ const host = new URL(site.url).host;
 
 /** A short heading is set large; a longer one smaller, so three lines hold it. */
 function titleSize(title: string, narrow: boolean) {
-  if (title.length <= 18) return narrow ? 96 : 112;
-  if (title.length <= 36) return narrow ? 68 : 84;
-  return narrow ? 58 : 68;
+  if (title.length <= 18) return narrow ? 92 : 104;
+  if (title.length <= 36) return narrow ? 64 : 76;
+  return narrow ? 54 : 62;
 }
 
 /**
@@ -66,13 +69,27 @@ function keepHyphens(text: string): ReactNode {
   );
 }
 
+function Dot({ size, color }: { size: number; color: string }) {
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: 999,
+        backgroundColor: color,
+        flexShrink: 0,
+      }}
+    />
+  );
+}
+
 type OgCardProps = {
   /** The language of the card: its direction and text. */
   locale: Locale;
   /** Section label after the name, like `Blog` or `Projects`. */
   eyebrow?: string;
   title: string;
-  /** The end of the title, set in the brand color, as in the home hero. */
+  /** The end of the title, on its own line in a softer color, as in the hero. */
   titleAccent?: string;
   description?: string;
   /** Short facts on the bottom row: a date, a reading time, a count. */
@@ -82,11 +99,12 @@ type OgCardProps = {
 };
 
 /**
- * The 1200×630 share card: the site's gold wash, the avatar and the section on
- * top, a large title, the facts and the domain at the bottom, and a tile with
- * the avatar or a project logo on the end side.
- * It lays out in the language's direction, so a Persian card reads right to left with
- * the art on the left. Title and description stop with an ellipsis.
+ * The 1200×630 share card, in the light theme: a white sheet on a pale frame
+ * with the site's gold light at the top. The name and the section on top, a
+ * large title, the facts and the domain at the bottom, and the avatar or a
+ * project logo on the end side. It lays out in the language's direction, so a
+ * Persian card reads right to left with the art on the left. Title and
+ * description stop with an ellipsis.
  */
 export function OgCard({
   locale,
@@ -98,7 +116,10 @@ export function OgCard({
   art,
 }: OgCardProps) {
   const { dir } = localeConfig[locale];
-  const fullTitle = titleAccent ? `${title} ${titleAccent}` : title;
+  const ltr = dir === "ltr";
+  // The accent has a line of its own, so the longer of the two sets the size.
+  const sizedBy =
+    titleAccent && titleAccent.length > title.length ? titleAccent : title;
 
   return (
     <div
@@ -106,162 +127,159 @@ export function OgCard({
       lang={locale}
       style={{
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        position: "relative",
         width: "100%",
         height: "100%",
-        padding: "64px 80px",
+        padding: 28,
         fontFamily: ogFontFamily,
         color: ogColors.foreground,
-        backgroundColor: ogColors.background,
-        // The site's wash: a soft light of the brand color from the top.
-        backgroundImage: `radial-gradient(60% 100% at 50% 0%, ${ogColors.brandGlow}, transparent)`,
+        backgroundColor: ogColors.canvas,
+        backgroundImage: `radial-gradient(70% 90% at 50% 0%, ${ogColors.brandGlow}, transparent)`,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- Takumi renders <img>, not next/image. */}
-        <img
-          src={avatarSrc}
-          width={52}
-          height={52}
-          alt=""
-          style={{ borderRadius: 999, border: `2px solid ${ogColors.border}` }}
-        />
-        <span
-          style={{ fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}
-        >
-          {site.name}
-        </span>
-        {eyebrow ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div
-              style={{ width: 36, height: 2, backgroundColor: ogColors.brand }}
-            />
-            <span
-              style={{ fontSize: 28, fontWeight: 500, color: ogColors.brand }}
-            >
-              {keepHyphens(eyebrow)}
-            </span>
-          </div>
-        ) : null}
-      </div>
-
-      {/* Text, then the art on the end side. A row follows `dir`, so a Persian
-          card puts the art on the left. The art box has no height, so its
-          rings overflow the row without moving the text. */}
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          gap: 40,
-          width: "100%",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flex: 1,
+          padding: "52px 64px",
+          borderRadius: 36,
+          border: `1.5px solid ${ogColors.border}`,
+          backgroundColor: ogColors.background,
+          boxShadow:
+            "0 1px 2px rgba(0, 0, 0, 0.04), 0 24px 48px -28px rgba(0, 0, 0, 0.18)",
         }}
       >
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            gap: 24,
-            flex: 1,
-            minWidth: 0,
-            maxWidth: art ? 660 : 1040,
+            alignItems: "center",
+            gap: 16,
+            fontSize: 28,
+          }}
+        >
+          <Dot size={12} color={ogColors.brand} />
+          <span
+            style={{
+              fontWeight: 650,
+              letterSpacing: ltr ? "-0.02em" : 0,
+            }}
+          >
+            {site.name}
+          </span>
+          {eyebrow ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <span style={{ color: ogColors.border, fontWeight: 300 }}>/</span>
+              <span style={{ color: ogColors.muted, fontWeight: 500 }}>
+                {keepHyphens(eyebrow)}
+              </span>
+            </div>
+          ) : null}
+        </div>
+
+        {/* Text, then the art on the end side. A row follows `dir`, so a
+            Persian card puts the art on the left. */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 48,
+            width: "100%",
           }}
         >
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              fontSize: titleSize(fullTitle, Boolean(art)),
-              fontWeight: 650,
-              lineHeight: 1.08,
-              letterSpacing: dir === "ltr" ? "-0.035em" : 0,
+              gap: 22,
+              flex: 1,
+              minWidth: 0,
             }}
           >
             <div
-              style={{ textWrap: "balance", lineClamp: titleAccent ? 2 : 3 }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                fontSize: titleSize(sizedBy, Boolean(art)),
+                fontWeight: 650,
+                lineHeight: ltr ? 1.06 : 1.3,
+                letterSpacing: ltr ? "-0.04em" : 0,
+              }}
             >
-              {keepHyphens(title)}
+              <div
+                style={{ textWrap: "balance", lineClamp: titleAccent ? 2 : 3 }}
+              >
+                {keepHyphens(title)}
+              </div>
+              {/* Its own line, as in the hero: an inline span breaks under a
+                  line clamp when the card is right to left. */}
+              {titleAccent ? (
+                <div style={{ color: ogColors.subtle, lineClamp: 1 }}>
+                  {keepHyphens(titleAccent)}
+                </div>
+              ) : null}
             </div>
-            {/* Its own line, as in the hero: an inline span breaks under a
-              line clamp when the card is right to left. */}
-            {titleAccent ? (
-              <div style={{ color: ogColors.brand, lineClamp: 1 }}>
-                {keepHyphens(titleAccent)}
+            {description ? (
+              <div
+                style={{
+                  fontSize: art ? 28 : 30,
+                  lineHeight: 1.45,
+                  color: ogColors.muted,
+                  textWrap: "pretty",
+                  lineClamp: 2,
+                }}
+              >
+                {keepHyphens(description)}
               </div>
             ) : null}
           </div>
-          {description ? (
+          {art ? (
             <div
               style={{
-                fontSize: art ? 30 : 32,
-                lineHeight: 1.4,
-                color: ogColors.muted,
-                textWrap: "pretty",
-                lineClamp: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 280,
+                flexShrink: 0,
               }}
             >
-              {keepHyphens(description)}
+              {art}
             </div>
           ) : null}
         </div>
-        {art ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 340,
-              height: 0,
-              flexShrink: 0,
-            }}
-          >
-            {art}
-          </div>
-        ) : null}
-      </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          gap: 24,
-          fontSize: 26,
-          color: ogColors.subtle,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {meta.map((item, index) => (
-            <div
-              key={item}
-              style={{ display: "flex", alignItems: "center", gap: 16 }}
-            >
-              {index > 0 ? (
-                <div
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: 999,
-                    backgroundColor: ogColors.subtle,
-                  }}
-                />
-              ) : null}
-              <span>{item}</span>
-            </div>
-          ))}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: 999,
-              backgroundColor: ogColors.brand,
-            }}
-          />
-          <span dir="ltr" style={{ color: ogColors.muted }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            gap: 24,
+            fontSize: 24,
+            color: ogColors.muted,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {meta.map((item, index) => (
+              <div
+                key={item}
+                style={{ display: "flex", alignItems: "center", gap: 14 }}
+              >
+                {/* A hairline, not a dot: a dot reads as a Persian zero. */}
+                {index > 0 ? (
+                  <div
+                    style={{
+                      width: 1.5,
+                      height: 22,
+                      backgroundColor: ogColors.border,
+                    }}
+                  />
+                ) : null}
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+          <span dir="ltr" style={{ color: ogColors.subtle }}>
             {host}
           </span>
         </div>
@@ -270,44 +288,28 @@ export function OgCard({
   );
 }
 
-/**
- * A raised square, like a shadcn `Card`: a hairline border, a faint gold light
- * from the top, and whatever the card is about in the middle.
- */
-function Tile({ children }: { children: ReactNode }) {
+const lift = "0 28px 56px -24px rgba(0, 0, 0, 0.35)";
+
+/** The avatar in a hairline ring, for the home and blog cards. */
+export function OgAvatarArt() {
   return (
     <div
       style={{
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 300,
-        height: 300,
-        borderRadius: 56,
-        border: `2px solid ${ogColors.border}`,
-        backgroundColor: ogColors.surface,
-        backgroundImage: `radial-gradient(80% 60% at 50% 0%, ${ogColors.brandGlow}, transparent)`,
-        boxShadow: "0 40px 80px rgba(0, 0, 0, 0.55)",
+        padding: 12,
+        borderRadius: 999,
+        border: `1.5px solid ${ogColors.border}`,
       }}
     >
-      {children}
-    </div>
-  );
-}
-
-/** The avatar on a tile, for the home and blog cards. */
-export function OgAvatarArt() {
-  return (
-    <Tile>
       {/* eslint-disable-next-line @next/next/no-img-element -- Takumi renders <img>, not next/image. */}
       <img
         src={avatarSrc}
-        width={168}
-        height={168}
+        width={232}
+        height={232}
         alt=""
-        style={{ borderRadius: 999, border: `3px solid ${ogColors.brandRing}` }}
+        style={{ borderRadius: 999, boxShadow: lift }}
       />
-    </Tile>
+    </div>
   );
 }
 
@@ -315,7 +317,13 @@ function ProjectTile({ project, size }: { project: Project; size: number }) {
   if (project.logo) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- Takumi renders <img>, not next/image.
-      <img src={publicImage(project.logo)} width={size} height={size} alt="" />
+      <img
+        src={publicImage(project.logo)}
+        width={size}
+        height={size}
+        alt=""
+        style={{ borderRadius: size * 0.22, boxShadow: lift }}
+      />
     );
   }
 
@@ -328,8 +336,8 @@ function ProjectTile({ project, size }: { project: Project; size: number }) {
         width: size,
         height: size,
         borderRadius: size * 0.22,
-        border: `2px solid ${ogColors.border}`,
-        backgroundColor: "#171717",
+        border: `1.5px solid ${ogColors.border}`,
+        backgroundColor: ogColors.canvas,
         fontSize: size * 0.45,
         fontWeight: 600,
         color: ogColors.muted,
@@ -340,32 +348,26 @@ function ProjectTile({ project, size }: { project: Project; size: number }) {
   );
 }
 
-/** One project's logo on a tile, for its blog tag and the posts about it. */
+/** One project's logo, for its blog tag and the posts about it. */
 export function OgProjectArt({ project }: { project: Project }) {
-  return (
-    <Tile>
-      <ProjectTile project={project} size={150} />
-    </Tile>
-  );
+  return <ProjectTile project={project} size={208} />;
 }
 
-/** Up to four project logos on a tile, for `/projects`. */
+/** Up to four project logos in a square, for `/projects`. */
 export function OgProjectsArt({ projects }: { projects: Project[] }) {
   return (
-    <Tile>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: 24,
-          width: 224,
-        }}
-      >
-        {projects.slice(0, 4).map((project) => (
-          <ProjectTile key={project.slug} project={project} size={100} />
-        ))}
-      </div>
-    </Tile>
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        gap: 24,
+        width: 264,
+      }}
+    >
+      {projects.slice(0, 4).map((project) => (
+        <ProjectTile key={project.slug} project={project} size={120} />
+      ))}
+    </div>
   );
 }

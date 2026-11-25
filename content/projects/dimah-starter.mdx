@@ -1,24 +1,20 @@
 ---
-# One file per project, read by the home page and /projects.
-# Fields: `projectSchema` in src/lib/projects.ts. Only the frontmatter is used.
 name: dimah-starter
 description: >-
-  Open-source, server-first Next.js 16 starter for multi-tenant SaaS.
-  Sign-in, organizations with roles, an admin panel, and uploads are already wired.
-# Square image in public/. Without one, the card shows the first letter.
+  A server-first Next.js 16 starter for multi-tenant SaaS. Sign-in,
+  organizations with roles, an admin panel, uploads, and English and Persian
+  work from the first run.
 logo: /logos/dimah-starter.svg
-featured: true
-order: 1
-# Blog posts with this tag show the project's logo.
+order: 2
 tag: dimah-starter
 links:
   live: https://starter.dimah.dev
   repository: https://github.com/dimah-kz/dimah-starter
 highlights:
-  - Organizations, invitations, and roles on Better Auth
-  - Every write is a Server Action, with tagged cache reads
-  - Platform admin panel and direct-to-bucket uploads
-  - English and Persian, right-to-left ready
+  - Email, Google, passkey, and two-factor sign-in on Better Auth
+  - Organizations, email invitations, and owner, admin, and member roles
+  - Server Components read, Server Actions write, and cached reads are tagged
+  - Direct-to-bucket uploads with dimah-s3
 stack:
   - Next.js 16
   - React 19

@@ -1,5 +1,5 @@
 import { localeParam } from "@/i18n/params";
-import { BlogBackLink, BlogCards, BlogTagCloud } from "@/components/blog";
+import { BlogBackLink, BlogList, BlogTagCloud } from "@/components/blog";
 import { Container, PageHeader } from "@/components/layout/section";
 import { ProjectLogo } from "@/components/project-logo";
 import { locales } from "@/i18n/locales";
@@ -49,8 +49,8 @@ export default async function BlogTagPage(
           <BlogTagCloud tags={getTags(posts)} active={result.tag.slug} />
         </div>
       </PageHeader>
-      <Container className="py-12 sm:py-16">
-        <BlogCards posts={result.posts} latestSlug={posts[0]?.slug} />
+      <Container className="pt-8 pb-20 sm:pt-10">
+        <BlogList posts={result.posts} />
       </Container>
     </main>
   );

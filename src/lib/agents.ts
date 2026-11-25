@@ -7,7 +7,7 @@ import { feedPath, llmsPath, profiles } from "./links";
 import { markdownUrl } from "./markdown-url";
 import { getProjects, type Project } from "./projects";
 import { absoluteUrl, canonicalUrl } from "./seo";
-import { headline, site, siteCopy } from "./site";
+import { authorName, headline, site, siteCopy } from "./site";
 import { blogSource, postsIn } from "./source";
 
 /**
@@ -128,6 +128,25 @@ function contactLines({ locale, t }: Context): string {
   return lines.join("\n");
 }
 
+/** The About section of the home page: paragraphs, skills, and the timeline. */
+function aboutSection({ locale, t }: Context): string | undefined {
+  const { paragraphs, journey } = siteCopy(locale).about;
+  const skills = site.skills ?? [];
+  if (paragraphs.length + skills.length + journey.length === 0) return;
+
+  const steps = journey.map(({ period, title, description }) => {
+    const label = period ? `**${period}: ${title}.**` : `**${title}.**`;
+    return description ? `- ${label} ${description}` : `- ${label}`;
+  });
+
+  return blocks(
+    `## ${t("about.title")}`,
+    ...paragraphs,
+    skills.length > 0 && `${t("about.skills")}: ${skills.join(", ")}`,
+    steps.length > 0 && `### ${t("about.journey")}\n\n${steps.join("\n")}`,
+  ).trimEnd();
+}
+
 /* -------------------------------------------------------------------------- */
 /* Pages                                                                      */
 /* -------------------------------------------------------------------------- */
@@ -143,9 +162,11 @@ function home(ctx: Context): string {
     heading(site.name, copy.description),
     `**${headline(locale)}**`,
     copy.home.intro,
-    [`${site.author.name}: ${copy.tagline}`, copy.availability]
+    [`${authorName(locale)}: ${copy.tagline}`, copy.availability]
       .filter(Boolean)
       .join("\n\n"),
+
+    aboutSection(ctx),
 
     projects.length > 0 &&
       blocks(
@@ -158,14 +179,6 @@ function home(ctx: Context): string {
       blocks(
         `## ${t("experience.title")}`,
         ...experience.map((role) => roleSection(role, ctx)),
-      ).trimEnd(),
-
-    copy.home.principles.length > 0 &&
-      blocks(
-        `## ${t("principles.title")}`,
-        ...copy.home.principles.map(
-          ({ title, description }) => `### ${title}\n\n${description}`,
-        ),
       ).trimEnd(),
 
     posts.length > 0 &&

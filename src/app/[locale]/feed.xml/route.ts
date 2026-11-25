@@ -1,7 +1,7 @@
 import { isLocale, locales } from "@/i18n/locales";
 import { feedPath, findProfile } from "@/lib/links";
 import { canonicalUrl } from "@/lib/seo";
-import { site, siteCopy } from "@/lib/site";
+import { authorName, site, siteCopy } from "@/lib/site";
 import { postsIn } from "@/lib/source";
 import { getTranslations } from "next-intl/server";
 
@@ -34,7 +34,7 @@ export async function GET(
   const self = canonicalUrl(feedPath, locale);
   // RSS wants an email address here; without one, the element is left out.
   const email = findProfile("email")?.href.replace(/^mailto:/, "");
-  const author = email ? `${email} (${site.author.name})` : undefined;
+  const author = email ? `${email} (${authorName(locale)})` : undefined;
 
   const items = posts.map((post) => {
     const link = canonicalUrl(post.path, locale);

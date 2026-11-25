@@ -9,7 +9,7 @@ import {
   blogPageSchema,
   getPosts,
 } from "./blog";
-import { site, siteCopy } from "./site";
+import { authorName, site, siteCopy } from "./site";
 
 const blog = defineCollections({
   type: "doc",
@@ -34,7 +34,7 @@ export const blogSource = loader({
 /** The author of a post that lists none in `authors`: the site's author. */
 function defaultAuthor(locale: Locale): BlogAuthor {
   return {
-    name: site.author.name,
+    name: authorName(locale),
     title: siteCopy(locale).tagline,
     url: localizePath("/", locale),
     image: site.author.avatar,
@@ -44,7 +44,8 @@ function defaultAuthor(locale: Locale): BlogAuthor {
 /** `true` for the site's author, in any language. */
 export function isDefaultAuthor(author: BlogAuthor): boolean {
   return (
-    author.name === site.author.name && author.image === site.author.avatar
+    author.image === site.author.avatar &&
+    locales.some((locale) => author.name === authorName(locale))
   );
 }
 

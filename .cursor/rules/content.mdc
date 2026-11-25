@@ -11,7 +11,7 @@ alwaysApply: false
 - Blog posts are MDX in `content/blog` (Fumadocs `add blog`). Routes are `src/app/(home)/blog`. A post without `authors` is by the site's author.
 - Write only what is true of dimah-kz and the public repositories. No placeholder projects, roles, or invented biography.
 - A new document-shaped section is a new Fumadocs collection, then a route. Not a hardcoded array in a component.
-- Name, profile links, and contact stay in `src/lib/site.ts`; description, tagline, and home copy are in `site.copy`, once per language.
+- Name, profile links, and contact stay in `src/lib/site.ts`; description, tagline, home copy, and the About section (paragraphs and timeline) are in `site.copy`, once per language. Skills are `site.skills`.
 - Translations sit next to the original: `<name>.<locale>.mdx`. A project or role translation holds only the fields that change; a post translation is the whole post.
 - Interface labels are in `messages/en.json` and `messages/fa.json`. Add a label to every file.
 - A new page gets a Markdown version in `markdownPages()` in `src/lib/agents.ts`.

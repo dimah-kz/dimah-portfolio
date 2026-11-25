@@ -8,15 +8,8 @@
   "locale": {
     "label": "Language"
   },
-  "hero": {
-    "viewProjects": "View projects",
-    "readBlog": "Read the blog",
-    "latest": "Latest"
-  },
   "stats": {
-    "projects": "{count, plural, one {# project} other {# projects}}",
-    "projectsLabel": "Projects",
-    "postsLabel": "Posts"
+    "projects": "{count, plural, one {# project} other {# projects}}"
   },
   "profile": {
     "resume": "Résumé"
@@ -29,32 +22,27 @@
     "email": "Email",
     "website": "Website"
   },
+  "about": {
+    "title": "About",
+    "skills": "Tools I work with",
+    "journey": "Journey"
+  },
   "work": {
-    "eyebrow": "Work",
-    "title": "Selected work",
-    "description": "Featured projects, each linked to its live site and source.",
-    "more": "More projects",
+    "title": "Projects",
+    "description": "Open-source tools I build and maintain.",
     "all": "All projects"
   },
   "experience": {
-    "eyebrow": "Experience",
-    "title": "Where I have worked",
+    "title": "Experience",
     "description": "Roles and teams, most recent first.",
     "present": "Present"
   },
-  "principles": {
-    "eyebrow": "Principles",
-    "title": "How I build",
-    "description": "Ideas the projects here share."
-  },
   "writing": {
-    "eyebrow": "Blog",
     "title": "Writing",
-    "description": "Notes on the projects and the decisions behind them.",
+    "description": "Notes on the tools I build and the decisions behind them.",
     "all": "All posts"
   },
   "contact": {
-    "eyebrow": "Contact",
     "title": "Get in touch",
     "cta": {
       "github": "Follow on GitHub",
@@ -66,10 +54,11 @@
     }
   },
   "project": {
-    "live": "Live",
+    "featured": "Main project",
+    "live": "Website",
     "source": "Source",
     "stack": "Stack",
-    "liveFor": "Live site for {name}",
+    "liveFor": "Website of {name}",
     "sourceFor": "Source of {name}",
     "status": {
       "active": "Active",
@@ -79,14 +68,12 @@
   },
   "projects": {
     "title": "Projects",
-    "description": "Projects with their live sites and source.",
-    "featured": "Featured",
-    "other": "Also published",
+    "description": "Open-source tools and templates I build and maintain.",
     "empty": "No projects yet."
   },
   "blog": {
     "title": "Blog",
-    "description": "Notes on the projects and the decisions behind them.",
+    "description": "Notes on the tools I build and the decisions behind them.",
     "back": "All posts",
     "newer": "Newer post",
     "older": "Older post",
@@ -99,8 +86,6 @@
     "taggedDescription": "Posts tagged {tag}.",
     "tagsDescription": "Every topic across the blog.",
     "readingTime": "{minutes, number} min read",
-    "read": "Read post",
-    "latest": "Latest",
     "posts": "{count, plural, one {# post} other {# posts}}",
     "rss": "RSS feed",
     "empty": "No posts yet."
@@ -108,9 +93,7 @@
   "footer": {
     "builtWith": "Built with Next.js and Fumadocs.",
     "source": "Source",
-    "social": "Elsewhere",
-    "pages": "Pages",
-    "feeds": "Feeds"
+    "pages": "Pages"
   },
   "agents": {
     "full": "Every page of the site in one Markdown file.",

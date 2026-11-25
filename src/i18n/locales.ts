@@ -10,8 +10,7 @@
  *   1. Add it below.
  *   2. Add `messages/<code>.json` and a line for it in `src/i18n/messages.ts`.
  *   3. Add its copy to `copy` in `src/lib/site.ts`.
- *   4. Add its flag in `src/i18n/flags.tsx`.
- *   5. Optionally, translate content: `<name>.<code>.mdx` next to a file in `content/`.
+ *   4. Optionally, translate content: `<name>.<code>.mdx` next to a file in `content/`.
  * TypeScript points at any step that is missing. To remove a language, undo
  * the same steps.
  */
@@ -19,7 +18,7 @@ export const localeConfig = {
   en: {
     /** The language's own name, as the switcher shows it. */
     label: "English",
-    /** Short form for the switcher button. */
+    /** Short name in the language's own script, for the switcher. */
     short: "EN",
     dir: "ltr",
     /** Open Graph locale. */
@@ -27,7 +26,7 @@ export const localeConfig = {
   },
   fa: {
     label: "فارسی",
-    short: "FA",
+    short: "فا",
     dir: "rtl",
     ogLocale: "fa_IR",
   },

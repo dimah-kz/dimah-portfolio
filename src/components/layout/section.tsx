@@ -19,48 +19,37 @@ export function Section({
   ...props
 }: ComponentProps<"section">) {
   return (
-    <section className={cn("py-16 sm:py-20", className)} {...props}>
-      <Container className="flex flex-col gap-10">{children}</Container>
+    <section className={cn("py-10 sm:py-12", className)} {...props}>
+      <Container className="flex flex-col gap-7">{children}</Container>
     </section>
-  );
-}
-
-/** Small label over a heading, after a brand hairline. As on the share cards. */
-export function Eyebrow({ children }: { children: ReactNode }) {
-  return (
-    <p className="flex items-center gap-2.5 text-xs font-medium text-brand-text ltr:tracking-wider ltr:uppercase">
-      <span aria-hidden="true" className="h-px w-6 bg-brand" />
-      {children}
-    </p>
   );
 }
 
 export function SectionHeader({
   id,
-  eyebrow,
   title,
   description,
   action,
 }: {
   /** `id` of the heading, for `aria-labelledby` and anchors. */
   id?: string;
-  eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex max-w-xl flex-col gap-3">
-        {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
+    <div className="flex items-end justify-between gap-4">
+      <div className="flex min-w-0 flex-col gap-1.5">
         <h2
           id={id}
-          className="font-heading text-2xl font-semibold sm:text-3xl ltr:tracking-tight rtl:leading-snug"
+          className="font-heading text-xl font-semibold ltr:tracking-tight rtl:leading-snug"
         >
           {title}
         </h2>
         {description ? (
-          <p className="text-pretty text-muted-foreground">{description}</p>
+          <p className="text-sm text-pretty text-muted-foreground">
+            {description}
+          </p>
         ) : null}
       </div>
       {action}
@@ -79,12 +68,12 @@ export function SectionLink({
   return (
     <Link
       href={href}
-      className="group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+      className="group inline-flex shrink-0 items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
     >
       {children}
       <ArrowRightIcon
         aria-hidden="true"
-        className="size-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+        className="size-3.5 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
       />
     </Link>
   );
@@ -100,21 +89,22 @@ export function PageHeader({
   description,
   children,
 }: {
+  /** Above the title, such as a back link. */
   eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   children?: ReactNode;
 }) {
   return (
-    <header className="relative isolate -mt-14 overflow-hidden border-b pt-14">
+    <header className="relative isolate -mt-14 overflow-hidden pt-14">
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-wash" />
-      <Container className="flex flex-col gap-4 pt-16 pb-12 sm:pt-20">
+      <Container className="flex flex-col gap-3 pt-14 pb-2 sm:pt-20">
         {eyebrow}
-        <h1 className="font-heading text-4xl font-semibold text-balance sm:text-5xl ltr:tracking-tight rtl:leading-snug">
+        <h1 className="font-heading text-3xl font-semibold text-balance sm:text-4xl ltr:tracking-tight rtl:leading-snug">
           {title}
         </h1>
         {description ? (
-          <p className="max-w-2xl text-lg text-pretty text-muted-foreground">
+          <p className="max-w-xl text-base/relaxed text-pretty text-muted-foreground">
             {description}
           </p>
         ) : null}

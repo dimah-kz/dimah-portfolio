@@ -1,0 +1,48 @@
+---
+title: Share links in dimah-s3
+description: dimah-s3 2.1 lets a user send a file or a folder to someone without an account, with an expiry, a password, and a download limit.
+date: 2026-11-24
+tags: [dimah-s3]
+---
+
+A user picks a file or a folder in your app, copies a link, and sends it to someone who has no account. The link works until it expires, runs out of downloads, or the owner turns it off. That is what the `share()` plugin, new in [dimah-s3 2.1](https://s3.dimah.dev/blog/dimah-s3-2-1), adds.
+
+## Built on the database plugin
+
+`share()` sits next to `db()`. It reuses the same `resolveScope` and `authorize`, so it already knows who owns each file, and it keeps its links in one `share_link` table in the same database:
+
+```ts
+export const s3 = dimahS3({
+  client: awsS3,
+  bucket: process.env.S3_BUCKET!,
+  plugins: [
+    db({ client: dimahS3Db, getSession, resolveScope }),
+    share({
+      client: dimahS3Share,
+      url: (token) => `https://app.example.com/s/${token}`,
+      expiration: { default: 7 * 86_400, max: 30 * 86_400 },
+    }),
+  ],
+  routes: {
+    files: route({ upload: true, download: true, delete: true }),
+  },
+});
+```
+
+From the browser, the owner creates a link to one file, or to a folder with everything below it, and can add a password and a download limit. Later they can list their links, change the expiry, the password, or the limit, or revoke a link for good.
+
+## A link is a credential
+
+So the plugin treats it like one:
+
+- The token is 192 random bits. The visitor never sees the object key, the route, or the owner.
+- Every call checks again. A revoked or expired link, a deleted file, or a file moved out of a shared folder stops opening at once.
+- Downloads follow the route: a presigned URL that lives five minutes, or a signed URL that streams through your server.
+- The download limit is a compare-and-set, so concurrent downloads never pass it.
+- Passwords are hashed with PBKDF2-SHA256 through Web Crypto, so the plugin runs on Node.js and edge runtimes alike.
+
+## The page a visitor opens
+
+A shared folder renders in the same `ObjectList` component as the rest of the toolkit, with its breadcrumb, search, and sort, over a read-only source that keeps the folders above it hidden. A password-protected link opens locked until the server checks the password once.
+
+The [release post](https://s3.dimah.dev/blog/dimah-s3-2-1) covers the visitor page and the plugin SDK behind it, and [`examples/with-db`](https://github.com/dimah-kz/dimah-s3/tree/main/examples/with-db) has a working share flow.

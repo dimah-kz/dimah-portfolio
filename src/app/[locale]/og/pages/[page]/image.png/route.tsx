@@ -1,5 +1,4 @@
 import { isLocale, type Locale, locales } from "@/i18n/locales";
-import { findProfile } from "@/lib/links";
 import { OgAvatarArt, OgCard, OgProjectsArt } from "@/lib/og/card";
 import { ogImageResponse } from "@/lib/og/render";
 import { getProjects } from "@/lib/projects";
@@ -23,7 +22,6 @@ async function card(page: OgPage, locale: Locale): Promise<Card> {
   switch (page) {
     case "home":
       return {
-        eyebrow: findProfile("github")?.handle,
         title: copy.home.headline,
         titleAccent: copy.home.headlineAccent,
         description: copy.tagline,

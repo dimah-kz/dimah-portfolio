@@ -1,5 +1,5 @@
 import { localeParam } from "@/i18n/params";
-import { BlogCards, BlogFeedLink, BlogTagCloud } from "@/components/blog";
+import { BlogFeedLink, BlogList, BlogTagCloud } from "@/components/blog";
 import { JsonLd } from "@/components/json-ld";
 import { Container, PageHeader } from "@/components/layout/section";
 import { locales } from "@/i18n/locales";
@@ -45,8 +45,8 @@ export default async function BlogIndexPage(
           <BlogFeedLink />
         </div>
       </PageHeader>
-      <Container className="py-12 sm:py-16">
-        <BlogCards posts={posts} latestSlug={posts[0]?.slug} />
+      <Container className="pt-8 pb-20 sm:pt-10">
+        <BlogList posts={posts} />
       </Container>
     </main>
   );

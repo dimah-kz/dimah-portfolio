@@ -11,7 +11,7 @@ import { getExperience } from "./experience";
 import { feedPath, findProfile, profiles } from "./links";
 import { markdownUrl } from "./markdown-url";
 import { getProjects, type Project } from "./projects";
-import { headline, site, siteCopy } from "./site";
+import { authorName, headline, site, siteCopy } from "./site";
 import { isDefaultAuthor } from "./source";
 
 /** Browser title for the home page. Inner pages use `title.template`. */
@@ -188,7 +188,7 @@ export function siteJsonLd(locale: Locale) {
       {
         "@type": "Person",
         "@id": personId,
-        name: site.author.name,
+        name: authorName(locale),
         url: site.url,
         image: absoluteUrl(site.author.avatar),
         description: siteCopy(locale).tagline,

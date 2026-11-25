@@ -1,18 +1,18 @@
 import { localeParam } from "@/i18n/params";
 import { Hero } from "@/components/home/hero";
 import {
+  AboutSection,
   ContactSection,
   ExperienceSection,
-  PrinciplesSection,
+  JourneySection,
   WorkSection,
   WritingSection,
 } from "@/components/home/sections";
 import { JsonLd } from "@/components/json-ld";
-import { getProjects } from "@/lib/projects";
 import { pageMeta, profilePageJsonLd } from "@/lib/seo";
 import { postsIn } from "@/lib/source";
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 
 /** Posts on the home page. The rest are on `/blog`. */
 const latestPostCount = 3;
@@ -27,26 +27,15 @@ export default async function HomePage(props: PageProps<"/[locale]">) {
   const locale = await localeParam(props.params);
   setRequestLocale(locale);
 
-  const t = await getTranslations("stats");
-  const posts = postsIn(locale);
-  // Counted from the content, so the numbers never go stale.
-  const stats = [
-    {
-      value: getProjects(locale).length,
-      label: t("projectsLabel"),
-      href: "/projects",
-    },
-    { value: posts.length, label: t("postsLabel"), href: "/blog" },
-  ].filter((stat) => stat.value > 0);
-
   return (
     <main id="main" className="flex flex-1 flex-col">
       <JsonLd data={profilePageJsonLd(locale)} />
-      <Hero latest={posts[0]} stats={stats} />
+      <Hero />
       <WorkSection />
+      <AboutSection />
+      <JourneySection />
       <ExperienceSection />
-      <PrinciplesSection />
-      <WritingSection posts={posts.slice(0, latestPostCount)} />
+      <WritingSection posts={postsIn(locale).slice(0, latestPostCount)} />
       <ContactSection />
     </main>
   );

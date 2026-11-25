@@ -1,16 +1,28 @@
 ---
-title: Uploads in dimah-starter go through dimah-s3
-description: Avatars, logos, and other files in the starter are direct-to-bucket uploads. dimah-starter does not proxy the file.
+title: How dimah-starter handles uploads with dimah-s3
+description: Avatars and organization logos go straight from the browser to the bucket. The starter never proxies a file, and the two projects stay independent.
 date: 2026-11-19
 tags: [dimah-starter, dimah-s3]
 ---
 
-[dimah-starter](https://starter.dimah.dev) needs uploads for avatars and organization logos. I did not give it a second storage stack. The storage package is a thin use of [dimah-s3](https://s3.dimah.dev): the server signs a ticket, the browser sends the file to any S3-compatible bucket, and a Server Action stores the public URL.
+[dimah-starter](https://starter.dimah.dev) needs uploads for profile avatars and organization logos. Instead of building a second storage layer, its `storage` package is a thin layer over [dimah-s3](https://s3.dimah.dev).
 
-The application starts with no S3 settings. Only the upload paths need a bucket. When they are configured, the bucket has to allow `GET`, `PUT`, and `HEAD` from the app's origin, and objects are served from `S3_PUBLIC_BASE_URL`.
+## The flow
 
-An upload that was signed and never confirmed should not stay behind. The repository's production notes say to schedule `pnpm storage:purge` hourly so those objects leave the bucket and the database. Upload quotas are part of the same server-side rules. dimah-s3 expects auth, quotas, and database rules in server hooks, not in the browser.
+The server signs a ticket, the browser sends the file to any S3-compatible bucket, and a Server Action saves the URL. When a new file replaces an old one, the action deletes the old file after the response has been sent.
 
-That is the whole connection between the two projects. dimah-s3 does not know about organizations or Better Auth. dimah-starter does not know how to sign an S3 request. The starter calls the toolkit, then keeps the URL on the account or the organization the action already authorized.
+## Configuration
 
-Why the toolkit signs on the server is in [dimah-s3 signs the upload, then steps aside](/blog/presign-first). The repositories are [dimah-kz/dimah-starter](https://github.com/dimah-kz/dimah-starter) and [dimah-kz/dimah-s3](https://github.com/dimah-kz/dimah-s3).
+The app runs without any S3 settings; only the upload paths need a bucket. Once you set `DIMAH_S3_SECRET` and the `S3_*` variables, the bucket's CORS has to allow `GET`, `PUT`, and `HEAD` from the app's origin, and files are served from `S3_PUBLIC_BASE_URL`.
+
+## Cleaning up
+
+A file that was signed but never confirmed should not stay in the bucket. Run `pnpm storage:purge` hourly, and those files leave both the bucket and the database. The repository ships a GitHub Actions workflow that does it once you add its secrets.
+
+Upload quotas follow the same rule as everything else in the starter: they are enforced on the server, never in the browser.
+
+## Two projects, one boundary
+
+dimah-s3 knows nothing about organizations or Better Auth, and dimah-starter knows nothing about signing an S3 request. The starter calls the toolkit, then stores the URL on the account or organization that the action has already authorized.
+
+Why the toolkit signs on the server in the first place is the subject of [dimah-s3 signs the upload, then steps aside](/blog/presign-first).

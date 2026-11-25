@@ -19,9 +19,9 @@ export const projectSchema = z.object({
     .optional(),
   /** A badge next to the name. Leave it out for a project in normal use. */
   status: z.enum(["active", "beta", "archived"]).optional(),
-  /** Featured projects get the large cards on the home page. */
+  /** Featured projects come first, and the home page shows them before the rest. */
   featured: z.boolean().default(false),
-  /** Lower comes first. */
+  /** Lower comes first, among featured projects and among the rest. */
   order: z.number().default(100),
   /** Blog tag that belongs to this project. Posts with it show the project's logo. */
   tag: z.string().optional(),
@@ -31,7 +31,7 @@ export const projectSchema = z.object({
       repository: z.url().optional(),
     })
     .default({}),
-  /** Short points for the featured card. */
+  /** Short points, shown on `/projects` and in the Markdown. */
   highlights: z.array(z.string()).default([]),
   stack: z.array(z.string()).default([]),
 });
@@ -59,10 +59,13 @@ const entries = localizedEntries(collection.entries, {
   dir: "content/projects",
 });
 
-/** Every project in a language, ordered by `order`, then by name. */
+/** Every project in a language: featured first, then by `order`, then by name. */
 export function getProjects(locale: Locale): Project[] {
   return [...entries(locale)].sort(
-    (a, b) => a.order - b.order || a.name.localeCompare(b.name),
+    (a, b) =>
+      Number(b.featured) - Number(a.featured) ||
+      a.order - b.order ||
+      a.name.localeCompare(b.name),
   );
 }
 

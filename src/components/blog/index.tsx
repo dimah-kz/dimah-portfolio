@@ -1,17 +1,14 @@
 import { ProjectLogo } from "@/components/project-logo";
-import { Ribbon } from "@/components/ribbon";
-import { SpotlightCard } from "@/components/spotlight-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from "@/components/ui/item";
 import { Link } from "@/i18n/navigation";
 import { localizePath } from "@/i18n/paths";
 import { feedPath } from "@/lib/links";
@@ -29,15 +26,12 @@ import { BlogPanel } from "./panel";
 /* Lists                                                                      */
 /* -------------------------------------------------------------------------- */
 
-/** Posts as cards of one size, newest first. The newest post gets a ribbon. */
-export function BlogCards({
+/** Posts as rows, newest first: the date, the title, and the description. */
+export function BlogList({
   posts,
-  latestSlug,
   className,
 }: {
   posts: BlogPost[];
-  /** Slug of the newest post in the language, marked with a ribbon. */
-  latestSlug?: string;
   className?: string;
 }) {
   const t = useTranslations("blog");
@@ -53,69 +47,37 @@ export function BlogCards({
   }
 
   return (
-    <ul className={cn("grid gap-5 sm:grid-cols-2 lg:grid-cols-3", className)}>
+    <ul className={cn("-mx-3 flex flex-col gap-1", className)}>
       {posts.map((post) => (
         <li key={post.slug}>
-          <BlogCard post={post} latest={post.slug === latestSlug} />
+          <Item
+            render={<Link href={post.path} />}
+            className="group items-start px-3 py-3.5"
+          >
+            <ItemContent className="min-w-0 gap-1.5">
+              <span className="flex items-center gap-2">
+                <PostMarks tags={post.tags.map((tag) => tag.name)} />
+                <PostMeta post={post} className="text-xs" />
+              </span>
+              <ItemTitle className="line-clamp-none text-[0.9375rem] font-medium text-balance">
+                {post.title}
+              </ItemTitle>
+              {post.description ? (
+                <ItemDescription className="text-sm/relaxed text-pretty">
+                  {post.description}
+                </ItemDescription>
+              ) : null}
+            </ItemContent>
+            <ItemActions className="hidden self-center sm:flex">
+              <ArrowRightIcon
+                aria-hidden="true"
+                className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+              />
+            </ItemActions>
+          </Item>
         </li>
       ))}
     </ul>
-  );
-}
-
-export function BlogCard({
-  post,
-  latest = false,
-}: {
-  post: BlogPost;
-  latest?: boolean;
-}) {
-  const t = useTranslations("blog");
-
-  return (
-    <Link
-      href={post.path}
-      className="group block h-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <SpotlightCard>
-        <Card className="relative h-full">
-          {latest ? <Ribbon>{t("latest")}</Ribbon> : null}
-          {/* With the ribbon, the header keeps clear of the corner. */}
-          <CardHeader className={cn("gap-3", latest && "pe-14")}>
-            <div className="flex items-center gap-2.5">
-              <PostMarks tags={post.tags.map((tag) => tag.name)} />
-              <PostMeta post={post} className="text-xs" />
-            </div>
-            <CardTitle className="font-heading text-lg/snug font-semibold text-balance ltr:tracking-tight">
-              {post.title}
-            </CardTitle>
-            {post.description ? (
-              <CardDescription className="line-clamp-3 text-sm/relaxed text-pretty">
-                {post.description}
-              </CardDescription>
-            ) : null}
-          </CardHeader>
-          {post.tags.length > 0 ? (
-            <CardContent className="flex flex-wrap gap-1.5">
-              {post.tags.map((tag) => (
-                <Badge key={tag.slug} variant="secondary">
-                  {tag.name}
-                </Badge>
-              ))}
-            </CardContent>
-          ) : null}
-          <CardFooter className="mt-auto border-t">
-            <span className="inline-flex items-center gap-1 text-sm font-medium">
-              {t("read")}
-              <ArrowRightIcon
-                aria-hidden="true"
-                className="size-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
-              />
-            </span>
-          </CardFooter>
-        </Card>
-      </SpotlightCard>
-    </Link>
   );
 }
 
@@ -147,7 +109,10 @@ function PostMeta({ post, className }: { post: BlogPost; className?: string }) {
       )}
     >
       {post.date ? <BlogDate date={post.date} /> : null}
-      {post.date && post.readingTime ? <span aria-hidden="true">·</span> : null}
+      {/* A hairline, not a dot: a dot reads as a Persian zero. */}
+      {post.date && post.readingTime ? (
+        <span aria-hidden="true" className="h-3 w-px bg-border" />
+      ) : null}
       {post.readingTime ? (
         <span>{t("readingTime", { minutes: post.readingTime })}</span>
       ) : null}
@@ -203,7 +168,7 @@ export function BlogPage({ toc, className, ...props }: BlogPageProps) {
     <article
       {...props}
       className={cn(
-        "mx-auto flex w-full max-w-3xl flex-col gap-10 px-4 pt-12 sm:pt-16",
+        "mx-auto flex w-full max-w-(--fd-layout-width) flex-col gap-10 px-4 pt-12 sm:pt-16",
         // room for the floating panel
         toc ? "pb-32" : "pb-16",
         className,

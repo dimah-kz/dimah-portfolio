@@ -1,5 +1,4 @@
 import type { Locale } from "@/i18n/locales";
-import type { LucideIcon } from "lucide-react";
 
 /**
  * The shape of `src/lib/site.ts`. Hover a field in your editor to read what it
@@ -14,33 +13,41 @@ import type { LucideIcon } from "lucide-react";
 export type ProfileId =
   "github" | "linkedin" | "x" | "telegram" | "email" | "website";
 
-export interface Principle {
-  /** A lucide icon component, such as `ServerIcon`. */
-  icon: LucideIcon;
+/** One step of the timeline in the About section. */
+export interface Milestone {
+  /** When, in your own words: an age, a year, or "Today". */
+  period?: string;
   title: string;
-  description: string;
+  description?: string;
 }
 
 /** Everything the site says about you, in one language. */
 export interface SiteCopy {
-  /** One line. The meta description, and the summary in the feed and `llms.txt`. */
+  /** Your name as it is written in this language, when it differs from `author.name`. */
+  name?: string;
+  /** One line. The meta description, and the summary in the footer, the feed, and `llms.txt`. */
   description: string;
-  /** Short line under your name: the profile card, posts, and structured data. */
+  /** Short line under your name: the hero, posts, and structured data. */
   tagline: string;
-  /** A badge on the profile card, such as "Open to new roles". Leave out to hide it. */
+  /** A badge next to your name, such as "Open to new roles". Leave out to hide it. */
   availability?: string;
-  /** A CV in `public/` (such as `/resume.pdf`) or a URL. Adds a button to the profile card. */
+  /** A CV in `public/` (such as `/resume.pdf`) or a URL. Adds a button to the hero. */
   resume?: string;
   /** The paragraph in the contact section. */
   contact: string;
-  /** Home page copy. */
+  /** The first screen of the home page. */
   home: {
-    /** The hero title. `headlineAccent` follows it in the brand color. */
+    /** The hero title. `headlineAccent` follows it in a softer color. */
     headline: string;
     headlineAccent: string;
+    /** One or two sentences under the title. */
     intro: string;
-    /** Cards in the "How I build" section. An empty list hides the section. */
-    principles: Principle[];
+  };
+  /** The About section. With no paragraphs and no milestones, it is hidden. */
+  about: {
+    paragraphs: string[];
+    /** The timeline under the paragraphs, oldest first. An empty list hides it. */
+    journey: Milestone[];
   };
 }
 
@@ -51,6 +58,7 @@ export interface SiteConfig {
   url: string;
 
   author: {
+    /** Your name as people write it. The hero, posts, and structured data. */
     name: string;
     /** Square image in `public/`, such as `/avatar.png`. */
     avatar: string;
@@ -66,6 +74,9 @@ export interface SiteConfig {
     /** The profile behind the main button in the hero and the contact section. */
     primary: ProfileId;
   };
+
+  /** Languages, frameworks, and tools, shown as badges in the About section. Leave out to hide them. */
+  skills?: string[];
 
   /** Source of this site. The footer links to it. Leave out to hide the link. */
   repository?: string;

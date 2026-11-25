@@ -17,7 +17,7 @@ export function HomeShell({ children }: ComponentProps<"main">) {
   return (
     <div
       id="nd-home-layout"
-      className="flex flex-1 flex-col [--fd-layout-width:64rem]"
+      className="flex flex-1 flex-col [--fd-layout-width:44rem]"
     >
       <a
         href="#main"

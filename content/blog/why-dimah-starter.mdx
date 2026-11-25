@@ -1,18 +1,51 @@
 ---
-title: Why dimah-starter is server-first
-description: Tenants, roles, and writes stay on the server. The starter does not add a client SDK and leave those parts open.
+title: Why dimah-starter keeps everything on the server
+description: No auth client, no React Query, no client-side data layer. Sessions, permissions, and data stay on the server, and the code is simpler for it.
 date: 2026-11-21
 tags: [dimah-starter]
 ---
 
-A lot of Next.js starters begin with a client. You get an auth SDK, a query library, and a set of widgets, and then you are on your own for organizations, permissions, and cache invalidation. I built [dimah-starter](https://starter.dimah.dev) in the other direction.
+Most Next.js starters begin in the browser. You get an auth SDK, a query library, and a set of widgets, and then organizations, permissions, and cache invalidation are yours to figure out. I built [dimah-starter](https://starter.dimah.dev) the other way around: the server owns sessions, permissions, and data, and the browser renders what it is sent.
 
-The page reads the session in a Server Component. A list is a `'use cache'` read tagged for that user or that organization. A write is one Server Action, and `updateTag` expires what that write changed, so the person who submitted the form sees the new data in the same response. There is no auth client to hydrate, and no React Query cache to invalidate.
+## Reads
 
-The permission check is repeated on the read, not only in the layout. A layout gate does not keep a page's data out of its response. `requireDashboardSession`, `requireOrganizationManager`, and `requirePlatformAdmin` are the three gates, and the cached function underneath them never sees `headers()` or `cookies()`. A cached session would be shared across requests.
+A page is a Server Component. It checks the session and the permission on every request, then reads through a `'use cache'` function tagged for that user or organization:
 
-Multi-tenancy is not a later chapter. Organizations, invitations, and the owner, admin, and member roles are in the first run, on Better Auth. English and Persian are too, with the direction set on the document rather than patched onto individual components.
+```ts
+export async function getOrganizationMembersPage(query) {
+  const { organizationId } = await requireOrganizationManager();
+  return getCachedPage(organizationId, query);
+}
 
-Billing, a marketing CMS, and analytics are left out, so the provider can match the product.
+async function getCachedPage(organizationId, query) {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(tags.organizationMembersById(organizationId));
+  return db.select().from(member); // …
+}
+```
 
-The read and the write, with a trimmed members-list example, are in the README of [dimah-kz/dimah-starter](https://github.com/dimah-kz/dimah-starter), and the running app is [starter.dimah.dev](https://starter.dimah.dev).
+Two rules keep this safe. The permission check runs on the read itself, not only in a layout, because a layout gate does not keep a page's data out of its response. And the cached function never touches `headers()` or `cookies()`: a cached session would be shared between requests, so sessions are never cached.
+
+## Writes
+
+Every write is a Server Action. It calls Better Auth for users, organizations, and roles, or the oRPC router for product logic, and then expires exactly what it changed:
+
+```ts
+export async function removeOrganizationMemberAction(input) {
+  await auth.api.removeMember({ headers: await headers(), body });
+  updateTag(tags.organizationMembersById(input.organizationId));
+}
+```
+
+Because of `updateTag`, the person who submitted the form sees fresh data in the same response. There is no auth client to hydrate and no query cache to invalidate.
+
+## Multi-tenant from the first run
+
+Organizations, email invitations, and the owner, admin, and member roles exist from the first `pnpm dev`. So do English and Persian: the direction is set once on the document, and the layout mirrors for right-to-left without patches on individual components.
+
+## What is left out
+
+Billing, a CMS, and analytics are not included. You pick the provider that fits your product, instead of removing one that doesn't.
+
+The full walkthrough is in the [repository README](https://github.com/dimah-kz/dimah-starter), and the running app is at [starter.dimah.dev](https://starter.dimah.dev).

@@ -16,7 +16,7 @@ import {
   siteJsonLd,
   siteKeywords,
 } from "@/lib/seo";
-import { site, siteCopy } from "@/lib/site";
+import { authorName, site, siteCopy } from "@/lib/site";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
@@ -55,8 +55,8 @@ export async function generateMetadata(
     },
     description: siteCopy(locale).description,
     applicationName: site.name,
-    authors: [{ name: site.author.name, url: site.url }],
-    creator: site.author.name,
+    authors: [{ name: authorName(locale), url: site.url }],
+    creator: authorName(locale),
     publisher: site.name,
     category: "technology",
     keywords: siteKeywords(locale),
