@@ -70,6 +70,7 @@ export const site: SiteConfig = {
           "My work centers on the React ecosystem, with Next.js as my main framework. I write TypeScript end to end, from the interface to the APIs and databases behind it, and I aim for code that is clear, well structured, and easy for a team to maintain. My background in UI design with Figma helps me bring design and code together, building precise, polished interfaces that work equally well in English and Persian, left to right and right to left.",
           "I have solid experience delivering production software, including a complete customer loyalty platform, an education dashboard, and other projects built to production standards and deployed. Most of them were delivered as part of a team.",
           "I'm a firm believer in open source. Working in the open keeps code transparent, invites review and contributions, and lets others learn from it and build on it. That's why I publish most of my work under dimah-kz, with documentation written for both people and coding agents.",
+          "Technical growth is a priority for me, and I'm currently learning Rust. My long-term goal is to work at [Vercel](https://vercel.com) one day. Many of the engineers I look up to and have learned from work there, and their projects have taught me a great deal about building clean, well-reasoned software where every decision has a clear purpose.",
         ],
         journey: [
           {
@@ -131,6 +132,7 @@ export const site: SiteConfig = {
           "تمرکز کارم روی اکوسیستم React است و فریم‌ورک اصلی‌ام Next.js. با TypeScript از رابط کاربری تا API و دیتابیس پشت آن را می‌نویسم و دنبال کدی هستم که خوانا، ساختارمند و برای کار تیمی قابل نگهداری باشد. سابقه‌ام در طراحی رابط کاربری با فیگما کمک می‌کند طراحی و کد را به هم نزدیک کنم و رابط‌هایی دقیق و تمیز بسازم که به فارسی و انگلیسی، راست‌به‌چپ و چپ‌به‌راست، به یک اندازه درست کار کنند.",
           "در توسعه و تحویل نرم‌افزارهای عملیاتی تجربه جدی دارم؛ از جمله یک باشگاه مشتریان کامل، یک داشبورد آموزشی و پروژه‌های دیگری که در سطح پروداکشن پیاده‌سازی و مستقر شده‌اند. بیشتر این پروژه‌ها حاصل کار تیمی بوده‌اند.",
           "به متن‌باز باور عمیقی دارم. کدی که آشکارا منتشر می‌شود شفاف‌تر است، بازبینی و مشارکت دیگران را به همراه دارد و به همه اجازه می‌دهد از آن یاد بگیرند و رویش بسازند. برای همین بیشتر کارهایم را با نام dimah-kz متن‌باز منتشر می‌کنم، همراه با مستنداتی که هم برای آدم‌ها نوشته شده و هم برای ایجنت‌های برنامه‌نویسی.",
+          "رشد فنی برایم در اولویت است و در حال حاضر Rust یاد می‌گیرم. هدف بلندمدتم این است که روزی در [Vercel](https://vercel.com) کار کنم؛ جایی که بسیاری از الگوهایم و کسانی که از آن‌ها یاد گرفته‌ام و الهام گرفته‌ام کار می‌کنند. پروژه‌هایشان درس‌های زیادی به من داده‌اند، به‌خصوص درباره ساختن نرم‌افزاری تمیز و سنجیده که هر تصمیمش دلیل روشنی دارد.",
         ],
         journey: [
           {
