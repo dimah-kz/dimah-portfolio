@@ -53,55 +53,58 @@ export const site: SiteConfig = {
   copy: {
     en: {
       description:
-        "Full-stack developer building open-source tools for React and Next.js.",
+        "Full-stack developer focused on React and Next.js, building maintainable web applications and open-source tools.",
       tagline: "Full-stack TypeScript developer",
       contact:
-        "Have a question, an idea, or a project in mind? Telegram is the quickest way to reach me. For a bug or a feature request, open an issue on the project's repository.",
+        "Have a role, a project, or a question in mind? I'd be glad to hear about it. Telegram is the fastest way to reach me.",
       home: {
-        headline: "Open-source building blocks",
-        headlineAccent: "for React and Next.js.",
+        headline: "Building modern web apps",
+        headlineAccent: "with React and Next.js.",
         intro:
-          "From the server to the interface, I build tools and templates that are simple to adopt, clearly documented, and free for anyone to use.",
+          "I work across the React ecosystem with Next.js as my main framework, taking products from the database to the interface. I care about clean, maintainable code, and I share much of my work as open source.",
       },
       about: {
         paragraphs: [
-          "I'm Dimah, a full-stack developer born in Shiraz in 2006 and a computer engineering student at Shiraz University. I write TypeScript from end to end, from React interfaces to the servers and databases behind them, and I publish most of what I build as open source under dimah-kz.",
-          "I like software that is easy to understand and easy to own: logic that stays on the server, documentation that people and coding agents can both read, and interfaces that work in English and Persian, left to right and right to left.",
+          "I'm Dimah, a full-stack developer born in Shiraz in 2006 and a computer engineering student at Shiraz University. Mathematics was my first love, and the same pull toward logic and problem-solving led me to programming, which has been my passion ever since.",
+          "My work centers on the React ecosystem, with Next.js as my main framework. I write TypeScript end to end, from the interface to the APIs and databases behind it, and I aim for code that is clear, well structured, and easy for a team to maintain. I also build interfaces that work equally well in English and Persian, left to right and right to left.",
+          "I'm a firm believer in open source. Working in the open keeps code transparent, invites review and contributions, and lets others learn from it and build on it. That's why I publish most of my work under dimah-kz, with documentation written for both people and coding agents.",
         ],
         journey: [
           {
             period: "Growing up",
             title: "Games and business on a phone",
             description:
-              "I was a gamer without a computer, so everything happened on a phone: the games, and a few small businesses that earned me an income. The ideas and packages behind them kept pulling me toward the web.",
+              "Without a computer, everything happened on a phone: first games, then a few small businesses that earned me an income. The ideas and packages behind them kept drawing me toward the web.",
           },
           {
             period: "16–18",
-            title: "Math, science, and the Konkur",
+            title: "A love of mathematics",
             description:
-              "Math and the basic sciences were what I loved most at school. I spent two years studying hard for the Konkur, the national university entrance exam.",
+              "Math and the basic sciences were my strongest interests at school. I spent two years preparing intensively for the Konkur, Iran's national university entrance exam.",
           },
           {
             period: "17",
             title: "My first computer",
-            description: "I finally bought a computer of my own.",
+            description:
+              "I bought a computer of my own, my first step from the phone toward building for the web.",
           },
           {
             period: "After the Konkur",
-            title: "First websites, with WordPress",
-            description: "I started building websites with WordPress.",
+            title: "First websites with WordPress",
+            description:
+              "I started building websites with WordPress, my first hands-on work on the web.",
           },
           {
             period: "University",
             title: "Computer engineering at Shiraz University",
             description:
-              "I'm studying computer engineering at Shiraz University.",
+              "I study computer engineering at Shiraz University, pairing a formal foundation with hands-on projects.",
           },
           {
             period: "Today",
-            title: "Programming and open source",
+            title: "Full-stack development and open source",
             description:
-              "From WordPress I moved into programming. Now I build and maintain open-source tools for React and Next.js.",
+              "From WordPress I moved into programming. Today I build full-stack applications with React and Next.js and maintain open-source tools.",
           },
         ],
       },
@@ -110,54 +113,58 @@ export const site: SiteConfig = {
     fa: {
       name: "دیماه",
       description:
-        "توسعه‌دهنده فول‌استک و سازنده ابزارهای متن‌باز برای React و Next.js.",
+        "توسعه‌دهنده فول‌استک با تمرکز بر React و Next.js؛ سازنده وب‌اپلیکیشن‌های قابل نگهداری و ابزارهای متن‌باز.",
       tagline: "توسعه‌دهنده فول‌استک TypeScript",
       contact:
-        "سؤال، ایده یا پروژه‌ای در ذهن دارید؟ سریع‌ترین راه ارتباط با من تلگرام است. برای گزارش باگ یا پیشنهاد قابلیت، در مخزن همان پروژه یک issue باز کنید.",
+        "فرصت همکاری، پروژه یا سؤالی دارید؟ خوشحال می‌شوم با من در میان بگذارید. سریع‌ترین راه ارتباط با من تلگرام است.",
       home: {
-        headline: "ابزارهای متن‌باز",
-        headlineAccent: "برای React و Next.js.",
+        headline: "ساخت وب‌اپلیکیشن‌های مدرن",
+        headlineAccent: "با React و Next.js.",
         intro:
-          "از سرور تا رابط کاربری، ابزارها و قالب‌هایی می‌سازم که به‌کارگیری‌شان ساده است، مستندات روشنی دارند و رایگان در اختیار همه‌اند.",
+          "در اکوسیستم React کار می‌کنم و فریم‌ورک اصلی‌ام Next.js است؛ محصول را از دیتابیس تا رابط کاربری می‌سازم. به کد تمیز و قابل نگهداری اهمیت می‌دهم و بخش زیادی از کارهایم را به‌صورت متن‌باز منتشر می‌کنم.",
       },
       about: {
         paragraphs: [
-          "دیماه هستم، متولد ۱۳۸۵ در شیراز، توسعه‌دهنده فول‌استک و دانشجوی مهندسی کامپیوتر دانشگاه شیراز. از رابط کاربری React تا سرور و پایگاه داده پشت آن را با TypeScript می‌نویسم و بیشتر کارهایم را با نام dimah-kz متن‌باز منتشر می‌کنم.",
-          "نرم‌افزاری را دوست دارم که فهمیدن و نگه‌داشتنش ساده باشد: منطقی که روی سرور می‌ماند، مستنداتی که هم آدم‌ها و هم ایجنت‌های برنامه‌نویسی بتوانند بخوانند، و رابطی که به فارسی و انگلیسی، راست‌به‌چپ و چپ‌به‌راست، درست کار کند.",
+          "دیماه هستم، توسعه‌دهنده فول‌استک، متولد ۱۳۸۵ در شیراز و دانشجوی مهندسی کامپیوتر دانشگاه شیراز. ریاضی اولین عشقم بود و همان علاقه به منطق و حل مسئله مرا به برنامه‌نویسی رساند؛ کاری که از آن روز تا امروز عاشقش هستم.",
+          "تمرکز کارم روی اکوسیستم React است و فریم‌ورک اصلی‌ام Next.js. با TypeScript از رابط کاربری تا API و دیتابیس پشت آن را می‌نویسم و دنبال کدی هستم که خوانا، ساختارمند و برای کار تیمی قابل نگهداری باشد. رابط‌هایی هم می‌سازم که به فارسی و انگلیسی، راست‌به‌چپ و چپ‌به‌راست، به یک اندازه درست کار کنند.",
+          "به متن‌باز باور عمیقی دارم. کدی که آشکارا منتشر می‌شود شفاف‌تر است، بازبینی و مشارکت دیگران را به همراه دارد و به همه اجازه می‌دهد از آن یاد بگیرند و رویش بسازند. برای همین بیشتر کارهایم را با نام dimah-kz متن‌باز منتشر می‌کنم، همراه با مستنداتی که هم برای آدم‌ها نوشته شده و هم برای ایجنت‌های برنامه‌نویسی.",
         ],
         journey: [
           {
             period: "از کودکی",
             title: "بازی و کسب‌وکار با یک گوشی",
             description:
-              "گیمر بودم اما کامپیوتر نداشتم، پس همه‌چیز روی گوشی می‌گذشت: بازی‌ها، و چند کسب‌وکار کوچک که با همان گوشی از آن‌ها درآمد داشتم. ایده‌ها و پکیج‌هایی که برایشان داشتم، کم‌کم مرا به سمت وب کشاند.",
+              "کامپیوتر نداشتم و همه‌چیز روی گوشی می‌گذشت: اول بازی، بعد چند کسب‌وکار کوچک که از آن‌ها درآمد داشتم. ایده‌ها و پکیج‌هایی که برایشان داشتم، کم‌کم مرا به سمت وب کشاند.",
           },
           {
             period: "۱۶ تا ۱۸ سالگی",
-            title: "ریاضی، علوم پایه و کنکور",
+            title: "عشق به ریاضی",
             description:
-              "در مدرسه عاشق ریاضی و علوم پایه بودم و دو سال تمام، جدی برای کنکور درس خواندم.",
+              "ریاضی و علوم پایه بیشترین علاقه‌ام در مدرسه بود و دو سال فشرده برای کنکور آماده شدم.",
           },
           {
             period: "۱۷ سالگی",
             title: "اولین کامپیوتر",
-            description: "بالاخره توانستم اولین کامپیوتر خودم را بخرم.",
+            description:
+              "اولین کامپیوتر شخصی‌ام را خریدم؛ قدم اول از گوشی به سمت ساختن برای وب.",
           },
           {
             period: "بعد از کنکور",
             title: "اولین سایت‌ها با وردپرس",
-            description: "ساختن وب‌سایت را با وردپرس شروع کردم.",
+            description:
+              "ساخت وب‌سایت را با وردپرس شروع کردم؛ اولین تجربه عملی‌ام در وب.",
           },
           {
             period: "دانشگاه",
             title: "مهندسی کامپیوتر در دانشگاه شیراز",
-            description: "دانشجوی مهندسی کامپیوتر دانشگاه شیراز هستم.",
+            description:
+              "دانشجوی مهندسی کامپیوتر دانشگاه شیراز هستم و پایه‌های نظری را در کنار پروژه‌های عملی جلو می‌برم.",
           },
           {
             period: "امروز",
-            title: "برنامه‌نویسی و متن‌باز",
+            title: "توسعه فول‌استک و متن‌باز",
             description:
-              "از وردپرس به برنامه‌نویسی رسیدم و حالا ابزارهای متن‌باز برای React و Next.js می‌سازم و نگهداری می‌کنم.",
+              "از وردپرس به برنامه‌نویسی رسیدم. امروز با React و Next.js اپلیکیشن‌های فول‌استک می‌سازم و ابزارهای متن‌باز توسعه می‌دهم و نگهداری می‌کنم.",
           },
         ],
       },

@@ -45,7 +45,7 @@ export function SiteFooter() {
 
         <div className="flex flex-col-reverse gap-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {year} {authorName(locale)}. {t("footer.builtWith")}
+            © {year} {authorName(locale)}.
             {site.repository ? (
               <>
                 {" "}

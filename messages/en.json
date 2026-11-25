@@ -24,8 +24,8 @@
   },
   "about": {
     "title": "About",
-    "skills": "Tools I work with",
-    "journey": "Journey"
+    "skills": "Tech stack",
+    "journey": "My journey"
   },
   "work": {
     "title": "Projects",
@@ -45,7 +45,7 @@
   "contact": {
     "title": "Get in touch",
     "cta": {
-      "github": "See my work on GitHub",
+      "github": "GitHub",
       "linkedin": "Connect on LinkedIn",
       "x": "Message on X",
       "telegram": "Message on Telegram",
@@ -91,7 +91,6 @@
     "empty": "No posts yet."
   },
   "footer": {
-    "builtWith": "Built with Next.js and Fumadocs.",
     "source": "Source",
     "pages": "Pages"
   },
