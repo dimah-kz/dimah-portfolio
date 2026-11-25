@@ -10,11 +10,11 @@ The sample content is [dimah](https://github.com/dimah-kz), deployed at [dimah.d
 
 ## Features
 
-- **Home page**: a hero under a glass header (your name, tagline, title, intro, and main contact), an About section with your skills, a timeline of how you got here, projects, experience, the latest posts, and contact. A section with no content is hidden.
+- **Home page**: a hero under a glass header (your name, tagline, title, intro, and main contact), your projects with the main one on a card of its own, an About section with your skills, a timeline of how you got here, experience, the latest posts, and contact. A section with no content is hidden.
 - **Projects** as a content collection: one `.mdx` file per project, with a logo, status, highlights, stack, and links to its live site and source.
 - **Experience** as a content collection: one `.mdx` file per role.
 - **Blog**: a quiet list of posts, tags, reading time, newer and older links, a floating table of contents, and an RSS feed.
-- **Multilingual** with [next-intl](https://next-intl.dev): English at `/`, Persian at `/fa`, each language indexed on its own with `hreflang`, a language switcher that matches the theme switch, and one file to add or remove a language. See [Languages](#languages).
+- **Multilingual** with [next-intl](https://next-intl.dev): English at `/`, Persian at `/fa`, each language indexed on its own with `hreflang`, a flag language switcher next to the theme switch and in the footer, and one file to add or remove a language. See [Languages](#languages).
 - **Readable by AI agents**: `llms.txt`, `llms-full.txt`, a `.md` version of every page, `Accept: text/markdown` content negotiation, and JSON-LD for the person, the projects, and each post. See [For AI agents](#for-ai-agents).
 - **Share images** for every page in every language, rendered at build time with [Takumi](https://www.npmjs.com/package/takumi-js), which shapes Persian and mixed-direction text.
 - **SEO**: per-page metadata, canonical URLs, `hreflang`, a sitemap with language alternates, and robots. Preview deploys are `noindex`. Baseline security headers are set in `next.config.ts`.
@@ -45,6 +45,7 @@ Then make it yours, in this order:
 | What                                                      | Where                                                              |
 | --------------------------------------------------------- | ------------------------------------------------------------------ |
 | Languages and the default language                        | [`src/i18n/locales.ts`](src/i18n/locales.ts)                       |
+| Flags in the language switcher                            | [`src/i18n/flags.tsx`](src/i18n/flags.tsx)                         |
 | Name, URL, author, and the name in another script         | [`src/lib/site.ts`](src/lib/site.ts), `site.copy.<locale>.name`    |
 | Description, tagline, availability, résumé, per language  | `site.copy.<locale>`                                               |
 | GitHub, LinkedIn, X, Telegram, email, website             | `site.profiles`. Leave one out to hide it everywhere.              |
@@ -69,7 +70,7 @@ name: my-project
 description: One or two sentences, shown on every card.
 logo: /logos/my-project.svg # square image in public/; without it, the first letter is shown
 status: beta # optional badge: active, beta, or archived
-featured: true # your main project: first, on a full-width card with its highlights
+featured: true # your main project: first, on a full-width card
 order: 1 # lower comes first
 tag: my-project # blog posts with this tag show the project's logo
 links:
@@ -142,7 +143,7 @@ The site ships in English (the default) and Persian. Routing, labels, and format
 
 - **URLs.** The default language has no prefix (`/projects`); every other language has its code in front (`/fa/projects`). `/en/...` redirects to the unprefixed URL. A URL always shows the same language, with no redirect by browser language or cookie, so crawlers and shared links see stable pages.
 - **SEO.** Each page has its own canonical URL, `hreflang` for every language it exists in plus `x-default`, `og:locale`, a share image, a feed, and a sitemap entry with its alternates. A post without a translation lists no alternates.
-- **Switcher.** A pill in the header, next to the theme switch, with each language in its own script (`EN`, `فا`); more than three languages open a menu. It opens the same page in the other language, or that language's home when the page has no translation.
+- **Switcher.** A pill with each language's flag and its short name in its own script (`EN`, `فا`), next to the theme switch in the header and the mobile menu, and again in the footer; more than three languages open a menu. It opens the same page in the other language, or that language's home when the page has no translation.
 - **Direction and dates.** `dir` comes from the language (`fa` is right to left), and dates use its calendar and digits.
 
 ### Add a language
@@ -150,7 +151,8 @@ The site ships in English (the default) and Persian. Routing, labels, and format
 1. Add it to [`src/i18n/locales.ts`](src/i18n/locales.ts): its name, its short name in its own script, its direction, and its Open Graph locale.
 2. Add `messages/<code>.json` (start from `en.json`) and a line for it in [`src/i18n/messages.ts`](src/i18n/messages.ts).
 3. Add its copy to `copy` in [`src/lib/site.ts`](src/lib/site.ts).
-4. Optionally, translate content: `<name>.<code>.mdx` next to a project, role, or post. Fumadocs UI labels go in [`src/i18n/fumadocs.ts`](src/i18n/fumadocs.ts).
+4. Add its flag in [`src/i18n/flags.tsx`](src/i18n/flags.tsx), from [`country-flag-icons`](https://www.npmjs.com/package/country-flag-icons).
+5. Optionally, translate content: `<name>.<code>.mdx` next to a project, role, or post. Fumadocs UI labels go in [`src/i18n/fumadocs.ts`](src/i18n/fumadocs.ts).
 
 TypeScript reports any step that is missing, including a key missing from the new messages file. To remove a language, undo the same steps and delete its `.<code>.mdx` files. To change the default language, set `defaultLocale`; its pages take the unprefixed URLs.
 

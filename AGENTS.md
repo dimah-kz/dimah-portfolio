@@ -87,7 +87,7 @@ Keep the look calm: no background patterns (grids, dots, rings), one accent (`--
 
 | Change                                             | Where                                                             |
 | -------------------------------------------------- | ----------------------------------------------------------------- |
-| Languages and the default language                 | `src/i18n/locales.ts`                                             |
+| Languages and the default language                 | `src/i18n/locales.ts`, flags in `src/i18n/flags.tsx`              |
 | Name, deployed URL, author                         | `src/lib/site.ts` (`site.url` is currently `https://dimah.dev`), `site.copy.<locale>.name` for another script |
 | Description, tagline, availability, résumé         | `site.copy.<locale>`                                              |
 | GitHub, LinkedIn, X, Telegram, email, website      | `site.profiles`                                                   |
@@ -105,7 +105,7 @@ Keep the look calm: no background patterns (grids, dots, rings), one accent (`--
 | Accent color                                       | `--brand` in `src/app/global.css`                                 |
 | Share image design                                 | `src/lib/og/card.tsx`                                             |
 
-Adding a language is four steps, listed at the top of `src/i18n/locales.ts`; TypeScript reports a missing one. A right-to-left language flips the document, the Fumadocs UI, the labels, and the date format. Keep writing styles with the logical properties above so that flip does not require a CSS pass.
+Adding a language is five steps, listed at the top of `src/i18n/locales.ts`; TypeScript reports a missing one. A right-to-left language flips the document, the Fumadocs UI, the labels, and the date format. Keep writing styles with the logical properties above so that flip does not require a CSS pass.
 
 ## Check
 

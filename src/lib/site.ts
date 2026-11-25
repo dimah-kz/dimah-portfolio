@@ -45,7 +45,6 @@ export const site: SiteConfig = {
     "oRPC",
     "AWS SDK",
     "Turborepo",
-    "WordPress",
   ],
 
   repository: "https://github.com/dimah-kz/dimah-portfolio",
@@ -61,7 +60,7 @@ export const site: SiteConfig = {
         headline: "Open-source building blocks",
         headlineAccent: "for React and Next.js.",
         intro:
-          "My main project is dimah-s3, a full-stack S3 toolkit for React: the server signs each upload and the browser sends the file straight to the bucket. I also maintain dimah-starter, dimah-survey, and the template behind this site.",
+          "My main project is dimah-s3, a full-stack S3 toolkit for React: the server signs each upload and the browser sends the file straight to the bucket. I also maintain dimah-starter, the template behind this site, and dimah-survey.",
       },
       about: {
         paragraphs: [
@@ -112,7 +111,7 @@ export const site: SiteConfig = {
         headline: "ابزارهای متن‌باز",
         headlineAccent: "برای React و Next.js.",
         intro:
-          "پروژه اصلی‌ام dimah-s3 است، جعبه‌ابزار فول‌استک S3 برای React: سرور هر آپلود را امضا می‌کند و مرورگر فایل را مستقیم به باکت می‌فرستد. در کنارش dimah-starter، dimah-survey و قالب همین سایت را هم نگهداری می‌کنم.",
+          "پروژه اصلی‌ام dimah-s3 است، جعبه‌ابزار فول‌استک S3 برای React: سرور هر آپلود را امضا می‌کند و مرورگر فایل را مستقیم به باکت می‌فرستد. در کنارش dimah-starter، قالب همین سایت و dimah-survey را هم نگهداری می‌کنم.",
       },
       about: {
         paragraphs: [

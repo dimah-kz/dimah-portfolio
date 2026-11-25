@@ -68,7 +68,7 @@ export function findProfile(id: ProfileId): Profile | undefined {
 export const primaryContact: Profile | undefined =
   findProfile(site.contact.primary) ?? profiles[0];
 
-/** Icon links in the header, after the pages. */
+/** Icon links in the header, after the theme and language switches. */
 export const headerProfiles = profiles.filter(
   (profile) => profile.id === "github" || profile.id === "x",
 );

@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/section";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SocialLinks } from "@/components/social-links";
 import { Link } from "@/i18n/navigation";
 import { localizePath } from "@/i18n/paths";
@@ -10,7 +11,7 @@ import Image from "next/image";
 
 const linkClass = "transition-colors hover:text-foreground";
 
-/** The name and the description, the profiles, then the pages, the feeds, and the credits. */
+/** The name and the description, the profiles, then the credits, the pages, and the language switcher. */
 export function SiteFooter() {
   const t = useTranslations();
   const locale = useLocale();
@@ -57,24 +58,30 @@ export function SiteFooter() {
               </>
             ) : null}
           </p>
-          <nav aria-label={t("footer.pages")}>
-            <ul className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              {[{ key: "home" as const, href: "/" }, ...navLinks(locale)].map(
-                (link) => (
-                  <li key={link.href}>
-                    <Link href={link.href} className={linkClass}>
-                      {t(`nav.${link.key}`)}
-                    </Link>
-                  </li>
-                ),
-              )}
-              <li>
-                <a href={localizePath(llmsPath, locale)} className={linkClass}>
-                  llms.txt
-                </a>
-              </li>
-            </ul>
-          </nav>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <nav aria-label={t("footer.pages")}>
+              <ul className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                {[{ key: "home" as const, href: "/" }, ...navLinks(locale)].map(
+                  (link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className={linkClass}>
+                        {t(`nav.${link.key}`)}
+                      </Link>
+                    </li>
+                  ),
+                )}
+                <li>
+                  <a
+                    href={localizePath(llmsPath, locale)}
+                    className={linkClass}
+                  >
+                    llms.txt
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <LocaleSwitcher />
+          </div>
         </div>
       </Container>
     </footer>

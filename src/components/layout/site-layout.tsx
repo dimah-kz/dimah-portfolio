@@ -1,5 +1,9 @@
 import { HomeShell } from "@/components/layout/home-shell";
 import { SiteFooter } from "@/components/layout/site-footer";
+import {
+  HeaderLocaleSwitcher,
+  HeaderLocaleText,
+} from "@/components/locale-switcher";
 import { baseOptions } from "@/lib/layout.shared";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { useLocale, useTranslations } from "next-intl";
@@ -13,8 +17,12 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <HomeLayout
       {...baseOptions(locale, t)}
-      // The flag switcher in `baseOptions` replaces Fumadocs' language menu.
-      slots={{ container: HomeShell, languageSelect: false }}
+      slots={{
+        container: HomeShell,
+        // Our flag switcher in Fumadocs' language slot: next to the theme
+        // switch on desktop and in the mobile menu, apart from the profiles.
+        languageSelect: { root: HeaderLocaleSwitcher, text: HeaderLocaleText },
+      }}
     >
       {children}
       <SiteFooter />

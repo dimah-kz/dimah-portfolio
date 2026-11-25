@@ -1,4 +1,3 @@
-import { LocaleSwitcher } from "@/components/locale-switcher";
 import type { Locale } from "@/i18n/locales";
 import { localizePath } from "@/i18n/paths";
 import { site } from "@/lib/site";
@@ -33,8 +32,9 @@ function BrandTitle() {
 }
 
 /**
- * The header in a language: the name, the pages in `navLinks`, the language
- * switcher, then `headerProfiles` as icons.
+ * The header in a language: the name and the pages in `navLinks`; then the
+ * theme and language switches (Fumadocs slots, see `SiteLayout`); then
+ * `headerProfiles` as icons.
  */
 export function baseOptions(locale: Locale, t: HeaderLabels): BaseLayoutProps {
   return {
@@ -50,7 +50,6 @@ export function baseOptions(locale: Locale, t: HeaderLabels): BaseLayoutProps {
         url: localizePath(link.href, locale),
         active: "nested-url",
       })),
-      { type: "custom", secondary: true, children: <LocaleSwitcher /> },
       ...headerProfiles.map(({ id, href, icon: Icon }): LinkItemType => {
         const label = t(`profiles.${id}`);
         return {

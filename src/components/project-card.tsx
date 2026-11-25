@@ -53,8 +53,8 @@ function ProjectStatus({ project }: { project: Project }) {
 
 /**
  * A project: its logo, name, description, stack, and links. A featured
- * project (the main one) is larger and always lists its highlights, in two
- * columns; `detailed` lists them on the others, for `/projects`.
+ * project (the main one) is larger and marked. `detailed` adds the
+ * highlights, for `/projects`; a featured card sets them in two columns.
  */
 export function ProjectCard({
   project,
@@ -66,7 +66,7 @@ export function ProjectCard({
   const t = useTranslations("project");
   const { featured } = project;
   const { live, repository } = project.links;
-  const highlights = detailed || featured ? project.highlights : [];
+  const highlights = detailed ? project.highlights : [];
 
   return (
     <SpotlightCard>

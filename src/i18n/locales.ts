@@ -10,7 +10,8 @@
  *   1. Add it below.
  *   2. Add `messages/<code>.json` and a line for it in `src/i18n/messages.ts`.
  *   3. Add its copy to `copy` in `src/lib/site.ts`.
- *   4. Optionally, translate content: `<name>.<code>.mdx` next to a file in `content/`.
+ *   4. Add its flag in `src/i18n/flags.tsx`.
+ *   5. Optionally, translate content: `<name>.<code>.mdx` next to a file in `content/`.
  * TypeScript points at any step that is missing. To remove a language, undo
  * the same steps.
  */
