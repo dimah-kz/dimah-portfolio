@@ -4,7 +4,7 @@ import { SocialLinks } from "@/components/social-links";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { primaryContact, profiles } from "@/lib/links";
+import { heroContact, profiles } from "@/lib/links";
 import { authorName, site, siteCopy } from "@/lib/site";
 import { cn } from "cn";
 import { FileTextIcon } from "lucide-react";
@@ -27,7 +27,7 @@ export function Hero() {
   const locale = useLocale();
   const { home, tagline, availability, resume } = siteCopy(locale);
   const name = authorName(locale);
-  const others = profiles.filter((profile) => profile !== primaryContact);
+  const others = profiles.filter((profile) => profile !== heroContact);
 
   return (
     <section
@@ -95,7 +95,7 @@ export function Hero() {
         <div
           className={cn(enter, "flex flex-wrap items-center gap-2 delay-300")}
         >
-          {primaryContact ? <ContactButton profile={primaryContact} /> : null}
+          {heroContact ? <ContactButton profile={heroContact} /> : null}
           {resume ? (
             <a
               href={resume}

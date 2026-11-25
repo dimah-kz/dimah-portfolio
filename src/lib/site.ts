@@ -30,6 +30,7 @@ export const site: SiteConfig = {
 
   contact: {
     primary: "telegram",
+    hero: "github",
   },
 
   skills: [

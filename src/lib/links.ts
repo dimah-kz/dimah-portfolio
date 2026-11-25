@@ -68,6 +68,10 @@ export function findProfile(id: ProfileId): Profile | undefined {
 export const primaryContact: Profile | undefined =
   findProfile(site.contact.primary) ?? profiles[0];
 
+/** The main button in the hero: `site.contact.hero`, else the main contact. */
+export const heroContact: Profile | undefined =
+  (site.contact.hero && findProfile(site.contact.hero)) || primaryContact;
+
 /** Icon links in the header, after the theme and language switches. */
 export const headerProfiles = profiles.filter(
   (profile) => profile.id === "github" || profile.id === "x",

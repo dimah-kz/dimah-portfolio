@@ -71,8 +71,10 @@ export interface SiteConfig {
   profiles: Partial<Record<ProfileId, string>>;
 
   contact: {
-    /** The profile behind the main button in the hero and the contact section. */
+    /** The profile behind the main button in the contact section. */
     primary: ProfileId;
+    /** The profile behind the main button in the hero, such as your GitHub. Defaults to `primary`. */
+    hero?: ProfileId;
   };
 
   /** Languages, frameworks, and tools, shown as badges in the About section. Leave out to hide them. */

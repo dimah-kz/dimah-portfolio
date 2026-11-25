@@ -50,6 +50,7 @@ Then make it yours, in this order:
 | Description, tagline, availability, résumé, per language  | `site.copy.<locale>`                                               |
 | GitHub, LinkedIn, X, Telegram, email, website             | `site.profiles`. Leave one out to hide it everywhere.              |
 | The main contact button                                   | `site.contact.primary`                                             |
+| The main button in the hero                               | `site.contact.hero` (defaults to `primary`)                        |
 | Contact paragraph, headline, intro, About, timeline       | `site.copy.<locale>`                                               |
 | Skills in the About section                               | `site.skills`                                                      |
 | Projects                                                  | [`content/projects/*.mdx`](content/projects)                       |
