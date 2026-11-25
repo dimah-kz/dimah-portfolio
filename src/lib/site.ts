@@ -60,11 +60,11 @@ export const site: SiteConfig = {
         headline: "Open-source building blocks",
         headlineAccent: "for React and Next.js.",
         intro:
-          "My main project is dimah-s3, a full-stack S3 toolkit for React: the server signs each upload and the browser sends the file straight to the bucket. I also maintain dimah-starter, the template behind this site, and dimah-survey.",
+          "From the server to the interface, I build tools and templates that are simple to adopt, clearly documented, and free for anyone to use.",
       },
       about: {
         paragraphs: [
-          "I'm Dimah, a full-stack developer born in 2006. I write TypeScript from end to end, from React interfaces to the servers and databases behind them, and I publish most of what I build as open source under dimah-kz.",
+          "I'm Dimah, a full-stack developer born in Shiraz in 2006 and a computer engineering student at Shiraz University. I write TypeScript from end to end, from React interfaces to the servers and databases behind them, and I publish most of what I build as open source under dimah-kz.",
           "I like software that is easy to understand and easy to own: logic that stays on the server, documentation that people and coding agents can both read, and interfaces that work in English and Persian, left to right and right to left.",
         ],
         journey: [
@@ -91,6 +91,12 @@ export const site: SiteConfig = {
             description: "I started building websites with WordPress.",
           },
           {
+            period: "University",
+            title: "Computer engineering at Shiraz University",
+            description:
+              "I'm studying computer engineering at Shiraz University.",
+          },
+          {
             period: "Today",
             title: "Programming and open source",
             description:
@@ -111,11 +117,11 @@ export const site: SiteConfig = {
         headline: "ابزارهای متن‌باز",
         headlineAccent: "برای React و Next.js.",
         intro:
-          "پروژه اصلی‌ام dimah-s3 است، جعبه‌ابزار فول‌استک S3 برای React: سرور هر آپلود را امضا می‌کند و مرورگر فایل را مستقیم به باکت می‌فرستد. در کنارش dimah-starter، قالب همین سایت و dimah-survey را هم نگهداری می‌کنم.",
+          "از سرور تا رابط کاربری، ابزارها و قالب‌هایی می‌سازم که به‌کارگیری‌شان ساده است، مستندات روشنی دارند و رایگان در اختیار همه‌اند.",
       },
       about: {
         paragraphs: [
-          "دیماه هستم، متولد ۱۳۸۵ و توسعه‌دهنده فول‌استک. از رابط کاربری React تا سرور و پایگاه داده پشت آن را با TypeScript می‌نویسم و بیشتر کارهایم را با نام dimah-kz متن‌باز منتشر می‌کنم.",
+          "دیماه هستم، متولد ۱۳۸۵ در شیراز، توسعه‌دهنده فول‌استک و دانشجوی مهندسی کامپیوتر دانشگاه شیراز. از رابط کاربری React تا سرور و پایگاه داده پشت آن را با TypeScript می‌نویسم و بیشتر کارهایم را با نام dimah-kz متن‌باز منتشر می‌کنم.",
           "نرم‌افزاری را دوست دارم که فهمیدن و نگه‌داشتنش ساده باشد: منطقی که روی سرور می‌ماند، مستنداتی که هم آدم‌ها و هم ایجنت‌های برنامه‌نویسی بتوانند بخوانند، و رابطی که به فارسی و انگلیسی، راست‌به‌چپ و چپ‌به‌راست، درست کار کند.",
         ],
         journey: [
@@ -140,6 +146,11 @@ export const site: SiteConfig = {
             period: "بعد از کنکور",
             title: "اولین سایت‌ها با وردپرس",
             description: "ساختن وب‌سایت را با وردپرس شروع کردم.",
+          },
+          {
+            period: "دانشگاه",
+            title: "مهندسی کامپیوتر در دانشگاه شیراز",
+            description: "دانشجوی مهندسی کامپیوتر دانشگاه شیراز هستم.",
           },
           {
             period: "امروز",
