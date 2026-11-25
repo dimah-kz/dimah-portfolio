@@ -1,25 +1,34 @@
-import { defineCollections } from 'fumadocs-mdx/macro';
-import { z } from 'zod';
+import { defineCollections } from "fumadocs-mdx/macro";
+import { z } from "zod";
 
-/** Frontmatter of one `.mdx` file in `content/projects` per project. */
+/** Frontmatter of one `.mdx` file per project in `content/projects`. */
 export const projectSchema = z.object({
   name: z.string(),
   /** One or two sentences. Shown on every card. */
   description: z.string(),
-  /** Logo key in `src/components/brand.tsx`. Without one, the card shows the first letter. */
-  mark: z.string().optional(),
+  /**
+   * Square image in `public/`, such as `/logos/my-project.svg`. Without one,
+   * the card shows the first letter. A logo is drawn on light and dark pages,
+   * so give it its own background.
+   */
+  logo: z
+    .string()
+    .startsWith("/", "A path in `public/`, starting with `/`.")
+    .optional(),
+  /** A badge next to the name. Leave it out for a project in normal use. */
+  status: z.enum(["active", "beta", "archived"]).optional(),
   /** Featured projects get the large cards on the home page. */
   featured: z.boolean().default(false),
   /** Lower comes first. */
   order: z.number().default(100),
   /** Blog tag that belongs to this project. Posts with it show the project's logo. */
   tag: z.string().optional(),
-  links: z.object({
-    /** Docs path on this site, like `/docs/starter`. */
-    docs: z.string().optional(),
-    live: z.url().optional(),
-    repository: z.url().optional(),
-  }),
+  links: z
+    .object({
+      live: z.url().optional(),
+      repository: z.url().optional(),
+    })
+    .default({}),
   /** Short points for the featured card. */
   highlights: z.array(z.string()).default([]),
   stack: z.array(z.string()).default([]),
@@ -28,8 +37,8 @@ export const projectSchema = z.object({
 // A `doc` collection, read for its frontmatter only. (`type: 'meta'` with YAML
 // would fit better, but fumadocs-mdx 15.6 does not load macro meta collections.)
 const collection = defineCollections({
-  type: 'doc',
-  dir: 'content/projects',
+  type: "doc",
+  dir: "content/projects",
   schema: projectSchema,
 });
 
@@ -42,7 +51,7 @@ export type Project = z.output<typeof projectSchema> & {
 export const projects: Project[] = collection.entries
   .map((entry) => ({
     ...projectSchema.parse(entry),
-    slug: entry.info.path.replace(/\.mdx?$/, ''),
+    slug: entry.info.path.replace(/\.mdx?$/, ""),
   }))
   .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
 
@@ -62,10 +71,4 @@ export function projectsForTags(tags: readonly string[]): Project[] {
     if (project) matches.add(project);
   }
   return [...matches];
-}
-
-/** The project whose docs live under `/docs/<slug>`. */
-export function projectForDocsSlug(slug: string | undefined): Project | undefined {
-  if (!slug) return;
-  return projects.find((project) => project.links.docs === `/docs/${slug}`);
 }

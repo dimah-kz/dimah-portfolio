@@ -1,7 +1,8 @@
-import { docsLlms } from '@/lib/source';
+import { llmsTxt } from "@/lib/agents";
+import { markdownHeaders } from "@/lib/markdown-response";
 
 export const revalidate = false;
 
-export async function GET() {
-  return (await docsLlms.serve('/llms.txt'))!;
+export function GET() {
+  return new Response(llmsTxt(), { headers: markdownHeaders("/llms.txt") });
 }

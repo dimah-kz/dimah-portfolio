@@ -1,20 +1,27 @@
-import { docsLlms } from '@/lib/source';
+import { findMarkdownPage, markdownPages } from "@/lib/agents";
+import { markdownHeaders } from "@/lib/markdown-response";
+import { pagePath } from "@/lib/markdown-url";
 
 export const revalidate = false;
-// other paths are 404s, never cached responses
+// Other paths are 404s, never rendered on demand.
 export const dynamicParams = false;
 
-export async function GET(_req: Request, { params }: RouteContext<'/llms.mdx/[...path]'>) {
+/**
+ * The Markdown of one page. Reached as `<page>.md` (a rewrite in
+ * `next.config.ts`) or with `Accept: text/markdown` (`src/proxy.ts`).
+ */
+export async function GET(_req: Request, { params }: RouteContext<"/llms.mdx/[...path]">) {
   const { path } = await params;
-  return (await docsLlms.serve(`/${path.join('/')}`)) ?? new Response(null, { status: 404 });
+  const page = findMarkdownPage(pagePath(path));
+  if (!page) return new Response(null, { status: 404 });
+
+  return new Response(await page.render(), {
+    headers: markdownHeaders(page.path, { canonical: true }),
+  });
 }
 
-export async function generateStaticParams() {
-  const params: { path: string[] }[] = [];
-  for (const file of await docsLlms.files()) {
-    // `/llms.txt` and `/llms-full.txt` have their own routes
-    if (!/^\/llms(-full)?\.txt$/.test(file))
-      params.push({ path: decodeURI(file).slice(1).split('/') });
-  }
-  return params;
+export function generateStaticParams() {
+  return markdownPages().map((page) => ({
+    path: page.path === "/" ? ["index"] : page.path.slice(1).split("/"),
+  }));
 }

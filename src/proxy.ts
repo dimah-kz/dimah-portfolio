@@ -1,24 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { isMarkdownPreferred, rewritePath } from 'fumadocs-core/negotiation';
-import { docsRoute } from '@/lib/shared';
+import { isMarkdownPreferred } from "fumadocs-core/negotiation";
+import { type NextRequest, NextResponse } from "next/server";
+import { markdownRoute } from "@/lib/markdown-url";
 
-const { rewrite: rewriteDocs } = rewritePath(
-  `${docsRoute}{/*path}`,
-  `/llms.mdx${docsRoute}{/*path}.md`,
-);
-
+/**
+ * Content negotiation for agents: a page requested with `Accept: text/markdown`
+ * gets its Markdown (see `src/lib/agents.ts`) at the same URL. Browsers get HTML.
+ * The proxy runs before the cache, so both answers are served from one URL.
+ */
 export default function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  // files like `/docs/page.md` are served by the rewrites of the Next.js config
-  const result =
-    isMarkdownPreferred(request) && !/\.(md|txt)$/.test(pathname) && rewriteDocs(pathname);
+  if (!isMarkdownPreferred(request)) return NextResponse.next();
 
-  if (result) {
-    return NextResponse.rewrite(new URL(result, request.nextUrl), {
-      // this URL has two representations, selected by `Accept`
-      headers: { Vary: 'Accept' },
-    });
-  }
-
-  return NextResponse.next();
+  const response = NextResponse.rewrite(
+    new URL(markdownRoute(request.nextUrl.pathname), request.nextUrl),
+  );
+  response.headers.set("Vary", "Accept");
+  return response;
 }
+
+/** The pages that have a Markdown version. */
+export const config = {
+  matcher: ["/", "/projects", "/blog", "/blog/:path*"],
+};

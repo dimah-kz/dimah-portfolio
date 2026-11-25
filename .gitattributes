@@ -1,0 +1,2 @@
+# LF everywhere, so Prettier and CI agree on every OS.
+* text=auto eol=lf

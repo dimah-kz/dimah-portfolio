@@ -1,4 +1,4 @@
-import { TelegramIcon } from "@/components/icons";
+import { ContactButton } from "@/components/contact-button";
 import { Container } from "@/components/layout/section";
 import { SocialLinks } from "@/components/social-links";
 import { SpotlightCard } from "@/components/spotlight-card";
@@ -16,10 +16,10 @@ import {
 } from "@/components/ui/card";
 import type { BlogPost } from "@/lib/blog";
 import { t } from "@/lib/i18n";
-import { socialLinks } from "@/lib/links";
+import { primaryContact, profiles } from "@/lib/links";
 import { site } from "@/lib/site";
 import { cn } from "cn";
-import { ArrowRightIcon, SparklesIcon } from "lucide-react";
+import { ArrowRightIcon, FileTextIcon, SparklesIcon } from "lucide-react";
 import Link from "next/link";
 
 export interface HeroStat {
@@ -37,7 +37,7 @@ const enter =
 
 /**
  * The first screen: the newest post, the title with its accent, the intro and
- * two actions on one side; a profile card with live counts on the other. It
+ * the actions on one side; a profile card with live counts on the other. It
  * runs under the glass header (`-mt-14 pt-14`), on the brand wash.
  */
 export function Hero({
@@ -52,7 +52,10 @@ export function Hero({
       aria-labelledby="hero-title"
       className="relative isolate -mt-14 overflow-hidden pt-14"
     >
-      <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-[40rem] bg-wash" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 -z-10 h-[40rem] bg-wash"
+      />
 
       <Container className="grid gap-12 pt-16 pb-20 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-center lg:gap-16 lg:pt-28 lg:pb-28">
         <div className="flex flex-col items-start gap-6">
@@ -76,17 +79,17 @@ export function Hero({
           ) : null}
 
           <h1
-              id="hero-title"
-              className={cn(
-                enter,
-                "font-heading text-[clamp(2.5rem,4vw+1rem,4.25rem)] font-semibold text-balance delay-100 ltr:leading-[1.05] ltr:tracking-tight rtl:leading-[1.3]",
-              )}
-            >
-              {site.home.headline}{" "}
-              <span className="bg-linear-to-r from-brand-text to-brand bg-clip-text text-transparent">
-                {site.home.headlineAccent}
-              </span>
-            </h1>
+            id="hero-title"
+            className={cn(
+              enter,
+              "font-heading text-[clamp(2.5rem,4vw+1rem,4.25rem)] font-semibold text-balance delay-100 ltr:leading-[1.05] ltr:tracking-tight rtl:leading-[1.3]",
+            )}
+          >
+            {site.home.headline}{" "}
+            <span className="bg-linear-to-r from-brand-text to-brand bg-clip-text text-transparent">
+              {site.home.headlineAccent}
+            </span>
+          </h1>
 
           <p
             className={cn(
@@ -97,23 +100,36 @@ export function Hero({
             {site.home.intro}
           </p>
 
-          <div className={cn(enter, "flex flex-wrap items-center gap-3 pt-2 delay-300")}>
+          <div
+            className={cn(
+              enter,
+              "flex flex-wrap items-center gap-3 pt-2 delay-300",
+            )}
+          >
             <Link
               href="/projects"
-              className={cn(buttonVariants({ size: "lg" }), "h-10 px-4 text-sm")}
-            >
-              {t.hero.viewProjects}
-              <ArrowRightIcon data-icon="inline-end" className="rtl:rotate-180" />
-            </Link>
-            <Link
-              href="/blog"
               className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
+                buttonVariants({ size: "lg" }),
                 "h-10 px-4 text-sm",
               )}
             >
-              {t.hero.readBlog}
+              {t.hero.viewProjects}
+              <ArrowRightIcon
+                data-icon="inline-end"
+                className="rtl:rotate-180"
+              />
             </Link>
+            {latest ? (
+              <Link
+                href="/blog"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                  "h-10 px-4 text-sm",
+                )}
+              >
+                {t.hero.readBlog}
+              </Link>
+            ) : null}
           </div>
         </div>
 
@@ -127,23 +143,35 @@ export function Hero({
 
 /** Who this is, what is here in numbers, and the quickest way to say hello. */
 function ProfileCard({ stats }: { stats: HeroStat[] }) {
-  const profiles = socialLinks.filter((link) => link.href !== site.author.telegramUrl);
+  const others = profiles.filter((profile) => profile !== primaryContact);
+  const { availability, resume } = site.author;
 
   return (
     <SpotlightCard>
       <Card className="h-full">
         <CardHeader className="grid-cols-[auto_1fr] items-center gap-x-3">
           <Avatar className="row-span-2 size-12">
-            <AvatarImage src={site.author.avatarUrl} alt={site.author.name} />
+            <AvatarImage src={site.author.avatar} alt={site.author.name} />
             <AvatarFallback>{site.author.name.slice(0, 1)}</AvatarFallback>
           </Avatar>
           <CardTitle className="text-base">{site.author.name}</CardTitle>
-          <CardDescription className="text-sm">{site.author.tagline}</CardDescription>
+          <CardDescription className="text-sm">
+            {site.author.tagline}
+          </CardDescription>
+          {availability ? (
+            <Badge variant="outline" className="col-span-2 mt-3 w-fit gap-1.5">
+              <span
+                aria-hidden="true"
+                className="size-1.5 rounded-full bg-brand"
+              />
+              {availability}
+            </Badge>
+          ) : null}
         </CardHeader>
 
         {stats.length > 0 ? (
           <CardContent>
-            <ul className="grid grid-cols-3 gap-2">
+            <ul className="grid auto-cols-fr grid-flow-col gap-2">
               {stats.map((stat) => (
                 <li key={stat.href}>
                   <Link
@@ -164,16 +192,22 @@ function ProfileCard({ stats }: { stats: HeroStat[] }) {
         ) : null}
 
         <CardFooter className="flex-col items-stretch gap-3 border-t">
-          <a
-            href={site.author.telegramUrl}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(buttonVariants({ size: "lg" }), "h-10 gap-2 text-sm")}
-          >
-            <TelegramIcon data-icon="inline-start" />
-            {t.contact.telegram}
-          </a>
-          <SocialLinks links={profiles} className="justify-center" />
+          {primaryContact ? <ContactButton profile={primaryContact} /> : null}
+          {resume ? (
+            <a
+              href={resume}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "h-10 gap-2 px-4 text-sm",
+              )}
+            >
+              <FileTextIcon data-icon="inline-start" />
+              {t.profile.resume}
+            </a>
+          ) : null}
+          <SocialLinks links={others} className="justify-center" />
         </CardFooter>
       </Card>
     </SpotlightCard>

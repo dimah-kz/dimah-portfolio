@@ -34,7 +34,10 @@ export default function NotFound() {
           </EmptyHeader>
           <EmptyContent className="flex-row flex-wrap justify-center gap-2">
             <Link href="/" className={buttonVariants()}>
-              <ArrowLeftIcon data-icon="inline-start" className="rtl:rotate-180" />
+              <ArrowLeftIcon
+                data-icon="inline-start"
+                className="rtl:rotate-180"
+              />
               {t.notFound.home}
             </Link>
             {navLinks.map((link) => (

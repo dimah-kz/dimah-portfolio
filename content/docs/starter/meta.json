@@ -1,6 +1,0 @@
-{
-  "title": "dimah-starter",
-  "description": "Server-first Next.js 16 SaaS starter.",
-  "icon": "starter",
-  "pages": ["index", "server", "included"]
-}

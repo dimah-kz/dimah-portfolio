@@ -1,9 +1,10 @@
 import { BlogCards, BlogFeedLink, BlogTagCloud } from "@/components/blog";
+import { JsonLd } from "@/components/json-ld";
 import { Container, PageHeader } from "@/components/layout/section";
-import { getPosts, getTags } from "@/lib/blog";
+import { getTags } from "@/lib/blog";
 import { t } from "@/lib/i18n";
-import { ogImage, pageMeta } from "@/lib/seo";
-import { blogAuthors, blogSource } from "@/lib/source";
+import { blogJsonLd, ogImage, pageMeta } from "@/lib/seo";
+import { posts } from "@/lib/source";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = pageMeta(
@@ -13,11 +14,11 @@ export const metadata: Metadata = pageMeta(
 );
 
 export default function BlogIndexPage() {
-  const posts = getPosts(blogSource.getPages(), blogAuthors);
   const tags = getTags(posts);
 
   return (
     <main id="main" className="flex flex-1 flex-col">
+      <JsonLd data={blogJsonLd(posts)} />
       <PageHeader title={t.blog.title} description={t.blog.description}>
         <div className="flex flex-col gap-4 pt-2">
           {tags.length > 0 ? <BlogTagCloud tags={tags} /> : null}

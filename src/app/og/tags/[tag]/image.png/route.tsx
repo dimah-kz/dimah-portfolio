@@ -1,9 +1,9 @@
-import { getPosts, getTagPosts, getTags } from "@/lib/blog";
+import { getTagPosts, getTags } from "@/lib/blog";
 import { t } from "@/lib/i18n";
 import { OgCard, OgProjectArt } from "@/lib/og/card";
 import { ogImageResponse } from "@/lib/og/render";
 import { projectByTag } from "@/lib/projects";
-import { blogSource } from "@/lib/source";
+import { posts } from "@/lib/source";
 import { notFound } from "next/navigation";
 
 export const revalidate = false;
@@ -14,7 +14,7 @@ export async function GET(
   { params }: RouteContext<"/og/tags/[tag]/image.png">,
 ) {
   const { tag } = await params;
-  const result = getTagPosts(getPosts(blogSource.getPages()), tag);
+  const result = getTagPosts(posts, tag);
   if (!result) notFound();
 
   const project = projectByTag(result.tag.name);
@@ -23,7 +23,9 @@ export async function GET(
     <OgCard
       eyebrow={t.blog.tags}
       title={result.tag.name}
-      description={project?.description ?? t.blog.taggedDescription(result.tag.name)}
+      description={
+        project?.description ?? t.blog.taggedDescription(result.tag.name)
+      }
       meta={[t.blog.posts(result.posts.length)]}
       art={project ? <OgProjectArt project={project} /> : undefined}
     />,
@@ -31,5 +33,5 @@ export async function GET(
 }
 
 export function generateStaticParams() {
-  return getTags(getPosts(blogSource.getPages())).map((tag) => ({ tag: tag.slug }));
+  return getTags(posts).map((tag) => ({ tag: tag.slug }));
 }

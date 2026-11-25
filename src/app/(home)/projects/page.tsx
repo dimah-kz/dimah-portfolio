@@ -1,8 +1,14 @@
-import { PageHeader, Section, SectionHeader } from "@/components/layout/section";
+import {
+  PageHeader,
+  Section,
+  SectionHeader,
+} from "@/components/layout/section";
 import { ProjectCard, ProjectList } from "@/components/project-card";
+import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import { JsonLd } from "@/components/json-ld";
 import { t } from "@/lib/i18n";
-import { featuredProjects, otherProjects } from "@/lib/projects";
-import { ogImage, pageMeta } from "@/lib/seo";
+import { featuredProjects, otherProjects, projects } from "@/lib/projects";
+import { ogImage, pageMeta, projectsJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = pageMeta(
@@ -14,7 +20,21 @@ export const metadata: Metadata = pageMeta(
 export default function ProjectsPage() {
   return (
     <main id="main" className="flex flex-1 flex-col">
-      <PageHeader title={t.projects.title} description={t.projects.description} />
+      <JsonLd data={projectsJsonLd()} />
+      <PageHeader
+        title={t.projects.title}
+        description={t.projects.description}
+      />
+
+      {projects.length === 0 ? (
+        <Section>
+          <Empty className="border">
+            <EmptyHeader>
+              <EmptyTitle>{t.projects.empty}</EmptyTitle>
+            </EmptyHeader>
+          </Empty>
+        </Section>
+      ) : null}
 
       {featuredProjects.length > 0 ? (
         <Section aria-labelledby="featured-title">

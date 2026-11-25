@@ -1,13 +1,13 @@
-import type { StructuredData } from 'fumadocs-core/mdx-plugins/remark-structure';
-import { createGetUrl } from 'fumadocs-core/source';
-import { pageSchema } from 'fumadocs-core/source/schema';
-import { z } from 'zod';
+import type { StructuredData } from "fumadocs-core/mdx-plugins/remark-structure";
+import { createGetUrl } from "fumadocs-core/source";
+import { pageSchema } from "fumadocs-core/source/schema";
+import { z } from "zod";
 
 export const blogPageSchema = pageSchema.extend({
   /** publish date, posts are sorted by it */
   date: z.iso.date().or(z.date()).optional(),
   tags: z.array(z.string()).optional(),
-  /** keys of the authors passed to `getPosts()` */
+  /** keys of the authors passed to `getPosts()`; without it, the default author */
   authors: z.array(z.string()).optional(),
   /** cover image URL */
   image: z.string().optional(),
@@ -52,7 +52,10 @@ interface BlogPage {
 }
 
 /** Words of the text and headings, at 220 words a minute, at least 1. */
-export function readingTime(data: StructuredData, wordsPerMinute = 220): number {
+export function readingTime(
+  data: StructuredData,
+  wordsPerMinute = 220,
+): number {
   let words = 0;
   for (const item of [...data.headings, ...data.contents]) {
     words += item.content.split(/\s+/).filter(Boolean).length;
@@ -65,19 +68,24 @@ export function readingTime(data: StructuredData, wordsPerMinute = 220): number 
  *
  * With i18n, pass your config to it: `createGetUrl('/blog', i18n)`.
  */
-export const getBlogUrl = createGetUrl('/blog');
+export const getBlogUrl = createGetUrl("/blog");
 
 /** lowercase, whitespace replaced by `-` */
 export function tagSlug(tag: string): string {
-  return tag.toLowerCase().replace(/\s+/g, '-');
+  return tag.toLowerCase().replace(/\s+/g, "-");
 }
 
 /**
  * Posts of blog pages, newest first, undated posts on top.
  *
  * @param authors - authors by their keys in frontmatter, unknown keys are shown as names
+ * @param fallback - the author of a post that lists none
  */
-export function getPosts(pages: BlogPage[], authors: Record<string, BlogAuthor> = {}): BlogPost[] {
+export function getPosts(
+  pages: BlogPage[],
+  authors: Record<string, BlogAuthor> = {},
+  fallback?: BlogAuthor,
+): BlogPost[] {
   const posts: BlogPost[] = [];
 
   for (const { url, locale, data } of pages) {
@@ -89,19 +97,25 @@ export function getPosts(pages: BlogPage[], authors: Record<string, BlogAuthor> 
       image: data.image,
       tags: [],
       authors: [],
-      readingTime: data.structuredData ? readingTime(data.structuredData) : undefined,
+      readingTime: data.structuredData
+        ? readingTime(data.structuredData)
+        : undefined,
     };
 
     for (const name of data.tags ?? []) {
       const slug = tagSlug(name);
-      post.tags.push({ name, slug, url: getBlogUrl(['tags', slug], locale) });
+      post.tags.push({ name, slug, url: getBlogUrl(["tags", slug], locale) });
     }
-    for (const id of data.authors ?? []) post.authors.push(authors[id] ?? { name: id });
+    for (const id of data.authors ?? [])
+      post.authors.push(authors[id] ?? { name: id });
+    if (post.authors.length === 0 && fallback) post.authors.push(fallback);
     posts.push(post);
   }
 
   const now = Date.now();
-  return posts.sort((a, b) => (b.date?.getTime() ?? now) - (a.date?.getTime() ?? now));
+  return posts.sort(
+    (a, b) => (b.date?.getTime() ?? now) - (a.date?.getTime() ?? now),
+  );
 }
 
 /** the post of `url`, and the posts published right after (`newer`) and before (`older`) it */

@@ -1,17 +1,14 @@
-import { XIcon } from "@/components/icons";
 import { site } from "@/lib/site";
 import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
-import { FolderGit2Icon, NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
-import { t } from "./i18n";
-import { navLinks } from "./links";
+import { headerProfiles, navLinks } from "./links";
 
 /** Avatar and name, linked to `/` by the layout. */
 function BrandTitle() {
   return (
     <span className="inline-flex items-center gap-2.5">
       <Image
-        src={site.author.avatarUrl}
+        src={site.author.avatar}
         alt=""
         width={28}
         height={28}
@@ -26,16 +23,7 @@ function BrandTitle() {
   );
 }
 
-const xLink: LinkItemType = {
-  type: "icon",
-  url: site.author.xUrl,
-  text: "X",
-  label: "X",
-  icon: <XIcon />,
-  external: true,
-};
-
-/** Header of the home layout: `/`, `/projects`, `/blog`. */
+/** The header: the name, the pages in `navLinks`, then `headerProfiles` as icons. */
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
@@ -43,39 +31,20 @@ export function baseOptions(): BaseLayoutProps {
       // Glass: the hero runs under the header. Tint and blur are in `global.css`.
       transparentMode: "always",
     },
-    githubUrl: site.author.githubUrl,
     links: [
-      ...navLinks.map(
-        (link): LinkItemType => ({
-          text: link.label,
-          url: link.href,
-          active: "nested-url",
-        }),
-      ),
-      xLink,
-    ],
-  };
-}
-
-/** Docs sidebar shows the page tree, then links back to the rest of the site. */
-export function docsOptions(): BaseLayoutProps {
-  return {
-    nav: {
-      title: <BrandTitle />,
-    },
-    githubUrl: site.author.githubUrl,
-    links: [
-      {
-        text: t.nav.projects,
-        url: "/projects",
-        icon: <FolderGit2Icon />,
-      },
-      {
-        text: t.nav.blog,
-        url: "/blog",
-        icon: <NotebookPenIcon />,
-      },
-      xLink,
+      ...navLinks.map((link): LinkItemType => ({
+        text: link.label,
+        url: link.href,
+        active: "nested-url",
+      })),
+      ...headerProfiles.map(({ label, href, icon: Icon }): LinkItemType => ({
+        type: "icon",
+        text: label,
+        label,
+        url: href,
+        icon: <Icon />,
+        external: true,
+      })),
     ],
   };
 }

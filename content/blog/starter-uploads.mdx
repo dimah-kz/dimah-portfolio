@@ -3,10 +3,9 @@ title: Uploads in dimah-starter go through dimah-s3
 description: Avatars, logos, and other files in the starter are direct-to-bucket uploads. dimah-starter does not proxy the file.
 date: 2026-11-19
 tags: [dimah-starter, dimah-s3]
-authors: [dimah]
 ---
 
-[dimah-starter](/docs/starter) needs uploads for avatars and organization logos. I did not give it a second storage stack. The storage package is a thin use of [dimah-s3](/docs/s3): the server signs a ticket, the browser sends the file to any S3-compatible bucket, and a Server Action stores the public URL.
+[dimah-starter](https://starter.dimah.dev) needs uploads for avatars and organization logos. I did not give it a second storage stack. The storage package is a thin use of [dimah-s3](https://s3.dimah.dev): the server signs a ticket, the browser sends the file to any S3-compatible bucket, and a Server Action stores the public URL.
 
 The application starts with no S3 settings. Only the upload paths need a bucket. When they are configured, the bucket has to allow `GET`, `PUT`, and `HEAD` from the app's origin, and objects are served from `S3_PUBLIC_BASE_URL`.
 
@@ -14,4 +13,4 @@ An upload that was signed and never confirmed should not stay behind. The reposi
 
 That is the whole connection between the two projects. dimah-s3 does not know about organizations or Better Auth. dimah-starter does not know how to sign an S3 request. The starter calls the toolkit, then keeps the URL on the account or the organization the action already authorized.
 
-The product areas that include uploads are listed in [What ships](/docs/starter/included). The signing model is in [Presign-first](/docs/s3/presign).
+Why the toolkit signs on the server is in [dimah-s3 signs the upload, then steps aside](/blog/presign-first). The repositories are [dimah-kz/dimah-starter](https://github.com/dimah-kz/dimah-starter) and [dimah-kz/dimah-s3](https://github.com/dimah-kz/dimah-s3).

@@ -1,8 +1,9 @@
-import { ProjectMark, isMarkId } from "@/components/brand";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { ProjectLogo } from "@/components/project-logo";
 import { Ribbon } from "@/components/ribbon";
 import { SpotlightCard } from "@/components/spotlight-card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import {
   Card,
   CardContent,
@@ -15,15 +16,11 @@ import { formatDate, t } from "@/lib/i18n";
 import { projectByTag, projectsForTags } from "@/lib/projects";
 import { cn } from "cn";
 import type { TOCItemType } from "fumadocs-core/toc";
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ArrowUpRightIcon,
-} from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-react";
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
-import type { BlogAuthor, BlogPost, BlogTag } from "../../lib/blog";
-import { TOCProvider } from "../toc";
+import type { BlogAuthor, BlogPost, BlogTag } from "@/lib/blog";
+import { TOCProvider } from "@/components/toc";
 import { BlogPanel } from "./panel";
 
 /* -------------------------------------------------------------------------- */
@@ -41,6 +38,16 @@ export function BlogCards({
   latestUrl?: string;
   className?: string;
 }) {
+  if (posts.length === 0) {
+    return (
+      <Empty className="border">
+        <EmptyHeader>
+          <EmptyTitle>{t.blog.empty}</EmptyTitle>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
   return (
     <ul className={cn("grid gap-5 sm:grid-cols-2 lg:grid-cols-3", className)}>
       {posts.map((post) => (
@@ -52,7 +59,13 @@ export function BlogCards({
   );
 }
 
-export function BlogCard({ post, latest = false }: { post: BlogPost; latest?: boolean }) {
+export function BlogCard({
+  post,
+  latest = false,
+}: {
+  post: BlogPost;
+  latest?: boolean;
+}) {
   return (
     <Link
       href={post.url}
@@ -102,15 +115,13 @@ export function BlogCard({ post, latest = false }: { post: BlogPost; latest?: bo
 
 /** Logos of the projects a post is about, from its tags. */
 function PostMarks({ tags }: { tags: string[] }) {
-  const marks = projectsForTags(tags)
-    .map((project) => project.mark)
-    .filter(isMarkId);
-  if (marks.length === 0) return null;
+  const projects = projectsForTags(tags).filter((project) => project.logo);
+  if (projects.length === 0) return null;
 
   return (
     <span className="flex shrink-0 gap-1">
-      {marks.map((mark) => (
-        <ProjectMark key={mark} id={mark} className="size-5" />
+      {projects.map((project) => (
+        <ProjectLogo key={project.slug} project={project} className="size-5" />
       ))}
     </span>
   );
@@ -164,9 +175,9 @@ export function BlogTagCloud({
 }
 
 function TagMark({ name }: { name: string }) {
-  const mark = projectByTag(name)?.mark;
-  if (!isMarkId(mark)) return null;
-  return <ProjectMark id={mark} className="size-3.5" />;
+  const project = projectByTag(name);
+  if (!project?.logo) return null;
+  return <ProjectLogo project={project} className="size-3.5" />;
 }
 
 /* -------------------------------------------------------------------------- */

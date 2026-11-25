@@ -1,4 +1,6 @@
-import { ProjectLogo } from "@/components/brand";
+import { GitHubIcon } from "@/components/icons";
+import { ProjectLogo } from "@/components/project-logo";
+import { SpotlightCard } from "@/components/spotlight-card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -21,11 +23,8 @@ import {
 } from "@/components/ui/item";
 import { t } from "@/lib/i18n";
 import type { Project } from "@/lib/projects";
-import { ArrowUpRightIcon, BookOpenIcon, CheckIcon } from "lucide-react";
-import Link from "next/link";
+import { ArrowUpRightIcon, CheckIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { GitHubIcon } from "./icons";
-import { SpotlightCard } from "./spotlight-card";
 
 function ExternalLink({
   href,
@@ -52,22 +51,16 @@ function ExternalLink({
 }
 
 function ProjectLinks({ project }: { project: Project }) {
-  const { docs, live, repository } = project.links;
+  const { live, repository } = project.links;
 
   return (
     <>
-      {docs ? (
-        <Link
-          href={docs}
-          aria-label={t.project.docsFor(project.name)}
-          className={buttonVariants({ variant: "outline", size: "sm" })}
-        >
-          <BookOpenIcon data-icon="inline-start" />
-          {t.project.docs}
-        </Link>
-      ) : null}
       {live ? (
-        <ExternalLink href={live} label={t.project.liveFor(project.name)}>
+        <ExternalLink
+          href={live}
+          label={t.project.liveFor(project.name)}
+          variant="outline"
+        >
           {t.project.live}
           <ArrowUpRightIcon data-icon="inline-end" />
         </ExternalLink>
@@ -85,6 +78,15 @@ function ProjectLinks({ project }: { project: Project }) {
   );
 }
 
+function hasLinks(project: Project) {
+  return Boolean(project.links.live || project.links.repository);
+}
+
+function ProjectStatus({ project }: { project: Project }) {
+  if (!project.status) return null;
+  return <Badge variant="outline">{t.project.status[project.status]}</Badge>;
+}
+
 /** Large card for a featured project: highlights, stack, and links. */
 export function ProjectCard({ project }: { project: Project }) {
   return (
@@ -92,8 +94,9 @@ export function ProjectCard({ project }: { project: Project }) {
       <Card className="h-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-base">
-            <ProjectLogo mark={project.mark} name={project.name} className="size-10" />
+            <ProjectLogo project={project} className="size-10" />
             {project.name}
+            <ProjectStatus project={project} />
           </CardTitle>
           {project.links.live ? (
             <CardAction>
@@ -128,7 +131,7 @@ export function ProjectCard({ project }: { project: Project }) {
             </ul>
           ) : null}
           {project.stack.length > 0 ? (
-            <ul className="flex flex-wrap gap-1.5" aria-label="Stack">
+            <ul className="flex flex-wrap gap-1.5" aria-label={t.project.stack}>
               {project.stack.map((item) => (
                 <li key={item}>
                   <Badge variant="secondary">{item}</Badge>
@@ -138,9 +141,11 @@ export function ProjectCard({ project }: { project: Project }) {
           ) : null}
         </CardContent>
 
-        <CardFooter className="mt-auto flex-wrap gap-1.5 border-t">
-          <ProjectLinks project={project} />
-        </CardFooter>
+        {hasLinks(project) ? (
+          <CardFooter className="mt-auto flex-wrap gap-1.5 border-t">
+            <ProjectLinks project={project} />
+          </CardFooter>
+        ) : null}
       </Card>
     </SpotlightCard>
   );
@@ -153,17 +158,22 @@ export function ProjectList({ projects }: { projects: Project[] }) {
       {projects.map((project) => (
         <Item key={project.slug} variant="outline" role="listitem">
           <ItemMedia>
-            <ProjectLogo mark={project.mark} name={project.name} className="size-9" />
+            <ProjectLogo project={project} className="size-9" />
           </ItemMedia>
           <ItemContent>
-            <ItemTitle className="text-sm">{project.name}</ItemTitle>
+            <ItemTitle className="text-sm">
+              {project.name}
+              <ProjectStatus project={project} />
+            </ItemTitle>
             <ItemDescription className="text-sm/relaxed">
               {project.description}
             </ItemDescription>
           </ItemContent>
-          <ItemActions className="basis-full flex-wrap gap-1.5 ps-[2.875rem]">
-            <ProjectLinks project={project} />
-          </ItemActions>
+          {hasLinks(project) ? (
+            <ItemActions className="basis-full flex-wrap gap-1.5 ps-[2.875rem]">
+              <ProjectLinks project={project} />
+            </ItemActions>
+          ) : null}
         </Item>
       ))}
     </ItemGroup>

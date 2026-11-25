@@ -1,17 +1,17 @@
-'use client';
-import { buttonVariants } from '@/components/ui/button';
-import { toast } from '@/components/ui/toast';
-import { t } from '@/lib/i18n';
-import { cn } from 'cn';
-import { ChevronDownIcon, ListIcon, Share2Icon } from 'lucide-react';
-import { useState } from 'react';
-import { TOCScrollArea, useTOCItems } from '../toc';
-import { TOCItem, TOCItems } from '../toc/default';
+"use client";
+import { buttonVariants } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+import { t } from "@/lib/i18n";
+import { cn } from "cn";
+import { ChevronDownIcon, ListIcon, Share2Icon } from "lucide-react";
+import { useState } from "react";
+import { TOCScrollArea, useTOCItems } from "@/components/toc";
+import { TOCItem, TOCItems } from "@/components/toc/default";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '../ui/collapsible';
+} from "@/components/ui/collapsible";
 
 /** The table of contents and share button of a post, floating at the bottom. */
 export function BlogPanel() {
@@ -29,7 +29,7 @@ export function BlogPanel() {
       return;
     }
     await navigator.clipboard.writeText(location.href);
-    toast.add({ title: t.blog.copied, type: 'success' });
+    toast.add({ title: t.blog.copied, type: "success" });
   }
 
   return (
@@ -37,15 +37,19 @@ export function BlogPanel() {
       open={open}
       onOpenChange={setOpen}
       className={cn(
-        'fixed inset-x-0 bottom-3 z-20 mx-auto rounded-xl border bg-background/85 p-1 text-sm shadow-lg backdrop-blur-md sm:bottom-5',
-        items.length > 0 ? 'w-[calc(100%-1.5rem)] sm:max-w-sm' : 'w-fit',
+        "fixed inset-x-0 bottom-3 z-20 mx-auto rounded-xl border bg-background/85 p-1 text-sm shadow-lg backdrop-blur-md sm:bottom-5",
+        items.length > 0 ? "w-[calc(100%-1.5rem)] sm:max-w-sm" : "w-fit",
       )}
     >
       <CollapsibleContent>
         <TOCScrollArea className="max-h-[min(600px,calc(100vh-7.5rem))] px-2">
           <TOCItems>
             {items.map((item) => (
-              <TOCItem key={item.url} item={item} onClick={() => setOpen(false)} />
+              <TOCItem
+                key={item.url}
+                item={item}
+                onClick={() => setOpen(false)}
+              />
             ))}
           </TOCItems>
         </TOCScrollArea>
@@ -53,21 +57,24 @@ export function BlogPanel() {
       <div className="flex flex-row gap-1">
         {items.length > 0 ? (
           <CollapsibleTrigger
-            className={cn(buttonVariants({ variant: 'ghost', size: 'lg' }), 'min-w-0')}
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "lg" }),
+              "min-w-0",
+            )}
           >
             <ListIcon data-icon="inline-start" />
             <span className="truncate">{t.blog.toc}</span>
             <ChevronDownIcon
               data-icon="inline-end"
-              className={cn('transition-transform', open && 'rotate-180')}
+              className={cn("transition-transform", open && "rotate-180")}
             />
           </CollapsibleTrigger>
         ) : null}
         <button
           type="button"
           className={cn(
-            buttonVariants({ variant: 'ghost', size: 'lg' }),
-            'ms-auto text-muted-foreground',
+            buttonVariants({ variant: "ghost", size: "lg" }),
+            "ms-auto text-muted-foreground",
           )}
           onClick={onShare}
         >

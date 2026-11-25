@@ -1,6 +1,6 @@
-@import 'tailwindcss';
-@import 'fumadocs-ui/css/shadcn.css';
-@import 'fumadocs-ui/css/preset.css';
+@import "tailwindcss";
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -68,11 +68,14 @@ html > body[data-scroll-locked] {
   --radius-4xl: calc(var(--radius) * 2.6);
   --animate-shiny-text: shiny-text 8s infinite;
   @keyframes shiny-text {
-  0%, 90%, 100% {
-    background-position: calc(-100% - var(--shiny-width)) 0;
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
     }
-  30%, 60% {
-    background-position: calc(100% + var(--shiny-width)) 0;
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
 }
@@ -102,7 +105,7 @@ html > body[data-scroll-locked] {
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  /* Accent sampled from public/dimah-avatar.png. Decorative: dots, marks, selection. */
+  /* Accent sampled from public/avatar.png. Decorative: dots, marks, selection. */
   --brand: oklch(0.71 0.146 94);
   --brand-foreground: oklch(0.21 0.04 94);
   /* The accent as text: dark enough for 4.5:1 on the background. */
@@ -161,7 +164,8 @@ html > body[data-scroll-locked] {
   body {
     @apply bg-background text-foreground;
   }
-  button:not(:disabled), [role="button"]:not(:disabled) {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
     cursor: pointer;
   }
   html {

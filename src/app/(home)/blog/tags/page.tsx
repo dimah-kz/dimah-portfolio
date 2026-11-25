@@ -1,9 +1,9 @@
 import { BlogBackLink, BlogTagCloud } from "@/components/blog";
 import { PageHeader } from "@/components/layout/section";
-import { getPosts, getTags } from "@/lib/blog";
+import { getTags } from "@/lib/blog";
 import { t } from "@/lib/i18n";
 import { ogImage, pageMeta } from "@/lib/seo";
-import { blogSource } from "@/lib/source";
+import { posts } from "@/lib/source";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = pageMeta(
@@ -13,7 +13,7 @@ export const metadata: Metadata = pageMeta(
 );
 
 export default function BlogTagsPage() {
-  const tags = getTags(getPosts(blogSource.getPages()));
+  const tags = getTags(posts);
 
   return (
     <main id="main" className="flex flex-1 flex-col">

@@ -1,15 +1,17 @@
 import { JsonLd } from "@/components/json-ld";
 import { MotionProvider } from "@/components/motion-provider";
-import { fumadocsI18n } from "@/lib/i18n";
 import { DirectionProvider } from "@/components/ui/direction";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toast";
+import { fumadocsI18n } from "@/lib/i18n";
+import { findProfile } from "@/lib/links";
 import {
   defaultTitle,
   isPreviewDeploy,
   ogImage,
   ogImages,
   ogLocale,
+  pageAlternates,
   siteJsonLd,
   siteKeywords,
 } from "@/lib/seo";
@@ -33,6 +35,7 @@ const fontArabic = Noto_Sans_Arabic({
 });
 
 const indexable = !isPreviewDeploy();
+const xHandle = findProfile("x")?.handle;
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
@@ -50,16 +53,12 @@ export const metadata: Metadata = {
   },
   description: site.description,
   applicationName: site.name,
-  authors: [{ name: site.author.name, url: site.author.githubUrl }],
-  creator: `@${site.author.x}`,
+  authors: [{ name: site.author.name, url: site.url }],
+  creator: site.author.name,
   publisher: site.name,
   category: "technology",
   keywords: [...siteKeywords],
-  alternates: {
-    types: {
-      "application/rss+xml": "/feed.xml",
-    },
-  },
+  alternates: pageAlternates("/"),
   openGraph: {
     type: "website",
     locale: ogLocale,
@@ -71,8 +70,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: `@${site.author.x}`,
-    creator: `@${site.author.x}`,
+    ...(xHandle ? { site: `@${xHandle}`, creator: `@${xHandle}` } : {}),
   },
   robots: indexable
     ? {
@@ -101,7 +99,11 @@ export default function Layout({ children }: LayoutProps<"/">) {
         <JsonLd data={siteJsonLd()} />
         <DirectionProvider direction={site.direction}>
           <TooltipProvider>
-            <RootProvider dir={site.direction} i18n={fumadocsI18n}>
+            <RootProvider
+              dir={site.direction}
+              i18n={fumadocsI18n}
+              search={{ enabled: false }}
+            >
               <MotionProvider>
                 {children}
                 <Toaster />

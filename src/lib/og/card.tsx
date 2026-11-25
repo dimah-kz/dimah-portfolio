@@ -1,6 +1,5 @@
-import { isMarkId, ProjectMark } from "@/components/brand";
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { extname, join } from "node:path";
 import type { ReactNode } from "react";
 import type { Project } from "../projects";
 import { site } from "../site";
@@ -24,9 +23,22 @@ export const ogColors = {
   brandRing: "rgba(214, 181, 45, 0.55)",
 } as const;
 
-const avatarSrc = `data:image/png;base64,${readFileSync(
-  join(process.cwd(), "public", site.author.avatarUrl),
-).toString("base64")}`;
+const imageTypes: Record<string, string> = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+};
+
+/** A file in `public/` as a data URL. The renderer does not fetch. */
+function publicImage(path: string): string {
+  const type = imageTypes[extname(path).toLowerCase()] ?? "image/png";
+  const data = readFileSync(join(process.cwd(), "public", path));
+  return `data:${type};base64,${data.toString("base64")}`;
+}
+
+const avatarSrc = publicImage(site.author.avatar);
 
 const host = new URL(site.url).host;
 
@@ -54,7 +66,7 @@ function keepHyphens(text: string): ReactNode {
 }
 
 type OgCardProps = {
-  /** Section label after the name, like `Blog` or `Docs`. */
+  /** Section label after the name, like `Blog` or `Projects`. */
   eyebrow?: string;
   title: string;
   /** The end of the title, set in the brand color, as in the home hero. */
@@ -111,13 +123,19 @@ export function OgCard({
           alt=""
           style={{ borderRadius: 999, border: `2px solid ${ogColors.border}` }}
         />
-        <span style={{ fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}>
+        <span
+          style={{ fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}
+        >
           {site.name}
         </span>
         {eyebrow ? (
           <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div style={{ width: 36, height: 2, backgroundColor: ogColors.brand }} />
-            <span style={{ fontSize: 28, fontWeight: 500, color: ogColors.brand }}>
+            <div
+              style={{ width: 36, height: 2, backgroundColor: ogColors.brand }}
+            />
+            <span
+              style={{ fontSize: 28, fontWeight: 500, color: ogColors.brand }}
+            >
               {keepHyphens(eyebrow)}
             </span>
           </div>
@@ -127,66 +145,75 @@ export function OgCard({
       {/* Text, then the art on the end side. A row follows `dir`, so a Persian
           card puts the art on the left. The art box has no height, so its
           rings overflow the row without moving the text. */}
-      <div style={{ display: "flex", alignItems: "center", gap: 40, width: "100%" }}>
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          gap: 24,
-          flex: 1,
-          minWidth: 0,
-          maxWidth: art ? 660 : 1040,
+          alignItems: "center",
+          gap: 40,
+          width: "100%",
         }}
       >
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            fontSize: titleSize(fullTitle, Boolean(art)),
-            fontWeight: 650,
-            lineHeight: 1.08,
-            letterSpacing: site.direction === "ltr" ? "-0.035em" : 0,
+            gap: 24,
+            flex: 1,
+            minWidth: 0,
+            maxWidth: art ? 660 : 1040,
           }}
         >
-          <div style={{ textWrap: "balance", lineClamp: titleAccent ? 2 : 3 }}>
-            {keepHyphens(title)}
-          </div>
-          {/* Its own line, as in the hero: an inline span breaks under a
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              fontSize: titleSize(fullTitle, Boolean(art)),
+              fontWeight: 650,
+              lineHeight: 1.08,
+              letterSpacing: site.direction === "ltr" ? "-0.035em" : 0,
+            }}
+          >
+            <div
+              style={{ textWrap: "balance", lineClamp: titleAccent ? 2 : 3 }}
+            >
+              {keepHyphens(title)}
+            </div>
+            {/* Its own line, as in the hero: an inline span breaks under a
               line clamp when the card is right to left. */}
-          {titleAccent ? (
-            <div style={{ color: ogColors.brand, lineClamp: 1 }}>
-              {keepHyphens(titleAccent)}
+            {titleAccent ? (
+              <div style={{ color: ogColors.brand, lineClamp: 1 }}>
+                {keepHyphens(titleAccent)}
+              </div>
+            ) : null}
+          </div>
+          {description ? (
+            <div
+              style={{
+                fontSize: art ? 30 : 32,
+                lineHeight: 1.4,
+                color: ogColors.muted,
+                textWrap: "pretty",
+                lineClamp: 2,
+              }}
+            >
+              {keepHyphens(description)}
             </div>
           ) : null}
         </div>
-        {description ? (
+        {art ? (
           <div
             style={{
-              fontSize: art ? 30 : 32,
-              lineHeight: 1.4,
-              color: ogColors.muted,
-              textWrap: "pretty",
-              lineClamp: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 340,
+              height: 0,
+              flexShrink: 0,
             }}
           >
-            {keepHyphens(description)}
+            {art}
           </div>
         ) : null}
-      </div>
-      {art ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 340,
-            height: 0,
-            flexShrink: 0,
-          }}
-        >
-          {art}
-        </div>
-      ) : null}
       </div>
 
       <div
@@ -202,7 +229,10 @@ export function OgCard({
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           {meta.map((item, index) => (
-            <div key={item} style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div
+              key={item}
+              style={{ display: "flex", alignItems: "center", gap: 16 }}
+            >
               {index > 0 ? (
                 <div
                   style={{
@@ -219,7 +249,12 @@ export function OgCard({
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div
-            style={{ width: 10, height: 10, borderRadius: 999, backgroundColor: ogColors.brand }}
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: 999,
+              backgroundColor: ogColors.brand,
+            }}
           />
           <span dir="ltr" style={{ color: ogColors.muted }}>
             {host}
@@ -272,8 +307,11 @@ export function OgAvatarArt() {
 }
 
 function ProjectTile({ project, size }: { project: Project; size: number }) {
-  if (isMarkId(project.mark)) {
-    return <ProjectMark id={project.mark} size={size} color={ogColors.foreground} />;
+  if (project.logo) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- Takumi renders <img>, not next/image.
+      <img src={publicImage(project.logo)} width={size} height={size} alt="" />
+    );
   }
 
   return (
@@ -297,7 +335,7 @@ function ProjectTile({ project, size }: { project: Project; size: number }) {
   );
 }
 
-/** One project's logo on a tile, for its docs and its blog tag. */
+/** One project's logo on a tile, for its blog tag and the posts about it. */
 export function OgProjectArt({ project }: { project: Project }) {
   return (
     <Tile>
@@ -306,7 +344,7 @@ export function OgProjectArt({ project }: { project: Project }) {
   );
 }
 
-/** Up to four project logos on a tile, for `/projects` and the docs overview. */
+/** Up to four project logos on a tile, for `/projects`. */
 export function OgProjectsArt({ projects }: { projects: Project[] }) {
   return (
     <Tile>

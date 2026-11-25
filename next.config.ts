@@ -1,27 +1,25 @@
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from "fumadocs-mdx/next";
+import type { NextConfig } from "next";
 
 const withMDX = createMDX();
 
-/** @type {import('next').NextConfig} */
-const config = {
+const config: NextConfig = {
   reactStrictMode: true,
-  async rewrites() {
+  async redirects() {
     return [
-      {
-        source: '/favicon.ico',
-        destination: '/icon-192.png',
-      },
-      {
-        source: '/docs/:path*.md',
-        destination: '/llms.mdx/docs/:path*.md',
-      },
-      {
-        source: '/docs/:path*.txt',
-        destination: '/llms.mdx/docs/:path*.txt',
-      },
+      // The site had a docs section. Each project's docs now live on its own site.
+      { source: "/docs", destination: "/projects", permanent: true },
+      { source: "/docs/:path*", destination: "/projects", permanent: true },
     ];
   },
-  serverExternalPackages: ['@takumi-rs/core'],
+  async rewrites() {
+    return [
+      { source: "/favicon.ico", destination: "/icon.png" },
+      // `<page>.md` is the Markdown of a page, see `src/lib/agents.ts`.
+      { source: "/:path*.md", destination: "/llms.mdx/:path*" },
+    ];
+  },
+  serverExternalPackages: ["@takumi-rs/core"],
 };
 
 export default withMDX(config);

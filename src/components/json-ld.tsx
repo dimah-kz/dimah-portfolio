@@ -3,7 +3,7 @@ export function JsonLd({ data }: { data: object }) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify(data).replaceAll('<', '\\u003c'),
+        __html: JSON.stringify(data).replaceAll("<", "\\u003c"),
       }}
     />
   );

@@ -2,12 +2,12 @@ import {
   type ComponentPropsWithoutRef,
   type CSSProperties,
   type FC,
-} from "react"
+} from "react";
 
-import { cn } from "cn"
+import { cn } from "cn";
 
 export interface AnimatedShinyTextProps extends ComponentPropsWithoutRef<"span"> {
-  shimmerWidth?: number
+  shimmerWidth?: number;
 }
 
 export const AnimatedShinyText: FC<AnimatedShinyTextProps> = ({
@@ -32,11 +32,11 @@ export const AnimatedShinyText: FC<AnimatedShinyTextProps> = ({
         // Shine gradient
         "bg-linear-to-r from-transparent via-foreground/80 via-50% to-transparent",
 
-        className
+        className,
       )}
       {...props}
     >
       {children}
     </span>
-  )
-}
+  );
+};

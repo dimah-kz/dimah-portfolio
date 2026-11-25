@@ -3,10 +3,9 @@ title: Why dimah-starter is server-first
 description: Tenants, roles, and writes stay on the server. The starter does not add a client SDK and leave those parts open.
 date: 2026-11-21
 tags: [dimah-starter]
-authors: [dimah]
 ---
 
-A lot of Next.js starters begin with a client. You get an auth SDK, a query library, and a set of widgets, and then you are on your own for organizations, permissions, and cache invalidation. I built [dimah-starter](/docs/starter) in the other direction.
+A lot of Next.js starters begin with a client. You get an auth SDK, a query library, and a set of widgets, and then you are on your own for organizations, permissions, and cache invalidation. I built [dimah-starter](https://starter.dimah.dev) in the other direction.
 
 The page reads the session in a Server Component. A list is a `'use cache'` read tagged for that user or that organization. A write is one Server Action, and `updateTag` expires what that write changed, so the person who submitted the form sees the new data in the same response. There is no auth client to hydrate, and no React Query cache to invalidate.
 
@@ -16,4 +15,4 @@ Multi-tenancy is not a later chapter. Organizations, invitations, and the owner,
 
 Billing, a marketing CMS, and analytics are left out, so the provider can match the product.
 
-The read and the write, including the trimmed members-list example, are written up in [Server-first](/docs/starter/server). The repository is [dimah-kz/dimah-starter](https://github.com/dimah-kz/dimah-starter), and the running app is [starter.dimah.dev](https://starter.dimah.dev).
+The read and the write, with a trimmed members-list example, are in the README of [dimah-kz/dimah-starter](https://github.com/dimah-kz/dimah-starter), and the running app is [starter.dimah.dev](https://starter.dimah.dev).

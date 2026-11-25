@@ -11,18 +11,17 @@ import {
 } from "@/components/blog";
 import { JsonLd } from "@/components/json-ld";
 import { getMDXComponents } from "@/components/mdx";
-import { findPost, getPosts } from "@/lib/blog";
+import { findPost } from "@/lib/blog";
 import { articleJsonLd, ogImage, pageMeta } from "@/lib/seo";
 import { site } from "@/lib/site";
-import { blogAuthors, blogSource } from "@/lib/source";
+import { blogSource, posts } from "@/lib/source";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
   const { slug } = await props.params;
   const page = blogSource.getPage([slug]);
-  const found =
-    page && findPost(getPosts(blogSource.getPages(), blogAuthors), page.url);
+  const found = page && findPost(posts, page.url);
   if (!page || !found) notFound();
 
   const { post, newer, older } = found;
@@ -34,16 +33,7 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
         aria-hidden="true"
         className="absolute inset-x-0 -top-14 -z-10 h-[28rem] bg-wash"
       />
-      <JsonLd
-        data={articleJsonLd({
-          type: "BlogPosting",
-          pathname: post.url,
-          title: post.title,
-          description: post.description,
-          datePublished: post.date,
-          image: ogImage.post(slug),
-        })}
-      />
+      <JsonLd data={articleJsonLd({ post, image: ogImage.post(slug) })} />
       <BlogPage toc={page.data.toc}>
         <BlogHeader>
           <BlogBackLink />
@@ -77,10 +67,7 @@ export async function generateMetadata(
   const page = blogSource.getPage([slug]);
   if (!page) notFound();
 
-  const found = findPost(
-    getPosts(blogSource.getPages(), blogAuthors),
-    page.url,
-  );
+  const found = findPost(posts, page.url);
   const published = found?.post.date?.toISOString();
 
   return pageMeta(

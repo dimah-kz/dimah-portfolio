@@ -4,17 +4,19 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { type SocialLink, socialLinks } from "@/lib/links";
+import { type IconLink, isExternal, profiles } from "@/lib/links";
 import { cn } from "cn";
 
-/** Icon buttons for `socialLinks`, with a tooltip on each. */
+/** Icon buttons with a tooltip on each. Every profile by default. */
 export function SocialLinks({
-  links = socialLinks,
+  links = profiles,
   className,
 }: {
-  links?: SocialLink[];
+  links?: IconLink[];
   className?: string;
 }) {
+  if (links.length === 0) return null;
+
   return (
     <ul className={cn("flex items-center gap-1", className)}>
       {links.map(({ label, href, icon: Icon }) => (
@@ -25,10 +27,13 @@ export function SocialLinks({
                 <a
                   href={href}
                   aria-label={label}
-                  {...(href.startsWith("http")
+                  {...(isExternal(href)
                     ? { target: "_blank", rel: "noreferrer" }
                     : {})}
-                  className={buttonVariants({ variant: "ghost", size: "icon-lg" })}
+                  className={buttonVariants({
+                    variant: "ghost",
+                    size: "icon-lg",
+                  })}
                 />
               }
             >

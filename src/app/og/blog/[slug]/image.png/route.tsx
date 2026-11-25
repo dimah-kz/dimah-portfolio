@@ -1,9 +1,9 @@
-import { findPost, getPosts } from "@/lib/blog";
+import { findPost } from "@/lib/blog";
 import { formatDate, t } from "@/lib/i18n";
 import { OgCard, OgProjectArt } from "@/lib/og/card";
 import { ogImageResponse } from "@/lib/og/render";
 import { projectsForTags } from "@/lib/projects";
-import { blogSource } from "@/lib/source";
+import { blogSource, posts } from "@/lib/source";
 import { notFound } from "next/navigation";
 
 export const revalidate = false;
@@ -15,12 +15,14 @@ export async function GET(
 ) {
   const { slug } = await params;
   const page = blogSource.getPage([slug]);
-  const found = page && findPost(getPosts(blogSource.getPages()), page.url);
+  const found = page && findPost(posts, page.url);
   if (!found) notFound();
 
   const { post } = found;
   // A post about one project shows its logo; a post about several shows none.
-  const [project, ...others] = projectsForTags(post.tags.map((tag) => tag.name));
+  const [project, ...others] = projectsForTags(
+    post.tags.map((tag) => tag.name),
+  );
 
   return ogImageResponse(
     <OgCard
@@ -31,7 +33,11 @@ export async function GET(
         ...(post.date ? [formatDate(post.date)] : []),
         ...(post.readingTime ? [t.blog.readingTime(post.readingTime)] : []),
       ]}
-      art={project && others.length === 0 ? <OgProjectArt project={project} /> : undefined}
+      art={
+        project && others.length === 0 ? (
+          <OgProjectArt project={project} />
+        ) : undefined
+      }
     />,
   );
 }

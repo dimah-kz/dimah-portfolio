@@ -1,17 +1,18 @@
 import { BlogBackLink, BlogCards, BlogTagCloud } from "@/components/blog";
-import { ProjectLogo } from "@/components/brand";
 import { Container, PageHeader } from "@/components/layout/section";
-import { getPosts, getTagPosts, getTags } from "@/lib/blog";
+import { ProjectLogo } from "@/components/project-logo";
+import { getTagPosts, getTags } from "@/lib/blog";
 import { t } from "@/lib/i18n";
 import { projectByTag } from "@/lib/projects";
 import { ogImage, pageMeta } from "@/lib/seo";
-import { blogAuthors, blogSource } from "@/lib/source";
+import { posts } from "@/lib/source";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-export default async function BlogTagPage(props: PageProps<"/blog/tags/[tag]">) {
+export default async function BlogTagPage(
+  props: PageProps<"/blog/tags/[tag]">,
+) {
   const { tag } = await props.params;
-  const posts = getPosts(blogSource.getPages(), blogAuthors);
   const result = getTagPosts(posts, tag);
   if (!result) notFound();
 
@@ -24,17 +25,15 @@ export default async function BlogTagPage(props: PageProps<"/blog/tags/[tag]">) 
         title={
           <span className="inline-flex items-center gap-3">
             {project ? (
-              <ProjectLogo
-                mark={project.mark}
-                name={project.name}
-                className="size-9 sm:size-11"
-              />
+              <ProjectLogo project={project} className="size-9 sm:size-11" />
             ) : null}
             {result.tag.name}
           </span>
         }
         description={
-          project ? project.description : t.blog.taggedDescription(result.tag.name)
+          project
+            ? project.description
+            : t.blog.taggedDescription(result.tag.name)
         }
       >
         <div className="pt-2">
@@ -49,7 +48,7 @@ export default async function BlogTagPage(props: PageProps<"/blog/tags/[tag]">) 
 }
 
 export function generateStaticParams() {
-  return getTags(getPosts(blogSource.getPages())).map((tag) => ({
+  return getTags(posts).map((tag) => ({
     tag: tag.slug,
   }));
 }
@@ -58,7 +57,7 @@ export async function generateMetadata(
   props: PageProps<"/blog/tags/[tag]">,
 ): Promise<Metadata> {
   const { tag } = await props.params;
-  const result = getTagPosts(getPosts(blogSource.getPages()), tag);
+  const result = getTagPosts(posts, tag);
   if (!result) notFound();
 
   return pageMeta(

@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import type { BlogPost } from "./blog";
+import { experience } from "./experience";
+import { findProfile, profiles } from "./links";
+import { markdownUrl } from "./markdown-url";
 import { projects } from "./projects";
 import { headline, site } from "./site";
+import { defaultAuthor } from "./source";
 
 const ogLocales = {
   en: "en_US",
@@ -15,13 +20,14 @@ export const defaultTitle = `${site.name} — ${headline}`;
 
 /** Terms already used on the site: the name, project names, and their stacks. */
 export const siteKeywords = [
-  ...new Set([
-    site.name,
-    site.author.github,
-    ...projects.map((project) => project.name),
-    ...projects.flatMap((project) => project.stack),
-    "open source",
-  ]),
+  ...new Set(
+    [
+      site.name,
+      findProfile("github")?.handle,
+      ...projects.map((project) => project.name),
+      ...projects.flatMap((project) => project.stack),
+    ].filter((term): term is string => Boolean(term)),
+  ),
 ];
 
 /** Static pages with their own share image, see `src/app/og/pages`. */
@@ -56,13 +62,18 @@ export function absoluteUrl(path: string): string {
   return canonicalUrl(path);
 }
 
-/** Canonical plus the site feed. Replaces the whole `alternates` object. */
+/**
+ * Canonical, the feed, and the page's Markdown for agents
+ * (`<link rel="alternate" type="text/markdown">`).
+ * Replaces the whole `alternates` object.
+ */
 export function pageAlternates(pathname: string): Metadata["alternates"] {
   const path = pathname === "" ? "/" : pathname;
   return {
     canonical: path,
     types: {
       "application/rss+xml": "/feed.xml",
+      "text/markdown": markdownUrl(path),
     },
   };
 }
@@ -111,9 +122,31 @@ export function pageMeta(
   };
 }
 
+/* -------------------------------------------------------------------------- */
+/* Structured data (https://schema.org), read by search engines and agents    */
+/* -------------------------------------------------------------------------- */
+
+const personId = `${site.url}/#person`;
+const websiteId = `${site.url}/#website`;
+
+function projectData(project: (typeof projects)[number]) {
+  return {
+    "@type": "SoftwareSourceCode",
+    name: project.name,
+    description: project.description,
+    ...(project.links.repository
+      ? { codeRepository: project.links.repository }
+      : {}),
+    ...(project.links.live ? { url: project.links.live } : {}),
+    ...(project.stack.length > 0 ? { keywords: project.stack.join(", ") } : {}),
+    author: { "@id": personId },
+  };
+}
+
+/** The person and the website. On every page, from the root layout. */
 export function siteJsonLd() {
-  const personId = `${site.url}/#person`;
-  const websiteId = `${site.url}/#website`;
+  const email = findProfile("email");
+  const current = experience.filter((role) => !role.end);
 
   return {
     "@context": "https://schema.org",
@@ -123,23 +156,23 @@ export function siteJsonLd() {
         "@id": personId,
         name: site.author.name,
         url: site.url,
-        image: absoluteUrl(site.author.avatarUrl),
+        image: absoluteUrl(site.author.avatar),
         description: site.author.tagline,
-        email: site.author.email,
-        sameAs: [site.author.githubUrl, site.author.xUrl, site.author.telegramUrl],
-        owns: projects.flatMap((project) =>
-          project.links.repository
-            ? [
-                {
-                  "@type": "SoftwareSourceCode",
-                  name: project.name,
-                  description: project.description,
-                  codeRepository: project.links.repository,
-                  ...(project.links.live ? { url: project.links.live } : {}),
-                },
-              ]
-            : [],
-        ),
+        ...(email ? { email: email.href } : {}),
+        sameAs: profiles
+          .filter((profile) => profile.id !== "email")
+          .map((profile) => profile.href),
+        ...(current.length > 0
+          ? {
+              worksFor: current.map((role) => ({
+                "@type": "Organization",
+                name: role.company,
+                ...(role.url ? { url: role.url } : {}),
+              })),
+              jobTitle: current[0].role,
+            }
+          : {}),
+        ...(siteKeywords.length > 0 ? { knowsAbout: siteKeywords } : {}),
       },
       {
         "@type": "WebSite",
@@ -154,31 +187,87 @@ export function siteJsonLd() {
   };
 }
 
-export function articleJsonLd(input: {
-  type: "BlogPosting" | "TechArticle";
-  pathname: string;
-  title: string;
-  description?: string;
-  datePublished?: Date;
-  image?: string;
-}) {
-  const url = canonicalUrl(input.pathname);
-  const data: Record<string, unknown> = {
+/** The home page is about the person. */
+export function profilePageJsonLd() {
+  return {
     "@context": "https://schema.org",
-    "@type": input.type,
-    headline: input.title,
+    "@type": "ProfilePage",
+    url: site.url,
+    name: defaultTitle,
+    inLanguage: site.locale,
+    mainEntity: { "@id": personId },
+    isPartOf: { "@id": websiteId },
+  };
+}
+
+/** `/projects`: the projects as a list. */
+export function projectsJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    url: canonicalUrl("/projects"),
+    inLanguage: site.locale,
+    isPartOf: { "@id": websiteId },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: projects.map((project, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: projectData(project),
+      })),
+    },
+  };
+}
+
+/** `/blog`: the blog and its posts. */
+export function blogJsonLd(posts: BlogPost[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    url: canonicalUrl("/blog"),
+    inLanguage: site.locale,
+    author: { "@id": personId },
+    isPartOf: { "@id": websiteId },
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      url: canonicalUrl(post.url),
+      ...(post.description ? { description: post.description } : {}),
+      ...(post.date ? { datePublished: post.date.toISOString() } : {}),
+    })),
+  };
+}
+
+/** One post. Guest authors are named; the site's author is the person. */
+export function articleJsonLd(input: { post: BlogPost; image?: string }) {
+  const { post } = input;
+  const url = canonicalUrl(post.url);
+  const authors = post.authors.map((author) =>
+    author === defaultAuthor
+      ? { "@id": personId }
+      : {
+          "@type": "Person",
+          name: author.name,
+          ...(author.url ? { url: author.url } : {}),
+        },
+  );
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
     url,
     mainEntityOfPage: url,
     inLanguage: site.locale,
-    image: absoluteUrl(input.image ?? site.author.avatarUrl),
-    author: { "@id": `${site.url}/#person` },
-    publisher: { "@id": `${site.url}/#person` },
-    isPartOf: { "@id": `${site.url}/#website` },
+    image: absoluteUrl(input.image ?? site.author.avatar),
+    author: authors.length === 1 ? authors[0] : authors,
+    publisher: { "@id": personId },
+    isPartOf: { "@id": websiteId },
+    ...(post.description ? { description: post.description } : {}),
+    ...(post.date ? { datePublished: post.date.toISOString() } : {}),
+    ...(post.tags.length > 0
+      ? { keywords: post.tags.map((tag) => tag.name).join(", ") }
+      : {}),
+    ...(post.readingTime ? { timeRequired: `PT${post.readingTime}M` } : {}),
   };
-
-  if (input.description) data.description = input.description;
-  if (input.datePublished)
-    data.datePublished = input.datePublished.toISOString();
-
-  return data;
 }

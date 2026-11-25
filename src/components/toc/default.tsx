@@ -1,19 +1,24 @@
-'use client';
-import * as Primitive from 'fumadocs-core/toc';
-import { type ComponentProps, useCallback, useMemo } from 'react';
-import { cn } from '../../lib/utils';
-import { useTOCItems } from './index';
-import { useTranslations } from '@fuma-translate/react';
+"use client";
+import * as Primitive from "fumadocs-core/toc";
+import { type ComponentProps, useCallback, useMemo } from "react";
+import { cn } from "../../lib/utils";
+import { useTOCItems } from "./index";
+import { useTranslations } from "@fuma-translate/react";
 
-export interface TOCItemsProps extends ComponentProps<'div'> {
+export interface TOCItemsProps extends ComponentProps<"div"> {
   thumbBox?: boolean;
 }
 
-export function TOCItems({ className, thumbBox = true, children, ...props }: TOCItemsProps) {
+export function TOCItems({
+  className,
+  thumbBox = true,
+  children,
+  ...props
+}: TOCItemsProps) {
   const items = useTOCItems();
 
   return (
-    <div className={cn('relative flex flex-col', className)} {...props}>
+    <div className={cn("relative flex flex-col", className)} {...props}>
       {items.length > 0 && <ThumbTrack items={items} thumbBox={thumbBox} />}
       {children}
     </div>
@@ -21,11 +26,11 @@ export function TOCItems({ className, thumbBox = true, children, ...props }: TOC
 }
 
 export function TOCEmpty() {
-  const t = useTranslations({ note: 'table of contents' });
+  const t = useTranslations({ note: "table of contents" });
 
   return (
     <div className="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground">
-      {t('No Headings')}
+      {t("No Headings")}
     </div>
   );
 }
@@ -38,16 +43,25 @@ interface ItemPosition {
   offset: number;
 }
 
-function ThumbTrack({ items, thumbBox }: { items: Primitive.TOCItemType[]; thumbBox: boolean }) {
+function ThumbTrack({
+  items,
+  thumbBox,
+}: {
+  items: Primitive.TOCItemType[];
+  thumbBox: boolean;
+}) {
   const toc = Primitive.useTOC();
   const ref = useCallback(
     (track: HTMLDivElement) => {
       const container = track.parentElement!;
-      const svg = track.querySelector('svg')!;
-      const path = svg.querySelector('path')!;
-      const steps = svg.getElementsByTagName('g');
-      const thumb = thumbBox ? track.querySelector('div') : null;
-      const segment = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const svg = track.querySelector("svg")!;
+      const path = svg.querySelector("path")!;
+      const steps = svg.getElementsByTagName("g");
+      const thumb = thumbBox ? track.querySelector("div") : null;
+      const segment = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path",
+      );
       const positions = new Map<string, ItemPosition>();
       let previous: { start: number; end: number; isUp: boolean } | undefined;
 
@@ -70,20 +84,23 @@ function ThumbTrack({ items, thumbBox }: { items: Primitive.TOCItemType[]; thumb
           previous !== undefined &&
           (previous.start > start ||
             previous.end > end ||
-            (previous.start === start && previous.end === end && previous.isUp));
+            (previous.start === start &&
+              previous.end === end &&
+              previous.isUp));
         previous = { start, end, isUp };
         thumb.style.offsetDistance = `${isUp ? first.offset : last.offset + last.bottom - last.top}px`;
-        thumb.style.opacity = infos[isUp ? start : end]!.original._step === undefined ? '1' : '0';
+        thumb.style.opacity =
+          infos[isUp ? start : end]!.original._step === undefined ? "1" : "0";
       };
 
       // called after layout and before paint, so the track never lags behind the items
       const observer = new ResizeObserver(() => {
         if (container.clientHeight === 0) return;
         const anchors = new Map<string | null, HTMLElement>();
-        for (const anchor of container.getElementsByTagName('a'))
-          anchors.set(anchor.getAttribute('href'), anchor);
+        for (const anchor of container.getElementsByTagName("a"))
+          anchors.set(anchor.getAttribute("href"), anchor);
 
-        let d = '';
+        let d = "";
         let width = 0;
         let height = 0;
         let length = 0;
@@ -97,13 +114,16 @@ function ThumbTrack({ items, thumbBox }: { items: Primitive.TOCItemType[]; thumb
           const styles = getComputedStyle(anchor);
           const x = getLineOffset(item.depth) + 0.5;
           const top = anchor.offsetTop + parseFloat(styles.paddingTop);
-          const bottom = anchor.offsetTop + anchor.clientHeight - parseFloat(styles.paddingBottom);
+          const bottom =
+            anchor.offsetTop +
+            anchor.clientHeight -
+            parseFloat(styles.paddingBottom);
 
           if (last) {
             const curve = `C ${last.x} ${top - 4} ${x} ${last.bottom + 4} ${x} ${top}`;
             d += ` ${curve} L${x} ${bottom}`;
             if (thumb) {
-              segment.setAttribute('d', `M${last.x} ${last.bottom} ${curve}`);
+              segment.setAttribute("d", `M${last.x} ${last.bottom} ${curve}`);
               length += segment.getTotalLength();
             }
           } else {
@@ -125,11 +145,11 @@ function ThumbTrack({ items, thumbBox }: { items: Primitive.TOCItemType[]; thumb
           const g = steps[step++];
           if (position && g)
             g.setAttribute(
-              'transform',
+              "transform",
               `translate(${position.x}, ${(position.top + position.bottom) / 2})`,
             );
         }
-        path.setAttribute('d', d);
+        path.setAttribute("d", d);
         track.style.width = `${width}px`;
         track.style.height = `${height}px`;
         if (thumb) thumb.style.offsetPath = `path("${d}")`;
@@ -147,8 +167,11 @@ function ThumbTrack({ items, thumbBox }: { items: Primitive.TOCItemType[]; thumb
   );
 
   return (
-    <div ref={ref} className="absolute top-0 inset-s-0 origin-center rtl:-scale-x-100">
-      <svg className="absolute size-full [clip-path:polygon(0_0,100%_0,100%_0,0_0)] transition-[clip-path]">
+    <div
+      ref={ref}
+      className="absolute inset-s-0 top-0 origin-center rtl:-scale-x-100"
+    >
+      <svg className="absolute size-full transition-[clip-path] [clip-path:polygon(0_0,100%_0,100%_0,0_0)]">
         <path className="stroke-fd-primary" strokeWidth="1" fill="none" />
         {items.map(
           (item) =>
@@ -159,7 +182,7 @@ function ThumbTrack({ items, thumbBox }: { items: Primitive.TOCItemType[]; thumb
                   textAnchor="middle"
                   alignmentBaseline="central"
                   dominantBaseline="middle"
-                  className="fill-fd-primary-foreground font-medium text-xs leading-none font-mono rtl:-scale-x-100"
+                  className="fill-fd-primary-foreground font-mono text-xs leading-none font-medium rtl:-scale-x-100"
                 >
                   {item._step}
                 </text>
@@ -168,7 +191,7 @@ function ThumbTrack({ items, thumbBox }: { items: Primitive.TOCItemType[]; thumb
         )}
       </svg>
       {thumbBox && (
-        <div className="absolute left-0 size-1 bg-fd-primary rounded-full opacity-0 transition-[opacity,offset-distance]" />
+        <div className="absolute left-0 size-1 rounded-full bg-fd-primary opacity-0 transition-[opacity,offset-distance]" />
       )}
     </div>
   );
@@ -209,8 +232,8 @@ export function TOCItem({
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={cn(
-            'absolute -top-1.5 inset-s-0 bottom-0 h-[calc(100%+--spacing(1.5))] -z-1 rtl:-scale-x-100',
-            l1 !== l2 && 'h-full bottom-1.5',
+            "absolute inset-s-0 -top-1.5 bottom-0 -z-1 h-[calc(100%+--spacing(1.5))] rtl:-scale-x-100",
+            l1 !== l2 && "bottom-1.5 h-full",
           )}
           style={{
             width: Math.max(l0, l1) + 9,
@@ -227,14 +250,14 @@ export function TOCItem({
           )}
           <line
             x1={l1 + 0.5}
-            y1={l0 === l1 ? '6' : '12'}
+            y1={l0 === l1 ? "6" : "12"}
             x2={l1 + 0.5}
             y2="100%"
             strokeWidth="1"
             className="stroke-fd-foreground/10"
           />
           {item._step !== undefined && (
-            <g transform={`translate(${l1 + 0.5}, ${l1 === l2 ? '3' : '6'})`}>
+            <g transform={`translate(${l1 + 0.5}, ${l1 === l2 ? "3" : "6"})`}>
               <circle cx="0" cy="50%" r="8" className="fill-fd-muted" />
               <text
                 x="0"
@@ -242,7 +265,7 @@ export function TOCItem({
                 textAnchor="middle"
                 alignmentBaseline="central"
                 dominantBaseline="middle"
-                className="fill-fd-muted-foreground font-medium text-xs leading-none font-mono rtl:-scale-x-100"
+                className="fill-fd-muted-foreground font-mono text-xs leading-none font-medium rtl:-scale-x-100"
               >
                 {item._step}
               </text>
@@ -258,9 +281,9 @@ export function TOCItem({
       href={item.url}
       {...props}
       className={cn(
-        'prose prose-sm relative py-1.5 scroll-m-4 text-fd-muted-foreground hover:text-fd-accent-foreground transition-colors wrap-anywhere data-[active=true]:text-fd-primary',
-        isFirst && 'pt-0',
-        isLast && 'pb-0',
+        "relative prose scroll-m-4 py-1.5 prose-sm wrap-anywhere text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary",
+        isFirst && "pt-0",
+        isLast && "pb-0",
         props.className,
       )}
       style={{
